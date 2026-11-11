@@ -51,8 +51,8 @@ if ( is_wp_error( $endpaper_book ) ) {
 
 $endpaper_tag = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 2 );
 
-// The link to Hardcover is the credit line under the card. Nothing else in the block links there.
-$endpaper_url = ! empty( $attributes['showLink'] ) ? $endpaper_book['url'] : '';
+// The credit line under the card is always shown, and is the only link to Hardcover. It goes to the book's page there.
+$endpaper_url = $endpaper_book['url'] ? $endpaper_book['url'] : 'https://hardcover.app/';
 
 // The shelf and progress come from the site owner's own library. They are extras, so a failed lookup never hides the book.
 $endpaper_entry = array();
@@ -197,18 +197,16 @@ $endpaper_card_style = get_card_style( $attributes );
 
 	</div>
 
-	<?php if ( $endpaper_url ) : ?>
-		<p class="endpaper-book__attribution">
-			<?php
-			echo wp_kses(
-				sprintf(
-					/* translators: %s: Link to Hardcover. */
-					__( 'Powered by %s', 'endpaper' ),
-					'<a href="' . esc_url( $endpaper_url ) . '">Hardcover</a>'
-				),
-				array( 'a' => array( 'href' => array() ) )
-			);
-			?>
-		</p>
-	<?php endif; ?>
+	<p class="endpaper-book__attribution">
+		<?php
+		echo wp_kses(
+			sprintf(
+				/* translators: %s: Link to Hardcover. */
+				__( 'Powered by %s', 'endpaper' ),
+				'<a href="' . esc_url( $endpaper_url ) . '">Hardcover</a>'
+			),
+			array( 'a' => array( 'href' => array() ) )
+		);
+		?>
+	</p>
 </div>

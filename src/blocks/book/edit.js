@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	BlockControls,
@@ -33,6 +35,11 @@ import './editor.scss';
 const TITLE_LEVELS = [ 0, 2, 3, 4, 5, 6 ];
 
 /**
+ * Hardcover's status ID for the Currently Reading shelf.
+ */
+const CURRENTLY_READING = 2;
+
+/**
  * The parts of the book that can be shown or hidden, in display order.
  */
 const DISPLAY_TOGGLES = [
@@ -50,21 +57,14 @@ const DISPLAY_TOGGLES = [
 	},
 	{
 		attribute: 'showProgress',
+		onlyOnShelf: CURRENTLY_READING,
 		label: __( 'Your reading progress', 'endpaper' ),
 		help: __(
-			'Shown while the book is on your Currently Reading shelf.',
+			'Shows how far you are, as logged on Hardcover.',
 			'endpaper'
 		),
 	},
 	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
-	{
-		attribute: 'showLink',
-		label: __( 'Credit and link to Hardcover', 'endpaper' ),
-		help: __(
-			'Adds “Powered by Hardcover” under the card, linked to the book on Hardcover.',
-			'endpaper'
-		),
-	},
 ];
 
 /**
@@ -101,6 +101,35 @@ function getPreviewAttributes( attributes ) {
  */
 export default function Edit( { attributes, clientId, setAttributes } ) {
 	const blockProps = useBlockProps();
+
+	// The shelf the book is on in the site owner's library, once known. Some settings only apply to certain shelves.
+	const [ shelf, setShelf ] = useState( null );
+
+	useEffect( () => {
+		setShelf( null );
+
+		if ( ! attributes.bookId ) {
+			return;
+		}
+
+		let isCurrent = true;
+
+		apiFetch( {
+			path: `/endpaper/v1/library-entry/${ attributes.bookId }`,
+		} )
+			.then( ( entry ) => {
+				if ( isCurrent ) {
+					setShelf( entry?.status_id || 0 );
+				}
+			} )
+			.catch( () => {
+				// Without an answer, the shelf stays unknown and the settings that depend on it stay hidden.
+			} );
+
+		return () => {
+			isCurrent = false;
+		};
+	}, [ attributes.bookId ] );
 
 	if ( ! attributes.bookId ) {
 		return (
@@ -145,7 +174,10 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Display', 'endpaper' ) }>
-					{ DISPLAY_TOGGLES.map( ( { attribute, label, help } ) => (
+					{ DISPLAY_TOGGLES.filter(
+						( { onlyOnShelf } ) =>
+							! onlyOnShelf || onlyOnShelf === shelf
+					).map( ( { attribute, label, help } ) => (
 						<ToggleControl
 							key={ attribute }
 							__nextHasNoMarginBottom

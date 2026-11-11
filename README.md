@@ -14,8 +14,8 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page.
 - Shows the book as a card: the cover, title, authors, a description, and a row with the publication year, page count and Hardcover rating.
 - Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
-- Credits Hardcover under the card, with a link to the book there.
-- Each part can be switched on or off. The description can be limited in length, and ends on a whole sentence where it can.
+- Always credits Hardcover under the card, with a link to the book there.
+- The other parts can be switched on or off. The description can be limited in length, and ends on a whole sentence where it can.
 - Sizes follow the block’s font size, and colors follow the text color, so the card fits light and dark designs alike.
 - Supports the color, typography, spacing, border and shadow settings in the block editor. The border, padding, background and shadow apply to the card.
 

@@ -39,6 +39,23 @@ function register_rest_routes() {
 			),
 		)
 	);
+
+	register_rest_route(
+		'endpaper/v1',
+		'/library-entry/(?P<book_id>\d+)',
+		array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => __NAMESPACE__ . '\rest_library_entry',
+			'permission_callback' => __NAMESPACE__ . '\rest_permission',
+			'args'                => array(
+				'book_id' => array(
+					'type'              => 'integer',
+					'required'          => true,
+					'sanitize_callback' => 'absint',
+				),
+			),
+		)
+	);
 }
 add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_routes' );
 
@@ -65,4 +82,26 @@ function rest_search( $request ) {
 	}
 
 	return rest_ensure_response( search_books( $term ) );
+}
+
+/**
+ * Handles a request for the shelf a book is on in the site owner's library.
+ *
+ * The editor uses this to decide which settings to offer for a book.
+ *
+ * @param WP_REST_Request $request The request.
+ * @return WP_REST_Response|WP_Error The shelf's status ID, 0 if the book is not in the library, or an error.
+ */
+function rest_library_entry( $request ) {
+	$entry = get_library_entry( absint( $request->get_param( 'book_id' ) ) );
+
+	if ( is_wp_error( $entry ) ) {
+		return $entry;
+	}
+
+	return rest_ensure_response(
+		array(
+			'status_id' => isset( $entry['status_id'] ) ? absint( $entry['status_id'] ) : 0,
+		)
+	);
 }
