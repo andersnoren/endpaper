@@ -136,11 +136,13 @@
 	opacity: $muted-opacity;
 }
 
-/* The shelf is an accent-colored pill. PHP picks a contrasting text color. */
+/*
+ * The shelf is a pill with a tint of the accent color. The text keeps the
+ * normal text color, so it is readable whatever the accent is.
+ */
 .endpaper-book__shelf span {
-	background: $accent-color;
+	background: color-mix(in srgb, $accent-color 15%, transparent);
 	border-radius: 999px;
-	color: var(--endpaper-on-accent, #fff);
 	display: inline-block;
 	font-size: 0.875em;
 	line-height: 1.2;

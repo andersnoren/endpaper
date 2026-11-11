@@ -19,7 +19,6 @@ use function AndersNoren\Endpaper\get_book;
 use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_library_entry;
-use function AndersNoren\Endpaper\get_on_accent_style;
 use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
@@ -110,7 +109,7 @@ $endpaper_show_rating = ! empty( $attributes['showRating'] ) && $endpaper_book['
 
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
-		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ) . get_on_accent_style( $attributes, 'endpaper/book' ),
+		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ),
 	)
 );
 
