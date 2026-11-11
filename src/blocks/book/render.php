@@ -9,7 +9,9 @@
  * @var WP_Block $block      Block instance.
  */
 
+use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_book;
+use function AndersNoren\Endpaper\get_title_tag;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -36,6 +38,7 @@ if ( is_wp_error( $endpaper_book ) ) {
 }
 
 $endpaper_url   = $endpaper_book['url'];
+$endpaper_tag   = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 2 );
 $endpaper_lines = isset( $attributes['descriptionLines'] ) ? absint( $attributes['descriptionLines'] ) : 4;
 $endpaper_meta  = array();
 
@@ -68,13 +71,13 @@ if ( $endpaper_book['pages'] ) {
 
 		<div class="endpaper-book__content">
 
-			<h3 class="endpaper-book__title">
+			<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-book__title">
 				<?php if ( $endpaper_url ) : ?>
-					<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php echo esc_html( $endpaper_book['title'] ); ?></a>
+					<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
 				<?php else : ?>
-					<?php echo esc_html( $endpaper_book['title'] ); ?>
+					<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
 				<?php endif; ?>
-			</h3>
+			</<?php echo tag_escape( $endpaper_tag ); ?>>
 
 			<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
 				<p class="endpaper-book__authors">
@@ -112,7 +115,7 @@ if ( $endpaper_book['pages'] ) {
 						style="--endpaper-lines: <?php echo esc_attr( $endpaper_lines ); ?>;"
 					<?php endif; ?>
 				>
-					<?php echo esc_html( $endpaper_book['description'] ); ?>
+					<?php echo format_text( $endpaper_book['description'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
 				</p>
 			<?php endif; ?>
 

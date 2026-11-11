@@ -23,6 +23,10 @@
 			"enum": [ "list", "grid" ],
 			"default": "list"
 		},
+		"titleLevel": {
+			"type": "integer",
+			"default": 0
+		},
 		"showCover": {
 			"type": "boolean",
 			"default": true

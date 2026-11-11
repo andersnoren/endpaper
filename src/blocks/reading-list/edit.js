@@ -2,7 +2,12 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	HeadingLevelDropdown,
+	InspectorControls,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import {
 	PanelBody,
 	RangeControl,
@@ -15,6 +20,11 @@ import ServerSideRender from '@wordpress/server-side-render';
  * Internal dependencies
  */
 import metadata from './block.json';
+
+/**
+ * The levels the book titles can have. 0 is a paragraph, the others are heading levels.
+ */
+const TITLE_LEVELS = [ 0, 2, 3, 4, 5, 6 ];
 
 /**
  * The reading statuses a list can show. The values are Hardcover's status IDs.
@@ -55,6 +65,16 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	return (
 		<>
+			<BlockControls group="block">
+				<HeadingLevelDropdown
+					value={ attributes.titleLevel }
+					options={ TITLE_LEVELS }
+					onChange={ ( titleLevel ) =>
+						setAttributes( { titleLevel } )
+					}
+				/>
+			</BlockControls>
+
 			<InspectorControls>
 				<PanelBody title={ __( 'Books', 'endpaper' ) }>
 					<SelectControl

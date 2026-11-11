@@ -9,13 +9,16 @@
  * @var WP_Block $block      Block instance.
  */
 
+use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_reading_list;
+use function AndersNoren\Endpaper\get_title_tag;
 
 defined( 'ABSPATH' ) || exit;
 
 $endpaper_status  = isset( $attributes['status'] ) ? absint( $attributes['status'] ) : 2;
 $endpaper_count   = isset( $attributes['count'] ) ? absint( $attributes['count'] ) : 5;
 $endpaper_layout  = isset( $attributes['layout'] ) && 'grid' === $attributes['layout'] ? 'grid' : 'list';
+$endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 0 );
 $endpaper_entries = get_reading_list( $endpaper_status, $endpaper_count );
 
 // Visitors see nothing if the list fails or is empty. People who can edit see why.
@@ -66,13 +69,13 @@ $endpaper_wrapper = get_block_wrapper_attributes( array( 'class' => 'endpaper-re
 
 				<div class="endpaper-reading-list__content">
 
-					<p class="endpaper-reading-list__title">
+					<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-reading-list__title">
 						<?php if ( $endpaper_url ) : ?>
-							<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php echo esc_html( $endpaper_book['title'] ); ?></a>
+							<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
 						<?php else : ?>
-							<?php echo esc_html( $endpaper_book['title'] ); ?>
+							<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
 						<?php endif; ?>
-					</p>
+					</<?php echo tag_escape( $endpaper_tag ); ?>>
 
 					<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
 						<p class="endpaper-reading-list__authors">

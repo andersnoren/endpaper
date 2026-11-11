@@ -13,6 +13,10 @@
 		"bookId": {
 			"type": "integer"
 		},
+		"titleLevel": {
+			"type": "integer",
+			"default": 2
+		},
 		"showCover": {
 			"type": "boolean",
 			"default": true

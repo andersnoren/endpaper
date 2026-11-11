@@ -23,6 +23,7 @@ define( 'ENDPAPER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ENDPAPER_API_URL', 'https://api.hardcover.app/v1/graphql' );
 
 require_once ENDPAPER_DIR . 'includes/api.php';
+require_once ENDPAPER_DIR . 'includes/helpers.php';
 require_once ENDPAPER_DIR . 'includes/rest.php';
 
 /**

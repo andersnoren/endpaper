@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import {
 	BlockControls,
+	HeadingLevelDropdown,
 	InspectorControls,
 	useBlockProps,
 } from '@wordpress/block-editor';
@@ -23,6 +24,11 @@ import ServerSideRender from '@wordpress/server-side-render';
 import BookSearch from './book-search';
 import metadata from './block.json';
 import './editor.scss';
+
+/**
+ * The levels the title can have. 0 is a paragraph, the others are heading levels.
+ */
+const TITLE_LEVELS = [ 0, 2, 3, 4, 5, 6 ];
 
 /**
  * The parts of the book that can be shown or hidden, in display order.
@@ -70,6 +76,16 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	return (
 		<>
+			<BlockControls group="block">
+				<HeadingLevelDropdown
+					value={ attributes.titleLevel }
+					options={ TITLE_LEVELS }
+					onChange={ ( titleLevel ) =>
+						setAttributes( { titleLevel } )
+					}
+				/>
+			</BlockControls>
+
 			<BlockControls>
 				<ToolbarGroup>
 					<ToolbarButton
