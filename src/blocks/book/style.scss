@@ -50,6 +50,8 @@
 .endpaper-book__authors,
 .endpaper-book__meta,
 .endpaper-book__rating,
+.endpaper-book__shelf,
+.endpaper-book__progress,
 .endpaper-book__link {
 	font-size: 0.875em;
 }
@@ -60,4 +62,18 @@
 	-webkit-line-clamp: var(--endpaper-lines, 4);
 	line-clamp: var(--endpaper-lines, 4);
 	overflow: hidden;
+}
+
+.endpaper-book__progress {
+	align-items: center;
+	display: flex;
+	gap: 0.5em;
+}
+
+.endpaper-book__progress progress {
+
+	/* Follow the text color, so the bar matches the theme. */
+	accent-color: currentcolor;
+	flex: 0 1 8rem;
+	min-width: 0;
 }

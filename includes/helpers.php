@@ -122,3 +122,24 @@ function get_block_gap_style( $attributes ) {
 
 	return '' === $value ? '' : '--endpaper-gap: ' . $value . ';';
 }
+
+/**
+ * Outputs a reading progress bar with its label.
+ *
+ * @param float  $progress   Progress as a percentage, from 0 to 100.
+ * @param string $class_name Class for the wrapping paragraph.
+ * @return void
+ */
+function the_progress_bar( $progress, $class_name ) {
+	$percent = (int) round( $progress );
+	/* translators: %s: A percentage, such as 63. */
+	$label = sprintf( __( '%s%% read', 'endpaper' ), number_format_i18n( $percent ) );
+
+	printf(
+		'<p class="%1$s"><progress max="100" value="%2$s" aria-label="%3$s"></progress> <span>%4$s</span></p>',
+		esc_attr( $class_name ),
+		esc_attr( $percent ),
+		esc_attr( $label ),
+		esc_html( $label )
+	);
+}

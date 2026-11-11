@@ -341,12 +341,29 @@ function get_reading_statuses() {
 }
 
 /**
+ * Returns the labels of the shelves a book can be on.
+ *
+ * The keys are Hardcover's status IDs. "Ignored" (6) is left out on purpose.
+ *
+ * @return array Shelf labels, keyed by status ID.
+ */
+function get_shelf_labels() {
+	return array(
+		1 => __( 'Want to Read', 'endpaper' ),
+		2 => __( 'Currently Reading', 'endpaper' ),
+		3 => __( 'Read', 'endpaper' ),
+		4 => __( 'Paused', 'endpaper' ),
+		5 => __( 'Did Not Finish', 'endpaper' ),
+	);
+}
+
+/**
  * Converts a raw library entry from the API into the shape Endpaper uses.
  *
  * @param array $raw Raw library entry.
- * @return array Normalized entry.
+ * @return array Normalized entry, without the book it belongs to.
  */
-function normalize_reading_list_entry( $raw ) {
+function normalize_library_entry( $raw ) {
 	$read     = isset( $raw['user_book_reads'][0] ) && is_array( $raw['user_book_reads'][0] ) ? $raw['user_book_reads'][0] : array();
 	$progress = isset( $read['progress'] ) && is_numeric( $read['progress'] ) ? (float) $read['progress'] : null;
 
@@ -355,10 +372,83 @@ function normalize_reading_list_entry( $raw ) {
 	}
 
 	return array(
-		'book'     => normalize_book( isset( $raw['book'] ) && is_array( $raw['book'] ) ? $raw['book'] : array() ),
-		'rating'   => isset( $raw['rating'] ) && is_numeric( $raw['rating'] ) ? (float) $raw['rating'] : 0.0,
-		'progress' => $progress,
+		'status_id' => isset( $raw['status_id'] ) ? absint( $raw['status_id'] ) : 0,
+		'rating'    => isset( $raw['rating'] ) && is_numeric( $raw['rating'] ) ? (float) $raw['rating'] : 0.0,
+		'progress'  => $progress,
 	);
+}
+
+/**
+ * Converts a raw library entry, with its book, into the shape Endpaper uses.
+ *
+ * @param array $raw Raw library entry.
+ * @return array Normalized entry.
+ */
+function normalize_reading_list_entry( $raw ) {
+	$entry         = normalize_library_entry( $raw );
+	$entry['book'] = normalize_book( isset( $raw['book'] ) && is_array( $raw['book'] ) ? $raw['book'] : array() );
+
+	return $entry;
+}
+
+/**
+ * Returns the library entry for one book: which shelf it is on, and how far along it is.
+ *
+ * The library is that of the person the API token belongs to. Only an entry
+ * that is public on Hardcover is returned.
+ *
+ * @param int $book_id Hardcover book ID.
+ * @return array|WP_Error Normalized entry, an empty array if the book is not in the library, or an error.
+ */
+function get_library_entry( $book_id ) {
+	$book_id = absint( $book_id );
+
+	if ( ! $book_id ) {
+		return array();
+	}
+
+	// The token is part of the key, so switching to another account starts fresh.
+	$cache_key = 'endpaper_entry_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id;
+	$cached    = get_transient( $cache_key );
+	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
+
+	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < HOUR_IN_SECONDS ) {
+		return $stale;
+	}
+
+	// After a failed request, wait a few minutes before asking Hardcover again.
+	$backoff = get_transient( 'endpaper_api_backoff' );
+
+	if ( $backoff ) {
+		return null !== $stale ? $stale : new WP_Error( 'endpaper_backoff', (string) $backoff, array( 'status' => 503 ) );
+	}
+
+	$data = api_request(
+		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		array( 'book_id' => $book_id )
+	);
+
+	if ( is_wp_error( $data ) ) {
+		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+
+		return null !== $stale ? $stale : $data;
+	}
+
+	// A book that is not in the library is stored as an empty entry, so it is not looked up again on every page view.
+	$entry = isset( $data['me'][0]['user_books'][0] ) && is_array( $data['me'][0]['user_books'][0] )
+		? normalize_library_entry( $data['me'][0]['user_books'][0] )
+		: array();
+
+	set_transient(
+		$cache_key,
+		array(
+			'fetched' => time(),
+			'entry'   => $entry,
+		),
+		WEEK_IN_SECONDS
+	);
+
+	return $entry;
 }
 
 /**

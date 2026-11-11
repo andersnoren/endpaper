@@ -13,6 +13,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 - Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page.
 - Shows the cover, title, authors, publication year, page count, Hardcover rating and description, with a link back to the book on Hardcover.
+- Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
 - Each part can be switched on or off, and the description can be limited to a number of lines.
 - Has very little styling of its own, so it picks up the fonts, colors and link styles of your theme.
 - Supports the color, spacing, typography and alignment settings in the block editor.

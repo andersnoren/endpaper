@@ -12,7 +12,10 @@
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_book;
 use function AndersNoren\Endpaper\get_cover_radius_style;
+use function AndersNoren\Endpaper\get_library_entry;
+use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_title_tag;
+use function AndersNoren\Endpaper\the_progress_bar;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -38,10 +41,25 @@ if ( is_wp_error( $endpaper_book ) ) {
 	return;
 }
 
-$endpaper_url   = $endpaper_book['url'];
+// Without the link setting, nothing in the block links to Hardcover: not the title, the cover or the link below.
+$endpaper_url   = ! empty( $attributes['showLink'] ) ? $endpaper_book['url'] : '';
 $endpaper_tag   = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 2 );
 $endpaper_lines = isset( $attributes['descriptionLines'] ) ? absint( $attributes['descriptionLines'] ) : 4;
 $endpaper_meta  = array();
+
+// The shelf and progress come from the site owner's own library. They are extras, so a failed lookup never hides the book.
+$endpaper_entry = array();
+
+if ( ! empty( $attributes['showShelf'] ) || ! empty( $attributes['showProgress'] ) ) {
+	$endpaper_entry = get_library_entry( $endpaper_book_id );
+
+	if ( is_wp_error( $endpaper_entry ) ) {
+		$endpaper_entry = array();
+	}
+}
+
+$endpaper_shelves = get_shelf_labels();
+$endpaper_shelf   = $endpaper_entry && isset( $endpaper_shelves[ $endpaper_entry['status_id'] ] ) ? $endpaper_shelves[ $endpaper_entry['status_id'] ] : '';
 
 if ( $endpaper_book['year'] ) {
 	$endpaper_meta[] = (string) $endpaper_book['year'];
@@ -109,6 +127,14 @@ if ( $endpaper_book['pages'] ) {
 				</p>
 			<?php endif; ?>
 
+			<?php if ( ! empty( $attributes['showShelf'] ) && $endpaper_shelf ) : ?>
+				<p class="endpaper-book__shelf"><?php echo esc_html( $endpaper_shelf ); ?></p>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $attributes['showProgress'] ) && $endpaper_entry && 2 === $endpaper_entry['status_id'] && null !== $endpaper_entry['progress'] ) : ?>
+				<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
+			<?php endif; ?>
+
 			<?php if ( ! empty( $attributes['showDescription'] ) && $endpaper_book['description'] ) : ?>
 				<p
 					class="endpaper-book__description<?php echo $endpaper_lines ? ' is-clamped' : ''; ?>"
@@ -120,7 +146,7 @@ if ( $endpaper_book['pages'] ) {
 				</p>
 			<?php endif; ?>
 
-			<?php if ( ! empty( $attributes['showLink'] ) && $endpaper_url ) : ?>
+			<?php if ( $endpaper_url ) : ?>
 				<p class="endpaper-book__link">
 					<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php esc_html_e( 'View on Hardcover', 'endpaper' ); ?></a>
 				</p>

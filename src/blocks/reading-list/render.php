@@ -14,6 +14,7 @@ use function AndersNoren\Endpaper\get_block_gap_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
+use function AndersNoren\Endpaper\the_progress_bar;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -104,15 +105,7 @@ $endpaper_wrapper = get_block_wrapper_attributes(
 					<?php endif; ?>
 
 					<?php if ( ! empty( $attributes['showProgress'] ) && 2 === $endpaper_status && null !== $endpaper_entry['progress'] ) : ?>
-						<?php
-						$endpaper_percent = (int) round( $endpaper_entry['progress'] );
-						/* translators: %s: A percentage, such as 63. */
-						$endpaper_label = sprintf( __( '%s%% read', 'endpaper' ), number_format_i18n( $endpaper_percent ) );
-						?>
-						<p class="endpaper-reading-list__progress">
-							<progress max="100" value="<?php echo esc_attr( $endpaper_percent ); ?>" aria-label="<?php echo esc_attr( $endpaper_label ); ?>"></progress>
-							<span><?php echo esc_html( $endpaper_label ); ?></span>
-						</p>
+						<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-reading-list__progress' ); ?>
 					<?php endif; ?>
 
 				</div>

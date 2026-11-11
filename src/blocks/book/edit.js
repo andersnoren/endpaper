@@ -39,8 +39,31 @@ const DISPLAY_TOGGLES = [
 	{ attribute: 'showAuthors', label: __( 'Authors', 'endpaper' ) },
 	{ attribute: 'showMeta', label: __( 'Year and page count', 'endpaper' ) },
 	{ attribute: 'showRating', label: __( 'Hardcover rating', 'endpaper' ) },
+	{
+		attribute: 'showShelf',
+		label: __( 'Your shelf', 'endpaper' ),
+		help: __(
+			'Shows which of your Hardcover shelves the book is on, such as Currently Reading. Only if the book is public in your library.',
+			'endpaper'
+		),
+	},
+	{
+		attribute: 'showProgress',
+		label: __( 'Your reading progress', 'endpaper' ),
+		help: __(
+			'Shown while the book is on your Currently Reading shelf.',
+			'endpaper'
+		),
+	},
 	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
-	{ attribute: 'showLink', label: __( 'Link to Hardcover', 'endpaper' ) },
+	{
+		attribute: 'showLink',
+		label: __( 'Link to Hardcover', 'endpaper' ),
+		help: __(
+			'Links the title and cover to the book on Hardcover, and adds a link below the description.',
+			'endpaper'
+		),
+	},
 ];
 
 /**
@@ -99,11 +122,12 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Display', 'endpaper' ) }>
-					{ DISPLAY_TOGGLES.map( ( { attribute, label } ) => (
+					{ DISPLAY_TOGGLES.map( ( { attribute, label, help } ) => (
 						<ToggleControl
 							key={ attribute }
 							__nextHasNoMarginBottom
 							label={ label }
+							help={ help }
 							checked={ !! attributes[ attribute ] }
 							onChange={ ( value ) =>
 								setAttributes( { [ attribute ]: value } )

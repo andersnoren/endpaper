@@ -36,6 +36,14 @@
 			"type": "boolean",
 			"default": true
 		},
+		"showShelf": {
+			"type": "boolean",
+			"default": false
+		},
+		"showProgress": {
+			"type": "boolean",
+			"default": false
+		},
 		"showDescription": {
 			"type": "boolean",
 			"default": true
