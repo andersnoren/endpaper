@@ -61,6 +61,14 @@ if ( ! empty( $attributes['showShelf'] ) || ! empty( $attributes['showProgress']
 $endpaper_shelves = get_shelf_labels();
 $endpaper_shelf   = $endpaper_entry && isset( $endpaper_shelves[ $endpaper_entry['status_id'] ] ) ? $endpaper_shelves[ $endpaper_entry['status_id'] ] : '';
 
+$endpaper_show_progress = ! empty( $attributes['showProgress'] ) && $endpaper_entry && 2 === $endpaper_entry['status_id'] && null !== $endpaper_entry['progress'];
+$endpaper_show_shelf    = ! empty( $attributes['showShelf'] ) && $endpaper_shelf;
+
+// The progress bar already says the book is being read, so the Currently Reading label is left out next to it.
+if ( $endpaper_show_progress ) {
+	$endpaper_show_shelf = false;
+}
+
 if ( $endpaper_book['year'] ) {
 	$endpaper_meta[] = (string) $endpaper_book['year'];
 }
@@ -127,11 +135,11 @@ if ( $endpaper_book['pages'] ) {
 				</p>
 			<?php endif; ?>
 
-			<?php if ( ! empty( $attributes['showShelf'] ) && $endpaper_shelf ) : ?>
+			<?php if ( $endpaper_show_shelf ) : ?>
 				<p class="endpaper-book__shelf"><?php echo esc_html( $endpaper_shelf ); ?></p>
 			<?php endif; ?>
 
-			<?php if ( ! empty( $attributes['showProgress'] ) && $endpaper_entry && 2 === $endpaper_entry['status_id'] && null !== $endpaper_entry['progress'] ) : ?>
+			<?php if ( $endpaper_show_progress ) : ?>
 				<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
 			<?php endif; ?>
 
