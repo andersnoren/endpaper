@@ -29,9 +29,6 @@ $gap: var(--endpaper-gap, 1.5em);
 
 .wp-block-endpaper-reading-list {
 	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	gap: 1em;
 }
 
 /* Spacing inside the block is set with gaps, not with the theme's margins. */
@@ -40,8 +37,12 @@ $gap: var(--endpaper-gap, 1.5em);
 	margin: 0;
 }
 
+/* The card holds the list and, under it, the credit to Hardcover. */
 .endpaper-reading-list__card {
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
 }
 
 .wp-block-endpaper-reading-list .endpaper-reading-list__items {
@@ -229,8 +230,9 @@ $gap: var(--endpaper-gap, 1.5em);
 }
 
 /*
- * The credit to Hardcover: their logo under the list, lined up with it. It
- * is 18px tall at the default size, and scales with the font size.
+ * The credit to Hardcover: their logo under the list, lined up with it, and
+ * inside the frame if the list has one. It is 18px tall at the default size,
+ * and scales with the font size.
  */
 .wp-block-endpaper-reading-list .endpaper-reading-list__credit {
 	color: inherit;

@@ -145,8 +145,8 @@ $endpaper_card_style = get_card_style( $attributes );
 			<?php endforeach; ?>
 
 		</ul>
+		<p class="endpaper-reading-list__attribution">
+			<?php the_hardcover_credit( '', 'endpaper-reading-list__credit' ); ?>
+		</p>
 	</div>
-	<p class="endpaper-reading-list__attribution">
-		<?php the_hardcover_credit( '', 'endpaper-reading-list__credit' ); ?>
-	</p>
 </div>
