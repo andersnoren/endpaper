@@ -82,7 +82,7 @@ The key is stored in your site’s database as it is, not encrypted, which is ho
 
 = Will the blocks slow my site down? =
 
-No. Books are stored for a week and reading lists for an hour, so Hardcover is not asked on every page view. If Hardcover cannot be reached, the blocks show the last copy they have.
+No. Books are stored for a week and reading lists for an hour, so Hardcover is not asked on every page view. If Hardcover cannot be reached, the blocks show the last copy they have. To fetch everything again right away, for example after changing something on Hardcover, use the button on the settings screen to clear the cache.
 
 = Can I show books that are private on Hardcover? =
 

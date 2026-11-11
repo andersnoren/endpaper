@@ -156,7 +156,7 @@ function forget_account( $token ) {
 
 	$hash = substr( md5( $token ), 0, 10 );
 
-	delete_transient( 'endpaper_connection_' . $hash );
+	delete_transient( cache_key( 'endpaper_connection_' . $hash ) );
 
 	// With an external object cache the entries are not in the database. They expire within a week.
 	if ( wp_using_ext_object_cache() ) {
@@ -186,7 +186,7 @@ function get_connection_status() {
 		return array( 'state' => 'none' );
 	}
 
-	$cache_key = 'endpaper_connection_' . substr( md5( $token ), 0, 10 );
+	$cache_key = cache_key( 'endpaper_connection_' . substr( md5( $token ), 0, 10 ) );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) && isset( $cached['state'] ) ) {
@@ -345,6 +345,33 @@ function redirect_after_activation() {
 add_action( 'admin_init', __NAMESPACE__ . '\redirect_after_activation' );
 
 /**
+ * Clears the cache when the button on the settings screen is used.
+ *
+ * Not while the API key is missing or turned down: the books on the site are
+ * then shown from the cache, and would be gone until a key works again.
+ *
+ * @return void
+ */
+function handle_clear_cache() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'You are not allowed to do this.', 'endpaper' ), 403 );
+	}
+
+	check_admin_referer( 'endpaper_clear_cache' );
+
+	$result = 'kept';
+
+	if ( '' === get_token_trouble() ) {
+		clear_cache();
+		$result = 'cleared';
+	}
+
+	wp_safe_redirect( add_query_arg( 'endpaper_cache', $result, get_settings_url() ) );
+	exit;
+}
+add_action( 'admin_post_endpaper_clear_cache', __NAMESPACE__ . '\handle_clear_cache' );
+
+/**
  * Adds the settings screen to the Settings menu.
  *
  * @return void
@@ -455,11 +482,23 @@ function render_settings_page() {
 	$has_token = '' !== get_token();
 
 	$scopes = get_key_scopes();
+
+	// Without a key that works, the cache is what keeps the books on the site.
+	$key_trouble = '' !== get_token_trouble();
+
+	// Only read, to say what the button on this screen did. Nothing is changed based on it.
+	$cache_result = isset( $_GET['endpaper_cache'] ) ? sanitize_key( wp_unslash( $_GET['endpaper_cache'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Endpaper', 'endpaper' ); ?></h1>
 
 		<p><?php esc_html_e( 'Endpaper shows books from Hardcover. To do that it needs an API key from your Hardcover account.', 'endpaper' ); ?></p>
+
+		<?php if ( 'cleared' === $cache_result ) : ?>
+			<div class="notice notice-success inline is-dismissible"><p><?php esc_html_e( 'The cache was cleared. Everything is fetched from Hardcover again the next time it is shown.', 'endpaper' ); ?></p></div>
+		<?php elseif ( 'kept' === $cache_result ) : ?>
+			<div class="notice notice-warning inline is-dismissible"><p><?php esc_html_e( 'The cache was not cleared, because there is no working API key.', 'endpaper' ); ?></p></div>
+		<?php endif; ?>
 
 		<?php the_connection_notice(); ?>
 
@@ -510,6 +549,20 @@ function render_settings_page() {
 				submit_button();
 			}
 			?>
+		</form>
+
+		<h2><?php esc_html_e( 'Cache', 'endpaper' ); ?></h2>
+
+		<p><?php esc_html_e( 'Endpaper saves what it fetches from Hardcover, so your pages stay fast and Hardcover is not asked more often than needed. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. Clear the cache to fetch everything again the next time it is shown, for example after changing something on Hardcover.', 'endpaper' ); ?></p>
+
+		<?php if ( $key_trouble ) : ?>
+			<p><?php esc_html_e( 'The cache cannot be cleared without a working API key. The books on your site are shown from it, and would disappear.', 'endpaper' ); ?></p>
+		<?php endif; ?>
+
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<input type="hidden" name="action" value="endpaper_clear_cache" />
+			<?php wp_nonce_field( 'endpaper_clear_cache' ); ?>
+			<?php submit_button( __( 'Clear the cache', 'endpaper' ), 'secondary', 'endpaper-clear-cache', true, $key_trouble ? array( 'disabled' => 'disabled' ) : null ); ?>
 		</form>
 
 		<h2><?php esc_html_e( 'Creating a key', 'endpaper' ); ?></h2>

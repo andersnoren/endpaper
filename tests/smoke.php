@@ -16,6 +16,9 @@
 
 use function AndersNoren\Endpaper\format_date;
 use function AndersNoren\Endpaper\api_request;
+use function AndersNoren\Endpaper\cache_key;
+use function AndersNoren\Endpaper\clear_cache;
+use function AndersNoren\Endpaper\get_book_end_time;
 use function AndersNoren\Endpaper\get_connection_status;
 use function AndersNoren\Endpaper\get_editions;
 use function AndersNoren\Endpaper\get_key_problem_message;
@@ -309,6 +312,14 @@ try {
 	endpaper_check( 'an edition without a cover falls back to the cover of the book', 1 === substr_count( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 	endpaper_check( 'a spacing of zero gets a unit', false !== strpos( $endpaper_html, '--endpaper-gap: 0px' ) );
 
+	echo "Clearing the cache\n";
+	$endpaper_generation = (int) get_option( 'endpaper_cache_generation', 0 );
+	endpaper_check( 'the book is in the cache', false !== get_transient( cache_key( 'endpaper_book_42' ) ) );
+	clear_cache();
+	endpaper_check( 'clearing it puts everything out of reach', (int) get_option( 'endpaper_cache_generation' ) === $endpaper_generation + 1 && false === get_transient( cache_key( 'endpaper_book_42' ) ) && 0 === get_book_end_time( 42 ) );
+	endpaper_check( 'the key is kept', 'smoke-test-key' === get_token() );
+	endpaper_check( 'the block fetches the book again', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), 'endpaper-book__card' ) && false !== get_transient( cache_key( 'endpaper_book_42' ) ) );
+
 	echo "The settings screen\n";
 	wp_set_current_user( 1 );
 	ob_start();
@@ -316,6 +327,7 @@ try {
 	$endpaper_html = ob_get_clean();
 	endpaper_check( 'it renders for an administrator', false !== strpos( $endpaper_html, 'endpaper-token' ) && false !== strpos( $endpaper_html, 'read:library:public' ) );
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
+	endpaper_check( 'it has a button to clear the cache', false !== strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && false === strpos( $endpaper_html, 'disabled' ) );
 	endpaper_check( 'it links to the form for a new key, with the permissions ticked', false !== strpos( $endpaper_html, 'hardcover.app/account/api/keys/new?scope=read%3Acatalog%20read%3Alibrary%3Apublic%20read%3Ame%3Acontent' ) );
 
 	delete_option( 'endpaper_hardcover_token' );

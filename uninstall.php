@@ -16,6 +16,7 @@ function endpaper_remove_site_data() {
 	global $wpdb;
 
 	delete_option( 'endpaper_hardcover_token' );
+	delete_option( 'endpaper_cache_generation' );
 
 	foreach ( array( '_transient_endpaper_', '_transient_timeout_endpaper_' ) as $prefix ) {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients cannot be deleted by prefix any other way.

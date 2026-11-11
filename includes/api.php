@@ -60,6 +60,46 @@ function get_token() {
 }
 
 /**
+ * Returns the name something is stored under in the cache.
+ *
+ * Every name ends in a number that goes up when the cache is cleared, which
+ * puts everything stored before out of reach. That works wherever the cache
+ * is kept, also where entries cannot be looked up by the start of their name.
+ *
+ * @param string $name What is being stored.
+ * @return string The name to store it under.
+ */
+function cache_key( $name ) {
+	return $name . '_g' . absint( get_option( 'endpaper_cache_generation', 0 ) );
+}
+
+/**
+ * Clears everything Endpaper has fetched from Hardcover, so that it is fetched again.
+ *
+ * The API key stays, and so does the note of whether Hardcover accepts it.
+ *
+ * @return void
+ */
+function clear_cache() {
+	global $wpdb;
+
+	update_option( 'endpaper_cache_generation', absint( get_option( 'endpaper_cache_generation', 0 ) ) + 1 );
+	delete_transient( 'endpaper_api_backoff' );
+
+	// With an external object cache the old entries are not in the database. They are out of reach now, and expire by themselves.
+	if ( wp_using_ext_object_cache() ) {
+		return;
+	}
+
+	foreach ( array( 'book', 'edition', 'entry', 'list', 'connection' ) as $kind ) {
+		foreach ( array( '_transient_', '_transient_timeout_' ) as $prefix ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients cannot be deleted by prefix any other way.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( $prefix . 'endpaper_' . $kind ) . '%' ) );
+		}
+	}
+}
+
+/**
  * Tells whether Hardcover has turned down the saved API key.
  *
  * That is noted when it happens, and cleared the next time the key is
@@ -243,7 +283,7 @@ function cache_book( $book ) {
 	}
 
 	set_transient(
-		'endpaper_book_' . $book['id'],
+		cache_key( 'endpaper_book_' . $book['id'] ),
 		array(
 			'fetched' => time(),
 			'book'    => $book,
@@ -261,7 +301,7 @@ function cache_book( $book ) {
  * @return int The time the copy is dropped, as a Unix timestamp, or 0 if there is no copy.
  */
 function get_book_end_time( $book_id ) {
-	$cached = get_transient( 'endpaper_book_' . absint( $book_id ) );
+	$cached = get_transient( cache_key( 'endpaper_book_' . absint( $book_id ) ) );
 
 	return is_array( $cached ) && isset( $cached['fetched'] ) ? (int) $cached['fetched'] + MONTH_IN_SECONDS : 0;
 }
@@ -279,7 +319,7 @@ function get_book( $book_id ) {
 		return new WP_Error( 'endpaper_invalid_book', __( 'No book selected.', 'endpaper' ), array( 'status' => 400 ) );
 	}
 
-	$cached = get_transient( 'endpaper_book_' . $book_id );
+	$cached = get_transient( cache_key( 'endpaper_book_' . $book_id ) );
 	$stale  = is_array( $cached ) && isset( $cached['fetched'], $cached['book'] ) ? $cached['book'] : null;
 
 	if ( $stale && ( time() - (int) $cached['fetched'] ) < WEEK_IN_SECONDS ) {
@@ -351,7 +391,7 @@ function get_editions( $book_id ) {
 		return new WP_Error( 'endpaper_invalid_book', __( 'No book selected.', 'endpaper' ), array( 'status' => 400 ) );
 	}
 
-	$cache_key = 'endpaper_editions_v2_' . $book_id;
+	$cache_key = cache_key( 'endpaper_editions_v2_' . $book_id );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -402,7 +442,7 @@ function get_edition( $edition_id ) {
 		return new WP_Error( 'endpaper_invalid_edition', __( 'No edition selected.', 'endpaper' ), array( 'status' => 400 ) );
 	}
 
-	$cache_key = 'endpaper_edition_' . $edition_id;
+	$cache_key = cache_key( 'endpaper_edition_' . $edition_id );
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['edition'] ) ? $cached['edition'] : null;
 
@@ -641,7 +681,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = 'endpaper_entry_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id;
+	$cache_key = cache_key( 'endpaper_entry_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id );
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
 
@@ -703,7 +743,7 @@ function get_reading_list( $status_id, $limit ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = 'endpaper_list_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit;
+	$cache_key = cache_key( 'endpaper_list_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit );
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entries'] ) ? $cached['entries'] : null;
 
