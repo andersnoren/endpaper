@@ -10,6 +10,7 @@
  */
 
 use function AndersNoren\Endpaper\format_text;
+use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
 
@@ -43,7 +44,12 @@ if ( $endpaper_notice ) {
 	return;
 }
 
-$endpaper_wrapper = get_block_wrapper_attributes( array( 'class' => 'endpaper-reading-list--' . $endpaper_layout ) );
+$endpaper_wrapper = get_block_wrapper_attributes(
+	array(
+		'class' => 'endpaper-reading-list--' . $endpaper_layout,
+		'style' => get_cover_radius_style( $attributes ),
+	)
+);
 ?>
 <div <?php echo $endpaper_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 	<ul class="endpaper-reading-list__items">

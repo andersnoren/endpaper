@@ -13,6 +13,9 @@
 		"bookId": {
 			"type": "integer"
 		},
+		"coverRadius": {
+			"type": [ "string", "object" ]
+		},
 		"titleLevel": {
 			"type": "integer",
 			"default": 2
@@ -50,9 +53,14 @@
 		"html": false,
 		"align": [ "wide", "full" ],
 		"color": {
-			"background": true,
-			"text": true,
-			"link": true
+			"gradients": true,
+			"link": true,
+			"heading": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true,
+				"link": true
+			}
 		},
 		"spacing": {
 			"margin": true,
@@ -60,8 +68,30 @@
 		},
 		"typography": {
 			"fontSize": true,
-			"lineHeight": true
-		}
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"color": true,
+			"width": true,
+			"style": true,
+			"__experimentalDefaultControls": {
+				"radius": true,
+				"color": true,
+				"width": true,
+				"style": true
+			}
+		},
+		"shadow": true
 	},
 	"editorScript": "file:./index.js",
 	"style": "file:./style-index.css",

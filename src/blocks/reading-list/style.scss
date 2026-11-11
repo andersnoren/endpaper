@@ -5,6 +5,11 @@
  * styles from the active theme.
  */
 
+/* Keep padding and borders set in the editor inside the block's width. */
+.wp-block-endpaper-reading-list {
+	box-sizing: border-box;
+}
+
 .endpaper-reading-list__items {
 	display: grid;
 	gap: var(--wp--style--block-gap, 1.5rem);
@@ -26,6 +31,13 @@
 }
 
 .endpaper-reading-list__cover img {
+
+	/*
+	 * The radius comes from the block setting, then from the theme, which can
+	 * set it in theme.json under settings.custom.endpaper.coverRadius. Without
+	 * either, it is 4px.
+	 */
+	border-radius: var(--endpaper-cover-radius, var(--wp--custom--endpaper--cover-radius, 4px));
 	display: block;
 	height: auto;
 	width: 100%;

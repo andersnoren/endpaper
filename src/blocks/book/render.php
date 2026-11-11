@@ -11,6 +11,7 @@
 
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_book;
+use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_title_tag;
 
 defined( 'ABSPATH' ) || exit;
@@ -54,7 +55,7 @@ if ( $endpaper_book['pages'] ) {
 	);
 }
 ?>
-<div <?php echo get_block_wrapper_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+<div <?php echo get_block_wrapper_attributes( array( 'style' => get_cover_radius_style( $attributes ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 	<div class="endpaper-book__inner">
 
 		<?php if ( ! empty( $attributes['showCover'] ) && $endpaper_book['cover'] ) : ?>

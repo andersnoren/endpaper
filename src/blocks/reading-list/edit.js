@@ -19,6 +19,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 /**
  * Internal dependencies
  */
+import CoverRadiusPanel from '../../components/cover-radius-panel';
 import metadata from './block.json';
 
 /**
@@ -128,6 +129,15 @@ export default function Edit( { attributes, setAttributes } ) {
 					) ) }
 				</PanelBody>
 			</InspectorControls>
+
+			{ attributes.showCover && (
+				<CoverRadiusPanel
+					value={ attributes.coverRadius }
+					onChange={ ( coverRadius ) =>
+						setAttributes( { coverRadius } )
+					}
+				/>
+			) }
 
 			<div { ...blockProps }>
 				<ServerSideRender
