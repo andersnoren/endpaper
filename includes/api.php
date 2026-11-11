@@ -60,28 +60,6 @@ function get_token() {
 }
 
 /**
- * Returns when an API key expires, if the key itself says so.
- *
- * Some keys are tokens with an expiry time written into them, readable
- * without Hardcover's help. For any other kind of key nothing is known.
- *
- * @param string $token An API key.
- * @return int The time the key expires, as a Unix timestamp, or 0 if it does not say.
- */
-function get_token_expiry( $token ) {
-	$parts = explode( '.', (string) $token );
-
-	if ( 3 !== count( $parts ) ) {
-		return 0;
-	}
-
-	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- This is how the middle part of such a token is read. Nothing in it is run.
-	$claims = json_decode( (string) base64_decode( strtr( $parts[1], '-_', '+/' ), true ), true );
-
-	return is_array( $claims ) && isset( $claims['exp'] ) && is_numeric( $claims['exp'] ) && $claims['exp'] > 0 ? (int) $claims['exp'] : 0;
-}
-
-/**
  * Tells whether Hardcover has turned down the saved API key.
  *
  * That is noted when it happens, and cleared the next time the key is
@@ -99,20 +77,16 @@ function is_token_rejected() {
  * Tells why the API key cannot be used, if it cannot.
  *
  * Nothing is asked of Hardcover here: this goes by whether a key is saved,
- * what happened the last time it was used, and the expiry time some keys carry.
+ * and by what happened the last time it was used.
  *
- * @return string "missing" if there is no key, "rejected" if Hardcover turned it down or it has expired, or an empty string if nothing is known to be wrong.
+ * @return string "missing" if there is no key, "rejected" if Hardcover turned it down, or an empty string if nothing is known to be wrong.
  */
 function get_token_trouble() {
-	$token = get_token();
-
-	if ( '' === $token ) {
+	if ( '' === get_token() ) {
 		return 'missing';
 	}
 
-	$expires = get_token_expiry( $token );
-
-	return is_token_rejected() || ( $expires && $expires <= time() ) ? 'rejected' : '';
+	return is_token_rejected() ? 'rejected' : '';
 }
 
 /**

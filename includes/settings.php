@@ -213,66 +213,18 @@ function get_connection_status() {
 }
 
 /**
- * Finds out whether something is wrong with the API key, or soon will be.
+ * Describes what is wrong with the API key, if Hardcover has turned it down.
  *
- * Nothing is asked of Hardcover here: this goes by what happened the last
- * time the key was used, and by the expiry time some keys carry.
- *
- * @return array The problem ("none", "rejected", "expired" or "expiring"), and the expiry time if the key says.
+ * @return string The description, or an empty string if nothing is known to be wrong.
  */
-function get_key_problem() {
-	$token   = get_token();
-	$expires = get_token_expiry( $token );
-	$problem = 'none';
-
-	if ( '' === $token ) {
-		return array(
-			'problem' => 'none',
-			'expires' => 0,
-		);
-	}
-
-	if ( $expires && $expires <= time() ) {
-		$problem = 'expired';
-	} elseif ( is_token_rejected() ) {
-		$problem = 'rejected';
-	} elseif ( $expires && $expires - time() < 14 * DAY_IN_SECONDS ) {
-		$problem = 'expiring';
-	}
-
-	return array(
-		'problem' => $problem,
-		'expires' => $expires,
-	);
+function get_key_problem_message() {
+	return is_token_rejected()
+		? __( 'Hardcover no longer accepts the API key. It may have expired or been deleted. The books on your site will not update until a new key is saved.', 'endpaper' )
+		: '';
 }
 
 /**
- * Describes a problem with the API key in a sentence or two.
- *
- * @param array $status The problem, as returned by get_key_problem().
- * @return string The description, or an empty string if nothing is wrong.
- */
-function get_key_problem_message( $status ) {
-	$date = $status['expires'] ? wp_date( get_option( 'date_format' ), $status['expires'] ) : '';
-
-	switch ( $status['problem'] ) {
-		case 'expired':
-			/* translators: %s: A date. */
-			return sprintf( __( 'The Hardcover API key expired on %s. The books on your site will not update until a new key is saved.', 'endpaper' ), $date );
-
-		case 'rejected':
-			return __( 'Hardcover no longer accepts the API key. It may have expired or been deleted. The books on your site will not update until a new key is saved.', 'endpaper' );
-
-		case 'expiring':
-			/* translators: %s: A date. */
-			return sprintf( __( 'The Hardcover API key expires on %s. Create a new key on Hardcover and save it before then, or the books on your site will stop updating.', 'endpaper' ), $date );
-	}
-
-	return '';
-}
-
-/**
- * Tells the site's administrators when the API key has stopped working, or is about to.
+ * Tells the site's administrators when the API key has stopped working.
  *
  * The notice is on every admin screen but the plugin's own, which says the
  * same in its own words. It goes away by itself once a working key is saved.
@@ -290,16 +242,14 @@ function the_key_notice() {
 		return;
 	}
 
-	$status  = get_key_problem();
-	$message = get_key_problem_message( $status );
+	$message = get_key_problem_message();
 
 	if ( '' === $message ) {
 		return;
 	}
 
 	printf(
-		'<div class="notice %1$s"><p><strong>%2$s</strong> %3$s %4$s</p></div>',
-		'expiring' === $status['problem'] ? 'notice-warning' : 'notice-error',
+		'<div class="notice notice-error"><p><strong>%1$s</strong> %2$s %3$s</p></div>',
 		esc_html__( 'Endpaper:', 'endpaper' ),
 		esc_html( $message ),
 		is_token_in_config()
@@ -331,8 +281,7 @@ add_filter( 'site_status_tests', __NAMESPACE__ . '\add_site_health_test' );
  * @return array The result, in the shape Site Health expects.
  */
 function get_site_health_result() {
-	$status  = get_key_problem();
-	$message = get_key_problem_message( $status );
+	$message = get_key_problem_message();
 	$result  = array(
 		'label'       => __( 'Endpaper has a Hardcover API key', 'endpaper' ),
 		'status'      => 'good',
@@ -350,12 +299,9 @@ function get_site_health_result() {
 		$result['status']      = 'recommended';
 		$result['description'] = '<p>' . esc_html__( 'Endpaper needs an API key from Hardcover to show books. Until one is saved, its blocks show nothing.', 'endpaper' ) . '</p>';
 	} elseif ( '' !== $message ) {
-		$result['label']       = 'expiring' === $status['problem'] ? __( 'Endpaper’s Hardcover API key expires soon', 'endpaper' ) : __( 'Endpaper’s Hardcover API key has stopped working', 'endpaper' );
-		$result['status']      = 'expiring' === $status['problem'] ? 'recommended' : 'critical';
+		$result['label']       = __( 'Endpaper’s Hardcover API key has stopped working', 'endpaper' );
+		$result['status']      = 'critical';
 		$result['description'] = '<p>' . esc_html( $message ) . '</p>';
-	} elseif ( $status['expires'] ) {
-		/* translators: %s: A date. */
-		$result['description'] .= '<p>' . esc_html( sprintf( __( 'The key expires on %s.', 'endpaper' ), wp_date( get_option( 'date_format' ), $status['expires'] ) ) ) . '</p>';
 	}
 
 	if ( 'good' !== $result['status'] && ! is_token_in_config() ) {
@@ -462,20 +408,6 @@ function the_connection_notice() {
 		);
 	} else {
 		$message = __( 'Connected to Hardcover.', 'endpaper' );
-	}
-
-	// Some keys say when they expire. Say so here, with a warning when it is close.
-	$key = get_key_problem();
-
-	if ( 'expiring' === $key['problem'] ) {
-		printf( '<div class="notice notice-warning inline"><p>%1$s %2$s</p></div>', esc_html( $message ), esc_html( get_key_problem_message( $key ) ) );
-
-		return;
-	}
-
-	if ( $key['expires'] ) {
-		/* translators: %s: A date. */
-		$message .= ' ' . sprintf( __( 'The key expires on %s.', 'endpaper' ), wp_date( get_option( 'date_format' ), $key['expires'] ) );
 	}
 
 	printf( '<div class="notice notice-success inline"><p>%s</p></div>', esc_html( $message ) );
