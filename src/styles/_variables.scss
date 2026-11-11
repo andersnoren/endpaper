@@ -5,13 +5,13 @@
 /*
  * The accent color. It comes from, in order:
  *
- * 1. The block's own Accent setting.
+ * 1. The block's own Accent setting, or else the color the plugin picks from
+ *    the theme's palette. Either way it arrives as --endpaper-accent.
  * 2. The theme, which can set it in theme.json under
  *    settings.custom.endpaper.accent, for all blocks or for one block.
- * 3. The color named "accent" in the theme's palette, or else "accent-1".
- * 4. Indigo.
+ * 3. The text color. The plugin has no color of its own.
  */
-$accent-color: var(--endpaper-accent, var(--wp--custom--endpaper--accent, var(--wp--preset--color--accent, var(--wp--preset--color--accent-1, #4f46e5))));
+$accent-color: var(--endpaper-accent, var(--wp--custom--endpaper--accent, currentcolor));
 
 /*
  * Colors derived from the text color, so they work on light and dark

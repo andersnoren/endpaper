@@ -152,33 +152,27 @@ function get_surface_color( $attributes ) {
  * progress bar or a star: Twenty Twenty-Four's is beige. So the color has to
  * stand out from the background, by the 3:1 that WCAG asks of graphics. The
  * candidates are the theme's "accent" color, then "accent-1" to "accent-6".
- * If the theme has accent colors but none stands out, the text color is
- * used. A theme without accent colors gets indigo.
+ * If none of them stands out, or the theme has no accent colors, the text
+ * color is used. The plugin has no color of its own.
  *
  * @param array $attributes Block attributes.
- * @return string A palette reference, a hex color, or "currentcolor".
+ * @return string A palette reference, or "currentcolor".
  */
 function get_default_accent_color( $attributes ) {
-	$palette    = get_palette_colors();
-	$surface    = get_surface_color( $attributes );
-	$candidates = 0;
+	$palette = get_palette_colors();
+	$surface = get_surface_color( $attributes );
 
 	foreach ( array( 'accent', 'accent-1', 'accent-2', 'accent-3', 'accent-4', 'accent-5', 'accent-6' ) as $slug ) {
 		if ( ! isset( $palette[ $slug ] ) ) {
 			continue;
 		}
 
-		++$candidates;
 		$color = parse_color( $palette[ $slug ] );
 
 		// A color in a format that cannot be measured is taken on trust.
 		if ( ! $color || get_contrast_ratio( $color, $surface ) >= 3 ) {
 			return 'var:preset|color|' . $slug;
 		}
-	}
-
-	if ( ! $candidates && get_contrast_ratio( array( 79, 70, 229 ), $surface ) >= 3 ) {
-		return '#4f46e5';
 	}
 
 	return 'currentcolor';
