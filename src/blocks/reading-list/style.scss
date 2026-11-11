@@ -6,14 +6,15 @@ $gap: var(--endpaper-gap, 1.5em);
  * Reading List block.
  *
  * Every size is in em, relative to the block's font size. The block itself
- * defaults to 1rem, which is 16px unless the reader has changed their browser's
- * text size. The Size setting or the theme can change it.
+ * defaults to 1rem, so it follows the text size the reader has set in their
+ * browser, but never goes below 16px, since some themes set 1rem to 10px.
+ * The Size setting or the theme can change it.
  * Colors follow the text color, so the block works on any background.
  */
 
 /* Defaults with no specificity, so the editor's settings and theme.json win. */
 :where(.wp-block-endpaper-reading-list) {
-	font-size: 1rem;
+	font-size: max(1rem, 16px);
 	line-height: 1.4;
 }
 
