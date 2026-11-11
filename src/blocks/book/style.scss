@@ -229,6 +229,16 @@
 }
 
 /*
+ * Some themes decorate every heading, as Twenty Nineteen does with a short
+ * line above each one. That suits section headings in an article, not a
+ * title inside a card, so it is switched off here.
+ */
+.wp-block-endpaper-book .endpaper-book__title::before,
+.wp-block-endpaper-book .endpaper-book__title::after {
+	content: none;
+}
+
+/*
  * With Link to Hardcover on, the title and the cover are links. The title
  * keeps looking like a title, and is underlined on hover. The cover fades a
  * little. The title's class is repeated to outweigh themes that underline
