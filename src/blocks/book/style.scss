@@ -18,7 +18,7 @@
 
 :where(.endpaper-book__card) {
 	border: 1px solid $border-color;
-	border-radius: 1em;
+	border-radius: 0.75em;
 	padding: 1.5em;
 }
 
@@ -52,7 +52,7 @@
 	 * The radius comes from the block setting, then from the theme, which can
 	 * set it in theme.json under settings.custom.endpaper.coverRadius.
 	 */
-	border-radius: var(--endpaper-cover-radius, var(--wp--custom--endpaper--cover-radius, 0.5em));
+	border-radius: var(--endpaper-cover-radius, var(--wp--custom--endpaper--cover-radius, 0.25em));
 	display: block;
 	height: auto;
 	width: 100%;

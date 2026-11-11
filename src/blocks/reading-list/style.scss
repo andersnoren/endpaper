@@ -23,7 +23,7 @@ $gap: var(--endpaper-gap, 1.5em);
  * border, a background or a shadow gets room inside it, and rounded corners.
  */
 :where(.endpaper-reading-list__card--framed) {
-	border-radius: 1em;
+	border-radius: 0.75em;
 	padding: 1.5em;
 }
 
