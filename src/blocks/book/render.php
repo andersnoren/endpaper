@@ -16,6 +16,7 @@
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_book;
+use function AndersNoren\Endpaper\get_book_end_time;
 use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_edition;
@@ -23,6 +24,8 @@ use function AndersNoren\Endpaper\get_library_entry;
 use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
+use function AndersNoren\Endpaper\get_token_trouble;
+use function AndersNoren\Endpaper\the_editor_notice;
 use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
 use function AndersNoren\Endpaper\trim_to_sentence;
@@ -39,14 +42,7 @@ $endpaper_book = get_book( $endpaper_book_id );
 
 if ( is_wp_error( $endpaper_book ) ) {
 	// Visitors see nothing. People who can edit see what went wrong.
-	if ( current_user_can( 'edit_posts' ) ) {
-		printf(
-			'<p %1$s>%2$s</p>',
-			get_block_wrapper_attributes( array( 'class' => 'endpaper-book--error' ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			/* translators: %s: Error message. */
-			esc_html( sprintf( __( 'Endpaper: %s', 'endpaper' ), $endpaper_book->get_error_message() ) )
-		);
-	}
+	the_editor_notice( $endpaper_book->get_error_message(), '' !== get_token_trouble() );
 
 	return;
 }
@@ -225,5 +221,28 @@ $endpaper_card_style = get_card_style( $attributes );
 		</div>
 
 	</div>
+
+	<?php
+	// Without a key that works, the book is shown from a saved copy, which runs out. People who can edit are told when.
+	$endpaper_trouble = get_token_trouble();
+
+	if ( $endpaper_trouble ) {
+		$endpaper_end_time = get_book_end_time( $endpaper_book_id );
+
+		the_editor_notice(
+			sprintf(
+				'%1$s %2$s',
+				'missing' === $endpaper_trouble
+					? __( 'No Hardcover API key is saved, so this book is shown from a saved copy.', 'endpaper' )
+					: __( 'Hardcover no longer accepts the API key, so this book is shown from a saved copy.', 'endpaper' ),
+				$endpaper_end_time
+					/* translators: %s: A date. */
+					? sprintf( __( 'It will disappear from your site on %s unless a working key is saved.', 'endpaper' ), wp_date( get_option( 'date_format' ), $endpaper_end_time ) )
+					: __( 'It will soon disappear from your site unless a working key is saved.', 'endpaper' )
+			),
+			true
+		);
+	}
+	?>
 
 </div>

@@ -96,6 +96,26 @@ function is_token_rejected() {
 }
 
 /**
+ * Tells why the API key cannot be used, if it cannot.
+ *
+ * Nothing is asked of Hardcover here: this goes by whether a key is saved,
+ * what happened the last time it was used, and the expiry time some keys carry.
+ *
+ * @return string "missing" if there is no key, "rejected" if Hardcover turned it down or it has expired, or an empty string if nothing is known to be wrong.
+ */
+function get_token_trouble() {
+	$token = get_token();
+
+	if ( '' === $token ) {
+		return 'missing';
+	}
+
+	$expires = get_token_expiry( $token );
+
+	return is_token_rejected() || ( $expires && $expires <= time() ) ? 'rejected' : '';
+}
+
+/**
  * Sends a GraphQL request to the Hardcover API.
  *
  * @param string      $query     The GraphQL query.
@@ -256,6 +276,20 @@ function cache_book( $book ) {
 		),
 		MONTH_IN_SECONDS
 	);
+}
+
+/**
+ * Returns when the saved copy of a book runs out.
+ *
+ * Until then the book can be shown without Hardcover. After that it cannot.
+ *
+ * @param int $book_id Hardcover book ID.
+ * @return int The time the copy is dropped, as a Unix timestamp, or 0 if there is no copy.
+ */
+function get_book_end_time( $book_id ) {
+	$cached = get_transient( 'endpaper_book_' . absint( $book_id ) );
+
+	return is_array( $cached ) && isset( $cached['fetched'] ) ? (int) $cached['fetched'] + MONTH_IN_SECONDS : 0;
 }
 
 /**

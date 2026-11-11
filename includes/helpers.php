@@ -412,3 +412,31 @@ function the_hardcover_credit( $url, $class_name ) {
 		esc_html__( 'Powered by Hardcover', 'endpaper' )
 	);
 }
+
+/**
+ * Outputs a message for the people who look after the site, in place of a block or next to it.
+ *
+ * Visitors never see it. It says so itself, since it shows up on the public
+ * page, where it could be taken for something everyone sees.
+ *
+ * @param string $message          The message.
+ * @param bool   $link_to_settings Optional. Whether to add a link to the plugin's settings, for those who may change them.
+ * @return void
+ */
+function the_editor_notice( $message, $link_to_settings = false ) {
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		return;
+	}
+
+	$link = $link_to_settings && current_user_can( 'manage_options' )
+		? ' <a href="' . esc_url( admin_url( 'options-general.php?page=endpaper' ) ) . '">' . esc_html__( 'Go to the Endpaper settings', 'endpaper' ) . '</a>'
+		: '';
+
+	printf(
+		'<div class="endpaper-notice"><p><strong>%1$s</strong> %2$s%3$s</p><p class="endpaper-notice__private">%4$s</p></div>',
+		esc_html__( 'Endpaper:', 'endpaper' ),
+		esc_html( $message ),
+		$link, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+		esc_html__( 'Only people who can edit this site see this message.', 'endpaper' )
+	);
+}

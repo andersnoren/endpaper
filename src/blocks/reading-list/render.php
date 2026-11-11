@@ -17,7 +17,9 @@ use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
+use function AndersNoren\Endpaper\get_token_trouble;
 use function AndersNoren\Endpaper\has_card_frame;
+use function AndersNoren\Endpaper\the_editor_notice;
 use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
 use function AndersNoren\Endpaper\the_star_rating;
@@ -31,23 +33,14 @@ $endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attribu
 $endpaper_entries = get_reading_list( $endpaper_status, $endpaper_count );
 
 // Visitors see nothing if the list fails or is empty. People who can edit see why.
-$endpaper_notice = '';
-
 if ( is_wp_error( $endpaper_entries ) ) {
-	/* translators: %s: Error message. */
-	$endpaper_notice = sprintf( __( 'Endpaper: %s', 'endpaper' ), $endpaper_entries->get_error_message() );
-} elseif ( ! $endpaper_entries ) {
-	$endpaper_notice = __( 'Endpaper: No public books with this status were found in your Hardcover library.', 'endpaper' );
+	the_editor_notice( $endpaper_entries->get_error_message(), '' !== get_token_trouble() );
+
+	return;
 }
 
-if ( $endpaper_notice ) {
-	if ( current_user_can( 'edit_posts' ) ) {
-		printf(
-			'<p %1$s>%2$s</p>',
-			get_block_wrapper_attributes( array( 'class' => 'endpaper-reading-list--notice' ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			esc_html( $endpaper_notice )
-		);
-	}
+if ( ! $endpaper_entries ) {
+	the_editor_notice( __( 'No public books with this status were found in your Hardcover library.', 'endpaper' ) );
 
 	return;
 }

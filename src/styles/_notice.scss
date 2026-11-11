@@ -1,0 +1,29 @@
+@use "variables" as *;
+
+/*
+ * A message for the people who look after the site, shown in place of a
+ * block or below it. Visitors never get it. The dashed border sets it apart
+ * from the content around it.
+ */
+.endpaper-notice {
+	border: 1px dashed $dot-color;
+	border-radius: 0.75em;
+	box-sizing: border-box;
+	font-size: max(0.875rem, 14px);
+	line-height: 1.5;
+	padding: 1em 1.25em;
+}
+
+.endpaper-notice p {
+	margin: 0;
+}
+
+.endpaper-notice .endpaper-notice__private {
+	margin-top: 0.25em;
+	opacity: $muted-opacity;
+}
+
+/* Below a book, with some room between them. */
+.wp-block-endpaper-book > .endpaper-notice {
+	margin-top: 1em;
+}

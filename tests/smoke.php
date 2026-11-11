@@ -320,6 +320,20 @@ try {
 
 	delete_option( 'endpaper_hardcover_token' );
 
+	echo "After the key is removed\n";
+	delete_transient( 'endpaper_api_backoff' );
+	wp_set_current_user( 0 );
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /--><!-- wp:endpaper/reading-list {"status":3} /-->' );
+	endpaper_check( 'visitors still get the book, and no messages', false !== strpos( $endpaper_html, 'endpaper-book__card' ) && false === strpos( $endpaper_html, 'endpaper-notice' ) );
+
+	wp_set_current_user( 1 );
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+	endpaper_check( 'people who can edit are told the book will go', false !== strpos( $endpaper_html, 'endpaper-book__card' ) && false !== strpos( $endpaper_html, 'shown from a saved copy' ) && false !== strpos( $endpaper_html, wp_date( 'Y' ) ) );
+	endpaper_check( 'the message says it is private, and links to the settings', false !== strpos( $endpaper_html, 'Only people who can edit this site see this message.' ) && false !== strpos( $endpaper_html, 'options-general.php?page=endpaper' ) );
+
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"align":"wide"} /-->' );
+	endpaper_check( 'a list that cannot be shown says why, at the normal width', false !== strpos( $endpaper_html, 'endpaper-notice' ) && false === strpos( $endpaper_html, 'alignwide' ) );
+
 	echo "Translations\n";
 	foreach ( array( 'endpaper-book-editor-script', 'endpaper-reading-list-editor-script' ) as $endpaper_handle ) {
 		$endpaper_script = wp_scripts()->registered[ $endpaper_handle ] ?? null;
