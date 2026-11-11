@@ -135,7 +135,7 @@
 	color: var(--endpaper-on-accent, #fff);
 	display: inline-block;
 	font-size: 0.875em;
-	font-weight: 700;
+	font-weight: 400;
 	line-height: 1.2;
 	padding: 0.36em 0.86em;
 }
@@ -185,6 +185,11 @@
 	text-align: center;
 }
 
-.endpaper-book__attribution a {
+.wp-block-endpaper-book .endpaper-book__attribution a {
 	color: inherit;
+	text-decoration: underline;
+}
+
+.wp-block-endpaper-book .endpaper-book__attribution a:hover {
+	text-decoration: none;
 }
