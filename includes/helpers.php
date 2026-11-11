@@ -66,8 +66,8 @@ function sanitize_css_length( $value, $preset_type ) {
 	}
 
 	if ( preg_match( '/^(\d*\.?\d+)(px|%|em|rem|vw|vh)?$/', $value, $matches ) ) {
-		// A number without a unit is only valid CSS when it is zero.
-		return $matches[1] . ( isset( $matches[2] ) ? $matches[2] : ( 0.0 === (float) $matches[1] ? '' : 'px' ) );
+		// A number without a unit gets one, zero included: a bare 0 is not valid inside calc().
+		return $matches[1] . ( isset( $matches[2] ) ? $matches[2] : 'px' );
 	}
 
 	return '';

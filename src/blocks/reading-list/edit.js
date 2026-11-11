@@ -98,7 +98,12 @@ function getGapValue( blockGap ) {
 
 	const preset = blockGap.match( /^var:preset\|spacing\|(.+)$/ );
 
-	return preset ? `var(--wp--preset--spacing--${ preset[ 1 ] })` : blockGap;
+	if ( preset ) {
+		return `var(--wp--preset--spacing--${ preset[ 1 ] })`;
+	}
+
+	// A number without a unit gets one, zero included: a bare 0 is not valid inside calc().
+	return /^\d*\.?\d+$/.test( blockGap ) ? `${ blockGap }px` : blockGap;
 }
 
 /**
