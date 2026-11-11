@@ -84,7 +84,7 @@ $endpaper_description = '';
 if ( ! empty( $attributes['showDescription'] ) ) {
 	$endpaper_description = trim_to_sentence(
 		$endpaper_book['description'],
-		isset( $attributes['descriptionLength'] ) ? absint( $attributes['descriptionLength'] ) : 280
+		isset( $attributes['descriptionLength'] ) ? absint( $attributes['descriptionLength'] ) : 160
 	);
 }
 
