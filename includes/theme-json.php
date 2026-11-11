@@ -12,6 +12,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Gives the blocks a default margin above and below.
  *
+ * The margin is 1.5 times the block's font size, and never less than 32px.
+ *
  * The margin is added to the styles that blocks themselves contribute to
  * theme.json. That is the lowest layer above WordPress's own defaults, so a
  * theme can change it in its theme.json, under styles.blocks, and so can the
@@ -24,8 +26,8 @@ function add_default_block_styles( $theme_json ) {
 	$styles = array(
 		'spacing' => array(
 			'margin' => array(
-				'top'    => '1.5em',
-				'bottom' => '1.5em',
+				'top'    => 'max(1.5em, 32px)',
+				'bottom' => 'max(1.5em, 32px)',
 			),
 		),
 	);

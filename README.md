@@ -31,7 +31,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 The blocks have very little styling of their own, and support the standard color, typography, spacing, border and shadow settings. A theme can style them in `theme.json` like any core block, under `styles.blocks` with `endpaper/book` and `endpaper/reading-list`.
 
-Both blocks have a margin of 1.5em above and below by default. A theme changes it the same way as any other style:
+Both blocks have a margin above and below by default: 1.5em, and never less than 32px. A theme changes it the same way as any other style:
 
 ```json
 {
