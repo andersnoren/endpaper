@@ -123,6 +123,7 @@
 
 .endpaper-book__progress span {
 	font-size: $small-font-size;
+	opacity: $muted-opacity;
 }
 
 /* The shelf is an accent-colored pill. PHP picks a contrasting text color. */

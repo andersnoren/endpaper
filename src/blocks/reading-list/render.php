@@ -108,11 +108,14 @@ $endpaper_card_style = get_card_style( $attributes );
 								<?php endif; ?>
 								<?php if ( $endpaper_finished ) : ?>
 									<span class="endpaper-reading-list__finished">
+									<span aria-hidden="true"><?php echo esc_html( $endpaper_finished ); ?></span>
+									<span class="screen-reader-text">
 										<?php
 										/* translators: %s: A date, such as November 30, 2015. */
 										echo esc_html( sprintf( __( 'Finished %s', 'endpaper' ), $endpaper_finished ) );
 										?>
 									</span>
+								</span>
 								<?php endif; ?>
 							</p>
 						<?php endif; ?>

@@ -57,7 +57,7 @@
 }
 
 .endpaper-reading-list__cover {
-	flex: 0 0 4em;
+	flex: 0 0 4.5em;
 	margin: 0;
 }
 
@@ -79,7 +79,7 @@
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
-	gap: 0.75em;
+	gap: 1em;
 	justify-content: center;
 	min-width: 0;
 }
@@ -91,7 +91,7 @@
 }
 
 .wp-block-endpaper-reading-list .endpaper-reading-list__title {
-	font-size: 1.125em;
+	font-size: 1.25em;
 	line-height: 1.2;
 }
 
@@ -135,6 +135,7 @@
 .endpaper-reading-list__progress span,
 .endpaper-reading-list__finished {
 	font-size: $small-font-size;
+	opacity: $muted-opacity;
 }
 
 /* The rating and the date finished, side by side. */
