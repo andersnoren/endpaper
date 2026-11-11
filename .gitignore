@@ -4,3 +4,9 @@
 # Dependencies
 /node_modules/
 /vendor/
+
+# AI agent files
+.agents
+.claude
+AGENTS.md
+CLAUDE.md
