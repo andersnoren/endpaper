@@ -7,13 +7,17 @@
 	pointer-events: none;
 }
 
+/*
+ * The search results. Sizes are in em, relative to the editor's own text
+ * size, which is 13px.
+ */
 .endpaper-book-search {
 	width: 100%;
 }
 
 .endpaper-book-search__results {
 	list-style: none;
-	margin: 12px 0 0;
+	margin: 1em 0 0;
 	padding: 0;
 }
 
@@ -22,26 +26,26 @@
 }
 
 .endpaper-book-search__result.components-button {
-	gap: 12px;
+	gap: 1em;
 	height: auto;
 	justify-content: flex-start;
-	padding: 6px;
+	padding: 0.5em;
 	text-align: left;
 	width: 100%;
 }
 
 .endpaper-book-search__cover {
 	background: #ddd;
-	flex: 0 0 32px;
-	height: 48px;
+	flex: 0 0 2.5em;
+	height: 3.75em;
 	object-fit: cover;
-	width: 32px;
+	width: 2.5em;
 }
 
 .endpaper-book-search__text {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 0.15em;
 	min-width: 0;
 }
 
