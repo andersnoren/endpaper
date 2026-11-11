@@ -157,7 +157,11 @@
 	line-height: 1.2;
 }
 
-/* A dot after every fact but the last. */
+/*
+ * A dot after every fact but the last. The row is mostly numbers, so the dot
+ * is centered on the height of a capital letter, not on the lowercase ones.
+ * Browsers that do not know the cap unit get a value that suits most fonts.
+ */
 .endpaper-book__fact:not(:last-child)::after {
 	background: $dot-color;
 	border-radius: 50%;
@@ -165,7 +169,8 @@
 	display: inline-block;
 	height: 0.36em;
 	margin-inline-start: 0.57em;
-	vertical-align: middle;
+	vertical-align: 0.18em;
+	vertical-align: calc(0.5cap - 0.18em);
 	width: 0.36em;
 }
 
