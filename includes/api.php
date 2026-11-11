@@ -7,6 +7,10 @@
  * @package Endpaper
  */
 
+namespace AndersNoren\Endpaper;
+
+use WP_Error;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -22,7 +26,7 @@ define( 'ENDPAPER_BOOK_FIELDS', 'id title slug description pages release_year ra
  *
  * @return string The bare token, or an empty string if none is set.
  */
-function endpaper_get_token() {
+function get_token() {
 	$token = defined( 'ENDPAPER_HARDCOVER_TOKEN' ) ? trim( (string) ENDPAPER_HARDCOVER_TOKEN ) : '';
 
 	return trim( (string) preg_replace( '/^Bearer\s+/i', '', $token ) );
@@ -35,8 +39,8 @@ function endpaper_get_token() {
  * @param array  $variables Optional. Query variables.
  * @return array|WP_Error The "data" part of the response, or an error.
  */
-function endpaper_api_request( $query, $variables = array() ) {
-	$token = endpaper_get_token();
+function api_request( $query, $variables = array() ) {
+	$token = get_token();
 
 	if ( '' === $token ) {
 		return new WP_Error(
@@ -113,7 +117,7 @@ function endpaper_api_request( $query, $variables = array() ) {
  * @param array $raw Raw book record.
  * @return array Normalized book.
  */
-function endpaper_normalize_book( $raw ) {
+function normalize_book( $raw ) {
 	$authors      = array();
 	$contributors = array();
 
@@ -163,7 +167,7 @@ function endpaper_normalize_book( $raw ) {
  * @param array $book Normalized book.
  * @return void
  */
-function endpaper_cache_book( $book ) {
+function cache_book( $book ) {
 	if ( empty( $book['id'] ) ) {
 		return;
 	}
@@ -184,7 +188,7 @@ function endpaper_cache_book( $book ) {
  * @param int $book_id Hardcover book ID.
  * @return array|WP_Error Normalized book, or an error.
  */
-function endpaper_get_book( $book_id ) {
+function get_book( $book_id ) {
 	$book_id = absint( $book_id );
 
 	if ( ! $book_id ) {
@@ -205,7 +209,7 @@ function endpaper_get_book( $book_id ) {
 		return $stale ? $stale : new WP_Error( 'endpaper_backoff', (string) $backoff, array( 'status' => 503 ) );
 	}
 
-	$data = endpaper_api_request(
+	$data = api_request(
 		'query EndpaperBook($id: Int!) { books(where: {id: {_eq: $id}}, limit: 1) { ' . ENDPAPER_BOOK_FIELDS . ' } }',
 		array( 'id' => $book_id )
 	);
@@ -220,8 +224,8 @@ function endpaper_get_book( $book_id ) {
 		return $stale ? $stale : new WP_Error( 'endpaper_not_found', __( 'That book could not be found on Hardcover.', 'endpaper' ), array( 'status' => 404 ) );
 	}
 
-	$book = endpaper_normalize_book( $data['books'][0] );
-	endpaper_cache_book( $book );
+	$book = normalize_book( $data['books'][0] );
+	cache_book( $book );
 
 	return $book;
 }
@@ -232,8 +236,8 @@ function endpaper_get_book( $book_id ) {
  * @param string $slug Book slug, as used in hardcover.app/books/{slug}.
  * @return array|WP_Error Normalized book, or an error.
  */
-function endpaper_get_book_by_slug( $slug ) {
-	$data = endpaper_api_request(
+function get_book_by_slug( $slug ) {
+	$data = api_request(
 		'query EndpaperBookBySlug($slug: String!) { books(where: {slug: {_eq: $slug}}, limit: 1) { ' . ENDPAPER_BOOK_FIELDS . ' } }',
 		array( 'slug' => $slug )
 	);
@@ -246,8 +250,8 @@ function endpaper_get_book_by_slug( $slug ) {
 		return new WP_Error( 'endpaper_not_found', __( 'That book could not be found on Hardcover.', 'endpaper' ), array( 'status' => 404 ) );
 	}
 
-	$book = endpaper_normalize_book( $data['books'][0] );
-	endpaper_cache_book( $book );
+	$book = normalize_book( $data['books'][0] );
+	cache_book( $book );
 
 	return $book;
 }
@@ -260,11 +264,11 @@ function endpaper_get_book_by_slug( $slug ) {
  * @param string $term Search term or book URL.
  * @return array|WP_Error List of book summaries (id, title, authors, year, cover), or an error.
  */
-function endpaper_search_books( $term ) {
+function search_books( $term ) {
 	$term = trim( (string) $term );
 
 	if ( preg_match( '#hardcover\.app/books/([a-z0-9_-]+)#i', $term, $matches ) ) {
-		$book = endpaper_get_book_by_slug( strtolower( $matches[1] ) );
+		$book = get_book_by_slug( strtolower( $matches[1] ) );
 
 		if ( is_wp_error( $book ) ) {
 			return $book;
@@ -281,7 +285,7 @@ function endpaper_search_books( $term ) {
 		);
 	}
 
-	$data = endpaper_api_request(
+	$data = api_request(
 		'query EndpaperSearch($query: String!) { search(query: $query, query_type: "Book", per_page: 8, page: 1) { results } }',
 		array( 'query' => $term )
 	);

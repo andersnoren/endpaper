@@ -14,6 +14,8 @@
  * @package Endpaper
  */
 
+namespace AndersNoren\Endpaper;
+
 defined( 'ABSPATH' ) || exit;
 
 define( 'ENDPAPER_VERSION', '0.1.0' );
@@ -31,15 +33,15 @@ require_once ENDPAPER_DIR . 'includes/rest.php';
  *
  * @return void
  */
-function endpaper_register_blocks() {
-	$endpaper_blocks = glob( ENDPAPER_DIR . 'build/blocks/*/block.json' );
+function register_blocks() {
+	$blocks = glob( ENDPAPER_DIR . 'build/blocks/*/block.json' );
 
-	if ( ! $endpaper_blocks ) {
+	if ( ! $blocks ) {
 		return;
 	}
 
-	foreach ( $endpaper_blocks as $endpaper_block ) {
-		register_block_type( dirname( $endpaper_block ) );
+	foreach ( $blocks as $block ) {
+		register_block_type( dirname( $block ) );
 	}
 }
-add_action( 'init', 'endpaper_register_blocks' );
+add_action( 'init', __NAMESPACE__ . '\register_blocks' );

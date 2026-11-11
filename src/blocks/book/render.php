@@ -9,6 +9,8 @@
  * @var WP_Block $block      Block instance.
  */
 
+use function AndersNoren\Endpaper\get_book;
+
 defined( 'ABSPATH' ) || exit;
 
 $endpaper_book_id = isset( $attributes['bookId'] ) ? absint( $attributes['bookId'] ) : 0;
@@ -17,7 +19,7 @@ if ( ! $endpaper_book_id ) {
 	return;
 }
 
-$endpaper_book = endpaper_get_book( $endpaper_book_id );
+$endpaper_book = get_book( $endpaper_book_id );
 
 if ( is_wp_error( $endpaper_book ) ) {
 	// Visitors see nothing. People who can edit see what went wrong.

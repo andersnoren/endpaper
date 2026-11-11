@@ -19,11 +19,12 @@
 
 	<rule ref="WordPress-Extra"/>
 
-	<!-- Everything in the global namespace must start with the plugin prefix. -->
+	<!-- Namespaces and anything left in the global namespace must use a plugin prefix. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
 				<element value="endpaper"/>
+				<element value="AndersNoren\Endpaper"/>
 			</property>
 		</properties>
 	</rule>
