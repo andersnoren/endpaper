@@ -52,3 +52,21 @@ function register_blocks() {
 	}
 }
 add_action( 'init', __NAMESPACE__ . '\register_blocks' );
+
+/**
+ * Notes that the plugin was just activated, so the next screen can be the settings screen.
+ *
+ * Not when it is activated for a whole network or from the command line,
+ * where nobody is waiting to be sent anywhere.
+ *
+ * @param bool $network_wide Whether the plugin is being activated for all sites in a network.
+ * @return void
+ */
+function set_activation_redirect( $network_wide ) {
+	if ( $network_wide || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+		return;
+	}
+
+	set_transient( 'endpaper_activation_redirect', 1, 30 );
+}
+register_activation_hook( __FILE__, __NAMESPACE__ . '\set_activation_redirect' );

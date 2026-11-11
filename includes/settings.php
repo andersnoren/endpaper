@@ -212,6 +212,33 @@ function get_connection_status() {
 }
 
 /**
+ * Sends the person who just activated the plugin to the settings screen.
+ *
+ * Not when several plugins were activated at once: that would take them away
+ * from the list they were working through.
+ *
+ * @return void
+ */
+function redirect_after_activation() {
+	if ( ! get_transient( 'endpaper_activation_redirect' ) ) {
+		return;
+	}
+
+	delete_transient( 'endpaper_activation_redirect' );
+
+	// Only read, to tell a bulk activation from a single one. Nothing is changed based on it.
+	$is_bulk = isset( $_GET['activate-multi'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+	if ( $is_bulk || wp_doing_ajax() || is_network_admin() || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	wp_safe_redirect( get_settings_url() );
+	exit;
+}
+add_action( 'admin_init', __NAMESPACE__ . '\redirect_after_activation' );
+
+/**
  * Adds the settings screen to the Settings menu.
  *
  * @return void
