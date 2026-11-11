@@ -50,6 +50,14 @@ const DISPLAY_TOGGLES = [
 	{ attribute: 'showMeta', label: __( 'Year and page count', 'endpaper' ) },
 	{ attribute: 'showRating', label: __( 'Hardcover rating', 'endpaper' ) },
 	{
+		attribute: 'showUserRating',
+		label: __( 'Your rating', 'endpaper' ),
+		help: __(
+			'Shows the stars you gave the book on Hardcover. Only if the book is public in your library.',
+			'endpaper'
+		),
+	},
+	{
 		attribute: 'showShelf',
 		label: __( 'Your shelf', 'endpaper' ),
 		help: __(

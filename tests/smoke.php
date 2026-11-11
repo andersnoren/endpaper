@@ -162,7 +162,7 @@ add_filter(
 								'user_books' => array(
 									array(
 										'status_id'       => 2,
-										'rating'          => null,
+										'rating'          => 3.5,
 										'edition'         => array(
 											'image'    => array( 'url' => 'https://assets.hardcover.app/edition-entry.jpg' ),
 											'language' => array( 'language' => 'Swedish' ),
@@ -264,6 +264,10 @@ try {
 	endpaper_check( 'it renders a card', false !== strpos( $endpaper_html, 'endpaper-book__card' ) );
 	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '"Complete"' ) && false !== strpos( $endpaper_html, 'Complete' ) );
 	endpaper_check( 'it shows the reading progress', false !== strpos( $endpaper_html, '<progress' ) );
+	endpaper_check( 'it shows the owner’s rating as stars, next to the progress', false !== strpos( $endpaper_html, 'endpaper-book__my-rating' ) && false !== strpos( $endpaper_html, 'endpaper-icon--star-half' ) && false !== strpos( $endpaper_html, 'Rated 3.5 out of 5' ) );
+
+	$endpaper_html_plain = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showUserRating":false} /-->' );
+	endpaper_check( 'the owner’s rating can be switched off', false === strpos( $endpaper_html_plain, 'endpaper-book__my-rating' ) );
 	endpaper_check( 'it uses the cover of the edition in the library', false !== strpos( $endpaper_html, 'edition-entry.jpg' ) && false === strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 	endpaper_check( 'it credits Hardcover', false !== strpos( $endpaper_html, 'endpaper-logo' ) && false !== strpos( $endpaper_html, 'Powered by Hardcover' ) );
 	endpaper_check( 'the key is not in the output', false === strpos( $endpaper_html, 'smoke-test-key' ) );

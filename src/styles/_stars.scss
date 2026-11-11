@@ -1,0 +1,39 @@
+@use "variables" as *;
+
+/*
+ * A rating as five stars, used by both blocks.
+ *
+ * The star icons have empty space around the shape. They overlap by that
+ * much, and the row is pulled in at both ends, so the first star lines up
+ * with the text above it.
+ */
+.endpaper-stars {
+	display: inline-flex;
+	margin-inline: -0.25em;
+}
+
+.endpaper-stars .endpaper-icon {
+	display: block;
+	fill: $accent-color;
+	flex: none;
+	height: 1.5em;
+	width: 1.5em;
+}
+
+.endpaper-stars .endpaper-icon + .endpaper-icon {
+	margin-inline-start: -0.25em;
+}
+
+/*
+ * The stars the rating does not reach are the same gray as the track of the
+ * progress bar, so the rating reads the same way: accent for what is there.
+ */
+.endpaper-stars .endpaper-icon--star-empty,
+.endpaper-stars .endpaper-icon__rest {
+	fill: $track-color;
+}
+
+/* The half star is filled on the side the reading direction starts from. */
+[dir="rtl"] .endpaper-stars .endpaper-icon--star-half {
+	transform: scaleX(-1);
+}

@@ -42,6 +42,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"showUserRating": {
+			"type": "boolean",
+			"default": true
+		},
 		"showShelf": {
 			"type": "boolean",
 			"default": false

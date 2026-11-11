@@ -28,6 +28,7 @@ use function AndersNoren\Endpaper\get_token_trouble;
 use function AndersNoren\Endpaper\the_editor_notice;
 use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
+use function AndersNoren\Endpaper\the_star_rating;
 use function AndersNoren\Endpaper\trim_to_sentence;
 
 defined( 'ABSPATH' ) || exit;
@@ -81,6 +82,9 @@ $endpaper_shelf   = $endpaper_entry && isset( $endpaper_shelves[ $endpaper_entry
 
 $endpaper_show_progress = ! empty( $attributes['showProgress'] ) && $endpaper_entry && 2 === $endpaper_entry['status_id'] && null !== $endpaper_entry['progress'];
 $endpaper_show_shelf    = ! empty( $attributes['showShelf'] ) && $endpaper_shelf;
+
+// The rating the site's owner gave the book, if they gave one.
+$endpaper_my_rating = ! empty( $attributes['showUserRating'] ) && ! empty( $endpaper_entry['rating'] ) ? (float) $endpaper_entry['rating'] : 0.0;
 
 // The progress bar already says the book is being read, so the Currently Reading label is left out next to it.
 if ( $endpaper_show_progress ) {
@@ -164,12 +168,20 @@ $endpaper_card_style = get_card_style( $attributes );
 					<?php endif; ?>
 				</div>
 
-				<?php if ( $endpaper_show_progress ) : ?>
-					<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
-				<?php endif; ?>
+				<?php if ( $endpaper_my_rating || $endpaper_show_progress || $endpaper_show_shelf ) : ?>
+					<div class="endpaper-book__mine">
+						<?php if ( $endpaper_my_rating ) : ?>
+							<?php the_star_rating( $endpaper_my_rating, 'endpaper-book__my-rating' ); ?>
+						<?php endif; ?>
 
-				<?php if ( $endpaper_show_shelf ) : ?>
-					<p class="endpaper-book__shelf"><span><?php echo esc_html( $endpaper_shelf ); ?></span></p>
+						<?php if ( $endpaper_show_progress ) : ?>
+							<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
+						<?php endif; ?>
+
+						<?php if ( $endpaper_show_shelf ) : ?>
+							<p class="endpaper-book__shelf"><span><?php echo esc_html( $endpaper_shelf ); ?></span></p>
+						<?php endif; ?>
+					</div>
 				<?php endif; ?>
 
 				<?php if ( $endpaper_description ) : ?>
