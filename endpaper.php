@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Endpaper
- * Description:       Book blocks powered by Hardcover. Proof of concept.
- * Version:           0.1.0
+ * Description:       Show books from Hardcover in your posts and pages: a single book as a card, or the books you are reading from your own library.
+ * Version:           1.0.0
  * Requires at least: 6.6
  * Requires PHP:      7.4
  * Author:            Anders Norén
@@ -18,7 +18,7 @@ namespace AndersNoren\Endpaper;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ENDPAPER_VERSION', '0.1.0' );
+define( 'ENDPAPER_VERSION', '1.0.0' );
 define( 'ENDPAPER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ENDPAPER_API_URL', 'https://api.hardcover.app/v1/graphql' );
 

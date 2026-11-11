@@ -4,7 +4,7 @@ Tags: books, reading, hardcover, block, reading list
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,7 +51,7 @@ Book covers are loaded directly from Hardcover’s servers. When a visitor views
 
 Each block shows the Hardcover logo, linked to Hardcover. The title and cover of a book can link to its page on Hardcover as well.
 
-The service is provided by Hardcover: [terms of service](TODO-ADD-LINK), [privacy policy](TODO-ADD-LINK).
+The service is provided by Hardcover: [terms of service](https://hardcover.app/pages/terms-of-service), [privacy policy](https://hardcover.app/pages/privacy-policy-2).
 
 == Installation ==
 
@@ -103,6 +103,6 @@ The API key and everything the plugin has stored are removed.
 
 == Changelog ==
 
-= 0.1.0 =
+= 1.0.0 =
 
 * First version.
