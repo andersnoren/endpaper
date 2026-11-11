@@ -411,7 +411,7 @@ function render_settings_page() {
 			<li><?php esc_html_e( 'Do not start from a preset. Tick these permissions and nothing else:', 'endpaper' ); ?></li>
 		</ol>
 
-		<table class="widefat striped" style="max-width: 48em;">
+		<table class="widefat striped">
 			<tbody>
 				<?php foreach ( $scopes as $endpaper_scope => $endpaper_purpose ) : ?>
 					<tr>
@@ -422,7 +422,7 @@ function render_settings_page() {
 			</tbody>
 		</table>
 
-		<p class="description" style="max-width: 48em;">
+		<p class="description">
 			<?php esc_html_e( 'A key cannot be changed once it is created, which is why the last two are worth ticking now. None of these let Endpaper change anything on Hardcover, or read anything you have not made public.', 'endpaper' ); ?>
 		</p>
 	</div>
