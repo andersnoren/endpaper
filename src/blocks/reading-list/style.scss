@@ -1,0 +1,85 @@
+/*
+ * Reading List block.
+ *
+ * Kept deliberately small, so the block inherits fonts, colors and link
+ * styles from the active theme.
+ */
+
+.endpaper-reading-list__items {
+	display: grid;
+	gap: var(--wp--style--block-gap, 1.5rem);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.endpaper-reading-list__item {
+	align-items: flex-start;
+	display: flex;
+	gap: 1rem;
+	margin: 0;
+}
+
+.endpaper-reading-list__cover {
+	flex: 0 0 4rem;
+	margin: 0;
+}
+
+.endpaper-reading-list__cover img {
+	display: block;
+	height: auto;
+	width: 100%;
+}
+
+.endpaper-reading-list__content {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.endpaper-reading-list__content > * {
+	margin-block: 0;
+}
+
+.endpaper-reading-list__content > * + * {
+	margin-block-start: 0.25em;
+}
+
+.endpaper-reading-list__authors,
+.endpaper-reading-list__rating,
+.endpaper-reading-list__progress {
+	font-size: 0.875em;
+}
+
+.endpaper-reading-list__progress {
+	align-items: center;
+	display: flex;
+	gap: 0.5em;
+}
+
+.endpaper-reading-list__progress progress {
+
+	/* Follow the text color, so the bar matches the theme. */
+	accent-color: currentcolor;
+	flex: 0 1 8rem;
+	min-width: 0;
+}
+
+/* Grid layout: covers side by side, with the text underneath. */
+.endpaper-reading-list--grid .endpaper-reading-list__items {
+	grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+}
+
+.endpaper-reading-list--grid .endpaper-reading-list__item {
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.endpaper-reading-list--grid .endpaper-reading-list__cover {
+	flex: none;
+	width: 100%;
+}
+
+.endpaper-reading-list--grid .endpaper-reading-list__content {
+	flex: none;
+	width: 100%;
+}

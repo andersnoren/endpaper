@@ -2,7 +2,7 @@
 
 Book blocks for WordPress, powered by [Hardcover](https://hardcover.app).
 
-Endpaper lets you embed books from Hardcover in your posts and pages. Search for a book in the block editor, pick it from the results, and the block shows its cover, author, rating and description.
+Endpaper lets you show books from Hardcover in your posts and pages. Embed a single book with its cover, author, rating and description, or show a list of the books you are reading from your own Hardcover library.
 
 In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
 
@@ -16,6 +16,14 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Each part can be switched on or off, and the description can be limited to a number of lines.
 - Has very little styling of its own, so it picks up the fonts, colors and link styles of your theme.
 - Supports the color, spacing, typography and alignment settings in the block editor.
+
+## The Reading List block
+
+- Shows books from your own Hardcover library: the ones you are currently reading, have read, or want to read.
+- Comes with ready-made Currently Reading, Recently Read and Want to Read variations in the block inserter.
+- Can be shown as a list or as a grid of covers.
+- Shows the cover, title, authors and your rating for each book, and your reading progress for books you are currently reading. Each part can be switched on or off.
+- Only shows books that are public on Hardcover, so a book you keep private there never appears on your site.
 
 ## Requirements
 
@@ -51,7 +59,7 @@ Endpaper isn’t in the WordPress.org plugin directory yet, so for now it has to
 ## How it uses the Hardcover API
 
 - **Your API key stays on your server.** All requests to Hardcover are made from PHP. The key is never sent to the browser.
-- **Requests are cached.** Each book is fetched once and stored for a week, so showing a book doesn’t call Hardcover on every page view. Search requests are only made while you are searching in the editor.
+- **Requests are cached.** A book is fetched once and stored for a week, and a reading list is refreshed at most once an hour, so showing either doesn’t call Hardcover on every page view. Search requests are only made while you are searching in the editor.
 - **It keeps working if Hardcover can’t be reached.** If a request fails, the block shows the last copy it has.
 - **Cover images are loaded from Hardcover.** They are not copied to your media library.
 

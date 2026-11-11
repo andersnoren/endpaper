@@ -324,3 +324,115 @@ function search_books( $term ) {
 
 	return $books;
 }
+
+/**
+ * Returns the reading statuses a reading list can show.
+ *
+ * The keys are Hardcover's status IDs.
+ *
+ * @return array Status labels, keyed by status ID.
+ */
+function get_reading_statuses() {
+	return array(
+		2 => __( 'Currently Reading', 'endpaper' ),
+		3 => __( 'Read', 'endpaper' ),
+		1 => __( 'Want to Read', 'endpaper' ),
+	);
+}
+
+/**
+ * Converts a raw library entry from the API into the shape Endpaper uses.
+ *
+ * @param array $raw Raw library entry.
+ * @return array Normalized entry.
+ */
+function normalize_reading_list_entry( $raw ) {
+	$read     = isset( $raw['user_book_reads'][0] ) && is_array( $raw['user_book_reads'][0] ) ? $raw['user_book_reads'][0] : array();
+	$progress = isset( $read['progress'] ) && is_numeric( $read['progress'] ) ? (float) $read['progress'] : null;
+
+	if ( null !== $progress ) {
+		$progress = max( 0.0, min( 100.0, $progress ) );
+	}
+
+	return array(
+		'book'     => normalize_book( isset( $raw['book'] ) && is_array( $raw['book'] ) ? $raw['book'] : array() ),
+		'rating'   => isset( $raw['rating'] ) && is_numeric( $raw['rating'] ) ? (float) $raw['rating'] : 0.0,
+		'progress' => $progress,
+	);
+}
+
+/**
+ * Returns books from the library of the person the API token belongs to.
+ *
+ * Only entries that are public on Hardcover are returned, so a book that is
+ * private there never ends up on the site.
+ *
+ * @param int $status_id Hardcover status ID. See get_reading_statuses().
+ * @param int $limit     Maximum number of books to return.
+ * @return array|WP_Error List of normalized entries, or an error.
+ */
+function get_reading_list( $status_id, $limit ) {
+	$status_id = absint( $status_id );
+	$limit     = max( 1, min( 20, absint( $limit ) ) );
+
+	if ( ! array_key_exists( $status_id, get_reading_statuses() ) ) {
+		return new WP_Error( 'endpaper_invalid_status', __( 'Unknown reading status.', 'endpaper' ), array( 'status' => 400 ) );
+	}
+
+	// The token is part of the key, so switching to another account starts fresh.
+	$cache_key = 'endpaper_list_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit;
+	$cached    = get_transient( $cache_key );
+	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entries'] ) ? $cached['entries'] : null;
+
+	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < HOUR_IN_SECONDS ) {
+		return $stale;
+	}
+
+	// After a failed request, wait a few minutes before asking Hardcover again.
+	$backoff = get_transient( 'endpaper_api_backoff' );
+
+	if ( $backoff ) {
+		return null !== $stale ? $stale : new WP_Error( 'endpaper_backoff', (string) $backoff, array( 'status' => 503 ) );
+	}
+
+	// Finished books are ordered by when they were last read. The others by when they last changed.
+	$order_by = 3 === $status_id
+		? '[{last_read_date: desc_nulls_last}, {date_added: desc}]'
+		: '[{updated_at: desc}]';
+
+	$data = api_request(
+		'query EndpaperReadingList($status_id: Int!, $limit: Int!) { me { user_books(where: {status_id: {_eq: $status_id}, privacy_setting_id: {_eq: 1}}, order_by: ' . $order_by . ', limit: $limit) { rating book { id title slug pages release_year image { url } cached_contributors } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		array(
+			'status_id' => $status_id,
+			'limit'     => $limit,
+		)
+	);
+
+	if ( is_wp_error( $data ) ) {
+		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+
+		return null !== $stale ? $stale : $data;
+	}
+
+	$raw_entries = isset( $data['me'][0]['user_books'] ) && is_array( $data['me'][0]['user_books'] ) ? $data['me'][0]['user_books'] : array();
+	$entries     = array();
+
+	foreach ( $raw_entries as $raw_entry ) {
+		$entry = normalize_reading_list_entry( $raw_entry );
+
+		if ( $entry['book']['id'] ) {
+			$entries[] = $entry;
+		}
+	}
+
+	set_transient(
+		$cache_key,
+		array(
+			'fetched' => time(),
+			'entries' => $entries,
+		),
+		WEEK_IN_SECONDS
+	);
+
+	return $entries;
+}
