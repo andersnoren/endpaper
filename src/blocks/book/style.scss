@@ -4,13 +4,14 @@
  * Book block.
  *
  * Every size is in em, relative to the block's font size. The block itself
- * defaults to 16px, which the Size setting or the theme can change.
+ * defaults to 1rem, which is 16px unless the reader has changed their browser's
+ * text size. The Size setting or the theme can change it.
  * Colors follow the text color, so the block works on any background.
  */
 
 /* Defaults with no specificity, so the editor's settings and theme.json win. */
 :where(.wp-block-endpaper-book) {
-	font-size: 16px;
+	font-size: 1rem;
 	line-height: 1.4;
 }
 
@@ -88,10 +89,6 @@
 	line-height: 1.2;
 }
 
-.endpaper-book__authors strong {
-	font-weight: 700;
-}
-
 .endpaper-book__progress {
 	align-items: center;
 	display: flex;
@@ -125,7 +122,7 @@
 }
 
 .endpaper-book__progress span {
-	font-size: 0.75em;
+	font-size: $small-font-size;
 }
 
 /* The shelf is an accent-colored pill. PHP picks a contrasting text color. */
@@ -172,14 +169,16 @@
 }
 
 .endpaper-book__rating-count {
-	font-size: 0.857em;
+
+	/* The same 13px as the other small text, inside the 14px facts row. */
+	font-size: 0.929em;
 	font-weight: 400;
 	margin-inline-start: 0.3em;
 	opacity: $muted-opacity;
 }
 
 .endpaper-book__attribution {
-	font-size: 0.75em;
+	font-size: $small-font-size;
 	opacity: $muted-opacity;
 	text-align: center;
 }

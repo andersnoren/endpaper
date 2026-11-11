@@ -131,14 +131,8 @@ $endpaper_card_style = get_card_style( $attributes );
 					<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
 						<p class="endpaper-book__authors">
 							<?php
-							echo wp_kses(
-								sprintf(
-									/* translators: %s: List of author names. */
-									__( 'By %s', 'endpaper' ),
-									'<strong>' . esc_html( wp_sprintf( '%l', $endpaper_book['authors'] ) ) . '</strong>'
-								),
-								array( 'strong' => array() )
-							);
+							/* translators: %s: List of author names. */
+							echo esc_html( sprintf( __( 'by %s', 'endpaper' ), wp_sprintf( '%l', $endpaper_book['authors'] ) ) );
 							?>
 						</p>
 					<?php endif; ?>
