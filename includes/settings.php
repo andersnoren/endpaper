@@ -212,10 +212,11 @@ function get_connection_status() {
 }
 
 /**
- * Sends the person who just activated the plugin to the settings screen.
+ * Sends the person who just activated the plugin to the settings screen, to add an API key.
  *
- * Not when several plugins were activated at once: that would take them away
- * from the list they were working through.
+ * Not when a key is already saved, and not when several plugins were
+ * activated at once: that would take them away from the list they were
+ * working through.
  *
  * @return void
  */
@@ -230,6 +231,11 @@ function redirect_after_activation() {
 	$is_bulk = isset( $_GET['activate-multi'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 	if ( $is_bulk || wp_doing_ajax() || is_network_admin() || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	// With a key in place there is nothing to set up.
+	if ( '' !== get_token() ) {
 		return;
 	}
 
