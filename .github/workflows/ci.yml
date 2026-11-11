@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+
+      - run: npm ci
+      - run: npm run lint:js
+      - run: npm run lint:css
+      - run: npm run build
+
+      - run: composer install --no-interaction --no-progress
+      - run: composer run phpcs
+
+  test:
+    name: PHP ${{ matrix.php }}, WordPress ${{ matrix.wp }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The oldest PHP and WordPress the plugin says it supports.
+          - php: '7.4'
+            wp: '6.6'
+          - php: '7.4'
+            wp: latest
+          - php: '8.3'
+            wp: latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli
+          tools: wp-cli
+          coverage: none
+
+      # The blocks are registered from the build folder, so they have to be built first.
+      - run: npm ci
+      - run: npm run build
+
+      - name: Check the syntax of every PHP file
+        run: |
+          find . -name '*.php' -not -path './node_modules/*' -not -path './vendor/*' -print0 \
+            | xargs -0 -n1 php -l > /dev/null
+
+      - name: Install WordPress
+        run: |
+          mkdir -p /tmp/wordpress
+          cd /tmp/wordpress
+          wp core download --version=${{ matrix.wp }}
+          wp config create --dbname=wordpress --dbuser=root --dbpass=root --dbhost=127.0.0.1:3306
+          wp config set WP_DEBUG true --raw
+          wp core install --url=http://localhost --title=Endpaper --admin_user=admin \
+            --admin_password=password --admin_email=admin@example.org --skip-email
+
+      - name: Activate the plugin
+        run: |
+          ln -s "$GITHUB_WORKSPACE" /tmp/wordpress/wp-content/plugins/endpaper
+          wp plugin activate endpaper --path=/tmp/wordpress
+
+      # Renders both blocks and the settings screen against a faked Hardcover API.
+      # Any PHP notice, warning or deprecation fails the run.
+      - name: Run the smoke test
+        run: wp eval-file wp-content/plugins/endpaper/tests/smoke.php --path=/tmp/wordpress
