@@ -88,7 +88,7 @@ $gap: var(--endpaper-gap, 1.5em);
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
-	gap: 1em;
+	gap: 0.75em;
 	justify-content: center;
 	min-width: 0;
 }
@@ -150,16 +150,12 @@ $gap: var(--endpaper-gap, 1.5em);
 	opacity: $muted-opacity;
 }
 
-/*
- * The rating and the date finished, side by side. The row sits a little
- * closer to the text above it than the progress bar does: 0.75em.
- */
-.wp-block-endpaper-reading-list .endpaper-reading-list__read {
+/* The rating and the date finished, side by side. */
+.endpaper-reading-list__read {
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.25em 0.8125em;
-	margin-block-start: -0.25em;
 }
 
 .endpaper-reading-list__rating {
