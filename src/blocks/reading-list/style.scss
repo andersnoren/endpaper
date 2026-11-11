@@ -1,5 +1,7 @@
 @use "../../styles/variables" as *;
 
+$gap: var(--endpaper-gap, 1.5em);
+
 /*
  * Reading List block.
  *
@@ -42,7 +44,7 @@
 	display: grid;
 
 	/* The gap between books comes from the Block spacing setting. */
-	gap: var(--endpaper-gap, 1.5em);
+	gap: $gap;
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -193,9 +195,14 @@
 	text-decoration: none;
 }
 
-/* Grid layout: covers side by side, with the text underneath. */
+/*
+ * Grid layout: covers side by side, with the text underneath.
+ *
+ * As many columns as fit, but never more than four: a column is at least 7em
+ * wide, and at least a quarter of the card.
+ */
 .wp-block-endpaper-reading-list.endpaper-reading-list--grid .endpaper-reading-list__items {
-	grid-template-columns: repeat(auto-fill, minmax(7em, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(max(7em, (100% - 3 * #{$gap}) / 4), 1fr));
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__item {
