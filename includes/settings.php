@@ -316,7 +316,9 @@ function the_connection_notice() {
 /**
  * Outputs the settings screen.
  *
- * The saved key is never output, not even in part.
+ * The saved key is never output, not even in part. When one is saved, the
+ * field shows a row of dots, always the same number, so it looks filled in
+ * without giving away the key or its length.
  *
  * @return void
  */
@@ -363,8 +365,8 @@ function render_settings_page() {
 								?>
 							</p>
 						<?php else : ?>
-							<input type="password" id="endpaper-token" name="<?php echo esc_attr( ENDPAPER_TOKEN_OPTION ); ?>" class="regular-text" value="" autocomplete="off" spellcheck="false" placeholder="<?php echo esc_attr( $has_token ? __( 'A key is saved', 'endpaper' ) : '' ); ?>" />
-							<p class="description">
+							<input type="password" id="endpaper-token" name="<?php echo esc_attr( ENDPAPER_TOKEN_OPTION ); ?>" class="regular-text" value="" autocomplete="off" spellcheck="false" placeholder="<?php echo esc_attr( $has_token ? str_repeat( '•', 24 ) : '' ); ?>" aria-describedby="endpaper-token-description" />
+							<p class="description" id="endpaper-token-description">
 								<?php
 								echo esc_html(
 									$has_token
