@@ -290,24 +290,25 @@ function get_card_style( $attributes ) {
 /**
  * Returns a star icon, as inline SVG.
  *
- * These are the stars from the WordPress icon library. They take the color
- * of the text around them.
+ * The shape is the filled star from the WordPress icon library. It takes the
+ * color of the text around it, unless the stylesheet sets another.
  *
- * @param string $type Which star: "filled", "half" or "empty".
+ * @param string $type Which star: "filled", "half" or "empty". The half star is a whole star with its first half drawn on top, so the two parts can have different colors. The empty star is the same shape as the filled one, to be given a fainter color.
  * @return string SVG markup.
  */
 function get_star_icon( $type = 'filled' ) {
-	$paths = array(
-		'filled' => '<path d="M11.776 4.454a.25.25 0 01.448 0l2.069 4.192a.25.25 0 00.188.137l4.626.672a.25.25 0 01.139.426l-3.348 3.263a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.362.263l-4.138-2.175a.25.25 0 00-.232 0l-4.138 2.175a.25.25 0 01-.363-.263l.79-4.607a.25.25 0 00-.071-.222L4.754 9.881a.25.25 0 01.139-.426l4.626-.672a.25.25 0 00.188-.137l2.069-4.192z" />',
-		'half'   => '<path d="M9.518 8.783a.25.25 0 00.188-.137l2.069-4.192a.25.25 0 01.448 0l2.07 4.192a.25.25 0 00.187.137l4.626.672a.25.25 0 01.139.427l-3.347 3.262a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.363.264l-4.137-2.176a.25.25 0 00-.233 0l-4.138 2.175a.25.25 0 01-.362-.263l.79-4.607a.25.25 0 00-.072-.222L4.753 9.882a.25.25 0 01.14-.427l4.625-.672zM12 14.533c.28 0 .559.067.814.2l1.895.997-.362-2.11a1.75 1.75 0 01.504-1.55l1.533-1.495-2.12-.308a1.75 1.75 0 01-1.317-.957L12 7.39v7.143z" />',
-		'empty'  => '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.706 8.646a.25.25 0 01-.188.137l-4.626.672a.25.25 0 00-.139.427l3.348 3.262a.25.25 0 01.072.222l-.79 4.607a.25.25 0 00.362.264l4.138-2.176a.25.25 0 01.233 0l4.137 2.175a.25.25 0 00.363-.263l-.79-4.607a.25.25 0 01.072-.222l3.347-3.262a.25.25 0 00-.139-.427l-4.626-.672a.25.25 0 01-.188-.137l-2.069-4.192a.25.25 0 00-.448 0L9.706 8.646zM12 7.39l-.948 1.921a1.75 1.75 0 01-1.317.957l-2.12.308 1.534 1.495c.412.402.6.982.503 1.55l-.362 2.11 1.896-.997a1.75 1.75 0 011.629 0l1.895.997-.362-2.11a1.75 1.75 0 01.504-1.55l1.533-1.495-2.12-.308a1.75 1.75 0 01-1.317-.957L12 7.39z" />',
-	);
+	$star = 'M11.776 4.454a.25.25 0 01.448 0l2.069 4.192a.25.25 0 00.188.137l4.626.672a.25.25 0 01.139.426l-3.348 3.263a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.362.263l-4.138-2.175a.25.25 0 00-.232 0l-4.138 2.175a.25.25 0 01-.363-.263l.79-4.607a.25.25 0 00-.071-.222L4.754 9.881a.25.25 0 01.139-.426l4.626-.672a.25.25 0 00.188-.137l2.069-4.192z';
+	$half = 'M12.0002 16.0322C11.9598 16.0322 11.9197 16.0419 11.884 16.0605L7.74627 18.2363C7.70501 18.2581 7.65801 18.267 7.6115 18.2637C7.56507 18.2603 7.52029 18.2441 7.48259 18.2168C7.44498 18.1895 7.41522 18.1524 7.39763 18.1094C7.38003 18.0662 7.37519 18.0186 7.38298 17.9727L8.17302 13.3662C8.18011 13.3262 8.17758 13.2848 8.16521 13.2461C8.15284 13.2074 8.13071 13.172 8.10173 13.1436L4.75408 9.88086C4.72079 9.84825 4.6968 9.80698 4.68572 9.76172C4.67469 9.71654 4.67716 9.66922 4.69158 9.625C4.70603 9.5807 4.7321 9.54075 4.76775 9.51074C4.80332 9.48083 4.84677 9.4618 4.89275 9.45508L9.51873 8.7832C9.55882 8.77731 9.5973 8.76117 9.63005 8.7373C9.66267 8.71346 9.68937 8.68176 9.7072 8.64551L11.7756 4.4541C11.7962 4.41237 11.8288 4.3771 11.8683 4.35254C11.9079 4.32804 11.9536 4.31543 12.0002 4.31543V16.0322Z';
 
-	if ( ! isset( $paths[ $type ] ) ) {
+	if ( ! in_array( $type, array( 'filled', 'half', 'empty' ), true ) ) {
 		$type = 'filled';
 	}
 
-	return '<svg class="endpaper-icon endpaper-icon--star-' . $type . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">' . $paths[ $type ] . '</svg>';
+	$paths = 'half' === $type
+		? '<path class="endpaper-icon__rest" d="' . $star . '" /><path d="' . $half . '" />'
+		: '<path d="' . $star . '" />';
+
+	return '<svg class="endpaper-icon endpaper-icon--star-' . $type . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">' . $paths . '</svg>';
 }
 
 /**

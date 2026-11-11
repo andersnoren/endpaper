@@ -162,14 +162,13 @@ $gap: var(--endpaper-gap, 1.5em);
  * with the text above it.
  */
 .endpaper-stars {
-	color: $accent-color;
 	display: inline-flex;
 	margin-inline: -0.25em;
 }
 
 .endpaper-stars .endpaper-icon {
 	display: block;
-	fill: currentcolor;
+	fill: $accent-color;
 	flex: none;
 	height: 1.5em;
 	width: 1.5em;
@@ -177,6 +176,15 @@ $gap: var(--endpaper-gap, 1.5em);
 
 .endpaper-stars .endpaper-icon + .endpaper-icon {
 	margin-inline-start: -0.25em;
+}
+
+/*
+ * The stars the rating does not reach are the same gray as the track of the
+ * progress bar, so the rating reads the same way: accent for what is there.
+ */
+.endpaper-stars .endpaper-icon--star-empty,
+.endpaper-stars .endpaper-icon__rest {
+	fill: $track-color;
 }
 
 /* The half star is filled on the side the reading direction starts from. */
