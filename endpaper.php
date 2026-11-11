@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Endpaper – Book blocks for Hardcover
+ * Plugin Name:       Endpaper – Book Blocks for Hardcover
  * Description:       Show books from Hardcover in your posts and pages: a single book as a card, or the books you are reading from your own library.
  * Version:           1.0.0
  * Requires at least: 6.6
