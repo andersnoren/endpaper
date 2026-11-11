@@ -28,6 +28,10 @@ require_once ENDPAPER_DIR . 'includes/colors.php';
 require_once ENDPAPER_DIR . 'includes/rest.php';
 require_once ENDPAPER_DIR . 'includes/theme-json.php';
 
+if ( is_admin() ) {
+	require_once ENDPAPER_DIR . 'includes/settings.php';
+}
+
 /**
  * Registers the Endpaper blocks.
  *

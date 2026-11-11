@@ -19,33 +19,61 @@ defined( 'ABSPATH' ) || exit;
 define( 'ENDPAPER_BOOK_FIELDS', 'id title slug description pages release_year rating ratings_count image { url } cached_contributors' );
 
 /**
- * Returns the Hardcover API token.
+ * Tidies up an API key: removes a leading "Bearer " and surrounding space.
  *
- * The token is read from the ENDPAPER_HARDCOVER_TOKEN constant, with or
- * without a leading "Bearer ".
+ * @param mixed $value The key as entered.
+ * @return string The bare key, or an empty string if it cannot be a key.
+ */
+function clean_token( $value ) {
+	if ( ! is_string( $value ) ) {
+		return '';
+	}
+
+	$token = trim( (string) preg_replace( '/^Bearer\s+/i', '', trim( $value ) ) );
+
+	// A key is one run of visible characters, with nothing that could break out of an HTTP header.
+	if ( strlen( $token ) > 4096 || ! preg_match( '/^[\x21-\x7E]+$/', $token ) ) {
+		return '';
+	}
+
+	return $token;
+}
+
+/**
+ * Returns the Hardcover API key.
  *
- * @return string The bare token, or an empty string if none is set.
+ * It comes from the ENDPAPER_HARDCOVER_TOKEN constant in wp-config.php if
+ * that is set, and otherwise from the settings screen.
+ *
+ * @return string The bare key, or an empty string if none is set.
  */
 function get_token() {
-	$token = defined( 'ENDPAPER_HARDCOVER_TOKEN' ) ? trim( (string) ENDPAPER_HARDCOVER_TOKEN ) : '';
+	if ( defined( 'ENDPAPER_HARDCOVER_TOKEN' ) ) {
+		$token = clean_token( ENDPAPER_HARDCOVER_TOKEN );
 
-	return trim( (string) preg_replace( '/^Bearer\s+/i', '', $token ) );
+		if ( '' !== $token ) {
+			return $token;
+		}
+	}
+
+	return clean_token( get_option( 'endpaper_hardcover_token', '' ) );
 }
 
 /**
  * Sends a GraphQL request to the Hardcover API.
  *
- * @param string $query     The GraphQL query.
- * @param array  $variables Optional. Query variables.
+ * @param string      $query     The GraphQL query.
+ * @param array       $variables Optional. Query variables.
+ * @param string|null $token     Optional. An API key to use in place of the saved one, to try it out before saving it.
  * @return array|WP_Error The "data" part of the response, or an error.
  */
-function api_request( $query, $variables = array() ) {
-	$token = get_token();
+function api_request( $query, $variables = array(), $token = null ) {
+	$token = null === $token ? get_token() : clean_token( $token );
 
 	if ( '' === $token ) {
 		return new WP_Error(
 			'endpaper_no_token',
-			__( 'No Hardcover API token found. Add the ENDPAPER_HARDCOVER_TOKEN constant to wp-config.php.', 'endpaper' ),
+			__( 'No Hardcover API key is saved. Add one under Settings, Endpaper.', 'endpaper' ),
 			array( 'status' => 400 )
 		);
 	}
@@ -78,7 +106,7 @@ function api_request( $query, $variables = array() ) {
 	if ( 401 === $code ) {
 		return new WP_Error(
 			'endpaper_unauthorized',
-			__( 'Hardcover rejected the API token. It may have expired or been reset.', 'endpaper' ),
+			__( 'Hardcover did not accept the API key. It may have expired or been deleted.', 'endpaper' ),
 			array( 'status' => 401 )
 		);
 	}

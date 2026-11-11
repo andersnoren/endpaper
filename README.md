@@ -113,17 +113,33 @@ Endpaper isn’t in the WordPress.org plugin directory yet, so for now it has to
 	npm run build
 	```
 
-3. Add your Hardcover API key to `wp-config.php`, above the line that says to stop editing:
+3. Activate Endpaper on the Plugins screen in WordPress.
 
-	```php
-	define( 'ENDPAPER_HARDCOVER_TOKEN', 'your-api-key' );
-	```
+4. Go to Settings, then Endpaper, and add your Hardcover API key. The screen explains how to create one, and which permissions it needs.
 
-4. Activate Endpaper on the Plugins screen in WordPress.
+To keep the key out of the database, define it in `wp-config.php` instead, above the line that says to stop editing. It then takes precedence over the settings screen:
+
+```php
+define( 'ENDPAPER_HARDCOVER_TOKEN', 'your-api-key' );
+```
+
+### Permissions for the API key
+
+Create the key without a preset, with these permissions and nothing else. A key cannot be changed after it is created, so the last two are worth ticking now.
+
+| Permission | Used for |
+| --- | --- |
+| `read:catalog` | Looking up and searching for books. |
+| `read:library:public` | Your reading lists, shelves and progress. Public entries only. |
+| `read:me:content` | Your username, to confirm whose key it is. |
+| `read:goals:public` | Your reading goals, for a block to come. |
+| `read:lists:public` | Your lists, for a block to come. |
+
+None of these let Endpaper change anything on Hardcover, or read anything you haven’t made public.
 
 ## How it uses the Hardcover API
 
-- **Your API key stays on your server.** All requests to Hardcover are made from PHP. The key is never sent to the browser.
+- **Your API key stays on your server.** All requests to Hardcover are made from PHP. The key is never sent to the browser, and the settings screen never shows a saved key. Deleting the plugin removes the key and everything it has cached.
 - **Requests are cached.** A book is fetched once and stored for a week, and a reading list is refreshed at most once an hour, so showing either doesn’t call Hardcover on every page view. Search requests are only made while you are searching in the editor.
 - **It keeps working if Hardcover can’t be reached.** If a request fails, the block shows the last copy it has.
 - **Cover images are loaded from Hardcover.** They are not copied to your media library.
