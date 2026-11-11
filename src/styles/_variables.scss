@@ -1,0 +1,12 @@
+/*
+ * Values shared by the block stylesheets.
+ */
+
+/*
+ * The accent color. It comes from the block's own Accent setting, then from
+ * the theme, which can set it in theme.json under
+ * settings.custom.endpaper.accent, for all blocks or for one block. Without
+ * either, it is the color named "accent" in the theme's palette, and failing
+ * that, the text color.
+ */
+$accent-color: var(--endpaper-accent, var(--wp--custom--endpaper--accent, var(--wp--preset--color--accent, currentcolor)));

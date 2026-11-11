@@ -26,6 +26,48 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Shows the cover, title, authors and your rating for each book, and your reading progress for books you are currently reading. Each part can be switched on or off.
 - Only shows books that are public on Hardcover, so a book you keep private there never appears on your site.
 
+## For theme authors
+
+The blocks have very little styling of their own, and support the standard color, typography, spacing, border and shadow settings. A theme can style them in `theme.json` like any core block, under `styles.blocks` with `endpaper/book` and `endpaper/reading-list`.
+
+Two settings are specific to Endpaper. A theme sets their defaults under `settings.custom`:
+
+```json
+{
+	"settings": {
+		"custom": {
+			"endpaper": {
+				"accent": "var(--wp--preset--color--primary)",
+				"coverRadius": "4px"
+			}
+		}
+	}
+}
+```
+
+- `accent` is the accent color, used for the reading progress bar. Without it, the blocks use the color with the slug `accent` in the theme’s palette, and failing that, the text color.
+- `coverRadius` is the corner radius of book covers. Without it, the radius is 4px.
+
+To set either for one block only, put the same `custom` settings under `settings.blocks`:
+
+```json
+{
+	"settings": {
+		"blocks": {
+			"endpaper/reading-list": {
+				"custom": {
+					"endpaper": {
+						"accent": "#c2410c"
+					}
+				}
+			}
+		}
+	}
+}
+```
+
+Both can also be changed for a single block in the editor, which takes precedence over the theme.
+
 ## Requirements
 
 - WordPress 6.6 or later

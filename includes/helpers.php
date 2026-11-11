@@ -143,3 +143,51 @@ function the_progress_bar( $progress, $class_name ) {
 		esc_html( $label )
 	);
 }
+
+/**
+ * Turns a color from the block editor into a CSS value.
+ *
+ * Accepts a hex color, an rgb() or hsl() color, or a reference to a color in
+ * the theme's palette, which is stored as "var:preset|color|{slug}". Anything
+ * else is rejected, so the result is safe to use in an inline style.
+ *
+ * @param mixed $value The stored value.
+ * @return string A CSS color, or an empty string if the value is not valid.
+ */
+function sanitize_css_color( $value ) {
+	if ( ! is_string( $value ) ) {
+		return '';
+	}
+
+	$value = trim( $value );
+
+	if ( preg_match( '/^var:preset\|color\|([a-zA-Z0-9_-]+)$/', $value, $matches ) ) {
+		return 'var(--wp--preset--color--' . _wp_to_kebab_case( $matches[1] ) . ')';
+	}
+
+	if ( preg_match( '/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $value ) ) {
+		return $value;
+	}
+
+	if ( preg_match( '/^(?:rgb|hsl)a?\([0-9.,%\/\s]+(?:deg)?[0-9.,%\/\s]*\)$/', $value ) ) {
+		return $value;
+	}
+
+	return '';
+}
+
+/**
+ * Returns the inline style that sets a block's accent color.
+ *
+ * The color is passed to the stylesheet as a custom property on the block
+ * wrapper. Without a value in the block attributes, nothing is returned and
+ * the stylesheet falls back to the theme's accent color.
+ *
+ * @param array $attributes Block attributes.
+ * @return string An inline style declaration, or an empty string.
+ */
+function get_accent_color_style( $attributes ) {
+	$value = sanitize_css_color( isset( $attributes['accentColor'] ) ? $attributes['accentColor'] : null );
+
+	return '' === $value ? '' : '--endpaper-accent: ' . $value . ';';
+}

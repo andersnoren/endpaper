@@ -13,6 +13,9 @@
 		"bookId": {
 			"type": "integer"
 		},
+		"accentColor": {
+			"type": "string"
+		},
 		"coverRadius": {
 			"type": [ "string", "object" ]
 		},

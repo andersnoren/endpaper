@@ -23,6 +23,9 @@
 			"enum": [ "list", "grid" ],
 			"default": "list"
 		},
+		"accentColor": {
+			"type": "string"
+		},
 		"coverRadius": {
 			"type": [ "string", "object" ]
 		},

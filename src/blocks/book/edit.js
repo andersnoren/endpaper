@@ -22,6 +22,7 @@ import ServerSideRender from '@wordpress/server-side-render';
  * Internal dependencies
  */
 import BookSearch from './book-search';
+import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
 import metadata from './block.json';
 import './editor.scss';
@@ -73,10 +74,11 @@ const DISPLAY_TOGGLES = [
  *
  * @param {Object}                       props               Component props.
  * @param {Object}                       props.attributes    Block attributes.
+ * @param {string}                       props.clientId      The block's client ID.
  * @param {(attributes: Object) => void} props.setAttributes Attribute setter.
  * @return {Element} The editor element.
  */
-export default function Edit( { attributes, setAttributes } ) {
+export default function Edit( { attributes, clientId, setAttributes } ) {
 	const blockProps = useBlockProps();
 
 	if ( ! attributes.bookId ) {
@@ -156,6 +158,12 @@ export default function Edit( { attributes, setAttributes } ) {
 					) }
 				</PanelBody>
 			</InspectorControls>
+
+			<AccentColorControl
+				clientId={ clientId }
+				value={ attributes.accentColor }
+				onChange={ ( accentColor ) => setAttributes( { accentColor } ) }
+			/>
 
 			{ attributes.showCover && (
 				<CoverRadiusPanel

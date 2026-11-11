@@ -19,6 +19,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 /**
  * Internal dependencies
  */
+import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
 import metadata from './block.json';
 
@@ -77,10 +78,11 @@ function getGapValue( blockGap ) {
  *
  * @param {Object}                       props               Component props.
  * @param {Object}                       props.attributes    Block attributes.
+ * @param {string}                       props.clientId      The block's client ID.
  * @param {(attributes: Object) => void} props.setAttributes Attribute setter.
  * @return {Element} The editor element.
  */
-export default function Edit( { attributes, setAttributes } ) {
+export default function Edit( { attributes, clientId, setAttributes } ) {
 	// The preview is rendered without the block's style settings, so the gap is set here.
 	const blockProps = useBlockProps( {
 		style: {
@@ -155,6 +157,12 @@ export default function Edit( { attributes, setAttributes } ) {
 					) ) }
 				</PanelBody>
 			</InspectorControls>
+
+			<AccentColorControl
+				clientId={ clientId }
+				value={ attributes.accentColor }
+				onChange={ ( accentColor ) => setAttributes( { accentColor } ) }
+			/>
 
 			{ attributes.showCover && (
 				<CoverRadiusPanel
