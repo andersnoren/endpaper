@@ -17,6 +17,7 @@ use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
+use function AndersNoren\Endpaper\has_card_frame;
 use function AndersNoren\Endpaper\the_progress_bar;
 use function AndersNoren\Endpaper\the_star_rating;
 
@@ -65,7 +66,7 @@ $endpaper_wrapper = get_block_wrapper_attributes(
 $endpaper_card_style = get_card_style( $attributes );
 ?>
 <div <?php echo $endpaper_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<div class="endpaper-reading-list__card"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
+	<div class="endpaper-reading-list__card<?php echo has_card_frame( $attributes ) ? ' endpaper-reading-list__card--framed' : ''; ?>"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
 		<ul class="endpaper-reading-list__items">
 
 			<?php foreach ( $endpaper_entries as $endpaper_entry ) : ?>

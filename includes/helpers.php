@@ -272,6 +272,26 @@ function get_card_style( $attributes ) {
 }
 
 /**
+ * Tells whether a block's card has been given a frame: a border, a background or a shadow.
+ *
+ * A framed card needs room between its edge and its contents.
+ *
+ * @param array $attributes Block attributes.
+ * @return bool Whether the card has a frame.
+ */
+function has_card_frame( $attributes ) {
+	$style = isset( $attributes['style'] ) && is_array( $attributes['style'] ) ? $attributes['style'] : array();
+
+	return ! empty( $attributes['borderColor'] )
+		|| ! empty( $attributes['backgroundColor'] )
+		|| ! empty( $attributes['gradient'] )
+		|| ! empty( $style['border'] )
+		|| ! empty( $style['color']['background'] )
+		|| ! empty( $style['color']['gradient'] )
+		|| ! empty( $style['shadow'] );
+}
+
+/**
  * Returns a star icon, as inline SVG.
  *
  * The shape is the filled star from the WordPress icon library. It takes the
