@@ -259,6 +259,136 @@ function get_book( $book_id ) {
 }
 
 /**
+ * Converts a raw edition from the API into the shape Endpaper uses.
+ *
+ * @param array $raw Raw edition.
+ * @return array Normalized edition.
+ */
+function normalize_edition( $raw ) {
+	$year = isset( $raw['release_date'] ) && is_string( $raw['release_date'] ) && preg_match( '/^\d{4}/', $raw['release_date'], $matches ) ? absint( $matches[0] ) : 0;
+
+	return array(
+		'id'       => isset( $raw['id'] ) ? absint( $raw['id'] ) : 0,
+		'book_id'  => isset( $raw['book_id'] ) ? absint( $raw['book_id'] ) : 0,
+		'title'    => isset( $raw['title'] ) ? sanitize_text_field( $raw['title'] ) : '',
+		'format'   => isset( $raw['edition_format'] ) ? sanitize_text_field( $raw['edition_format'] ) : '',
+		'language' => isset( $raw['language']['language'] ) ? sanitize_text_field( $raw['language']['language'] ) : '',
+		'year'     => $year,
+		'cover'    => isset( $raw['image']['url'] ) && is_string( $raw['image']['url'] ) ? esc_url_raw( $raw['image']['url'] ) : '',
+	);
+}
+
+/**
+ * Returns the editions of a book that have a cover, the most read first.
+ *
+ * Used by the editor, to pick a cover from. A failed request is not held
+ * against the other lookups: nothing on the site depends on this list.
+ *
+ * @param int $book_id Hardcover book ID.
+ * @return array|WP_Error List of normalized editions, or an error.
+ */
+function get_editions( $book_id ) {
+	$book_id = absint( $book_id );
+
+	if ( ! $book_id ) {
+		return new WP_Error( 'endpaper_invalid_book', __( 'No book selected.', 'endpaper' ), array( 'status' => 400 ) );
+	}
+
+	$cache_key = 'endpaper_editions_' . $book_id;
+	$cached    = get_transient( $cache_key );
+
+	if ( is_array( $cached ) ) {
+		return $cached;
+	}
+
+	$data = api_request(
+		'query EndpaperEditions($book_id: Int!) { editions(where: {book_id: {_eq: $book_id}}, order_by: {users_count: desc}, limit: 60) { id book_id title edition_format release_date image { url } language { language } } }',
+		array( 'book_id' => $book_id )
+	);
+
+	if ( is_wp_error( $data ) ) {
+		return $data;
+	}
+
+	$editions = array();
+	$covers   = array();
+
+	foreach ( isset( $data['editions'] ) && is_array( $data['editions'] ) ? $data['editions'] : array() as $raw_edition ) {
+		$edition = normalize_edition( is_array( $raw_edition ) ? $raw_edition : array() );
+
+		// Leave out editions without a cover, and editions that share a cover with one already listed.
+		if ( ! $edition['id'] || ! $edition['cover'] || isset( $covers[ $edition['cover'] ] ) ) {
+			continue;
+		}
+
+		$covers[ $edition['cover'] ] = true;
+		$editions[]                  = $edition;
+	}
+
+	$editions = array_slice( $editions, 0, 30 );
+
+	set_transient( $cache_key, $editions, DAY_IN_SECONDS );
+
+	return $editions;
+}
+
+/**
+ * Returns one edition by its Hardcover ID, from the cache when possible.
+ *
+ * Used to show the cover of an edition picked in the editor.
+ *
+ * @param int $edition_id Hardcover edition ID.
+ * @return array|WP_Error Normalized edition, or an error.
+ */
+function get_edition( $edition_id ) {
+	$edition_id = absint( $edition_id );
+
+	if ( ! $edition_id ) {
+		return new WP_Error( 'endpaper_invalid_edition', __( 'No edition selected.', 'endpaper' ), array( 'status' => 400 ) );
+	}
+
+	$cache_key = 'endpaper_edition_' . $edition_id;
+	$cached    = get_transient( $cache_key );
+	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['edition'] ) ? $cached['edition'] : null;
+
+	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < WEEK_IN_SECONDS ) {
+		return $stale;
+	}
+
+	// After a failed request, wait a few minutes before asking Hardcover again.
+	$backoff = get_transient( 'endpaper_api_backoff' );
+
+	if ( $backoff ) {
+		return null !== $stale ? $stale : new WP_Error( 'endpaper_backoff', (string) $backoff, array( 'status' => 503 ) );
+	}
+
+	$data = api_request(
+		'query EndpaperEdition($id: Int!) { editions(where: {id: {_eq: $id}}, limit: 1) { id book_id title edition_format release_date image { url } } }',
+		array( 'id' => $edition_id )
+	);
+
+	if ( is_wp_error( $data ) ) {
+		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+
+		return null !== $stale ? $stale : $data;
+	}
+
+	// An edition that no longer exists is stored as an empty one, so it is not looked up again on every page view.
+	$edition = normalize_edition( isset( $data['editions'][0] ) && is_array( $data['editions'][0] ) ? $data['editions'][0] : array() );
+
+	set_transient(
+		$cache_key,
+		array(
+			'fetched' => time(),
+			'edition' => $edition,
+		),
+		MONTH_IN_SECONDS
+	);
+
+	return $edition;
+}
+
+/**
  * Returns a book by its Hardcover slug.
  *
  * @param string $slug Book slug, as used in hardcover.app/books/{slug}.

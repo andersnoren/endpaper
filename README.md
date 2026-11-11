@@ -14,6 +14,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page.
 - Shows the book as a card: the cover, title, authors, a description, and a row with the publication year, page count and Hardcover rating.
 - Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
+- Uses the cover of the edition in your Hardcover library when the book is public there. You can pick the cover of another edition in the block’s settings.
 - Always credits Hardcover in the card, with their logo linked to the book there.
 - The other parts can be switched on or off. The description can be limited in length, and ends on a whole sentence where it can.
 - Sizes follow the block’s font size, and colors follow the text color, so the card fits light and dark designs alike.
@@ -24,7 +25,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Shows books from your own Hardcover library: the ones you are currently reading, have read, or want to read.
 - Comes with ready-made Currently Reading, Recently Read and Want to Read variations in the block inserter.
 - Can be shown as a list or as a grid of covers.
-- Shows the cover, title, authors and your rating for each book, and your reading progress for books you are currently reading. Each part can be switched on or off.
+- Shows the cover of your edition, the title, authors and your rating for each book, and your reading progress for books you are currently reading. Each part can be switched on or off.
 - Only shows books that are public on Hardcover, so a book you keep private there never appears on your site.
 
 ## For theme authors

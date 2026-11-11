@@ -13,6 +13,9 @@
 		"bookId": {
 			"type": "integer"
 		},
+		"editionId": {
+			"type": "integer"
+		},
 		"accentColor": {
 			"type": "string"
 		},

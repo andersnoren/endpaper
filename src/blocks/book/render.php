@@ -18,6 +18,7 @@ use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_book;
 use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
+use function AndersNoren\Endpaper\get_edition;
 use function AndersNoren\Endpaper\get_library_entry;
 use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_star_icon;
@@ -67,6 +68,17 @@ if ( is_wp_error( $endpaper_entry ) ) {
 
 // The edition in the library can have another cover than the one Hardcover shows for the book.
 $endpaper_cover = ! empty( $endpaper_entry['cover'] ) ? $endpaper_entry['cover'] : $endpaper_book['cover'];
+
+// An edition picked in the editor comes first. It is only used if it still exists and belongs to this book.
+$endpaper_edition_id = isset( $attributes['editionId'] ) ? absint( $attributes['editionId'] ) : 0;
+
+if ( $endpaper_edition_id && ! empty( $attributes['showCover'] ) ) {
+	$endpaper_edition = get_edition( $endpaper_edition_id );
+
+	if ( ! is_wp_error( $endpaper_edition ) && $endpaper_edition['cover'] && $endpaper_edition['book_id'] === $endpaper_book_id ) {
+		$endpaper_cover = $endpaper_edition['cover'];
+	}
+}
 
 $endpaper_shelves = get_shelf_labels();
 $endpaper_shelf   = $endpaper_entry && isset( $endpaper_shelves[ $endpaper_entry['status_id'] ] ) ? $endpaper_shelves[ $endpaper_entry['status_id'] ] : '';

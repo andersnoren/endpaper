@@ -56,6 +56,23 @@ function register_rest_routes() {
 			),
 		)
 	);
+
+	register_rest_route(
+		'endpaper/v1',
+		'/editions/(?P<book_id>\d+)',
+		array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => __NAMESPACE__ . '\rest_editions',
+			'permission_callback' => __NAMESPACE__ . '\rest_permission',
+			'args'                => array(
+				'book_id' => array(
+					'type'              => 'integer',
+					'required'          => true,
+					'sanitize_callback' => 'absint',
+				),
+			),
+		)
+	);
 }
 add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_routes' );
 
@@ -104,4 +121,14 @@ function rest_library_entry( $request ) {
 			'status_id' => isset( $entry['status_id'] ) ? absint( $entry['status_id'] ) : 0,
 		)
 	);
+}
+
+/**
+ * Handles a request for the editions of a book, for the cover picker.
+ *
+ * @param WP_REST_Request $request The request.
+ * @return WP_REST_Response|WP_Error List of editions with a cover, or an error.
+ */
+function rest_editions( $request ) {
+	return rest_ensure_response( get_editions( absint( $request->get_param( 'book_id' ) ) ) );
 }

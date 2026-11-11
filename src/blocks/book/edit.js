@@ -24,6 +24,7 @@ import ServerSideRender from '@wordpress/server-side-render';
  * Internal dependencies
  */
 import BookSearch from './book-search';
+import EditionPicker from './edition-picker';
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
@@ -123,7 +124,9 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 					) }
 				>
 					<BookSearch
-						onSelect={ ( bookId ) => setAttributes( { bookId } ) }
+						onSelect={ ( bookId ) =>
+							setAttributes( { bookId, editionId: undefined } )
+						}
 					/>
 				</Placeholder>
 			</div>
@@ -145,7 +148,12 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 			<BlockControls>
 				<ToolbarGroup>
 					<ToolbarButton
-						onClick={ () => setAttributes( { bookId: undefined } ) }
+						onClick={ () =>
+							setAttributes( {
+								bookId: undefined,
+								editionId: undefined,
+							} )
+						}
 					>
 						{ __( 'Replace', 'endpaper' ) }
 					</ToolbarButton>
@@ -204,6 +212,21 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						}
 					/>
 				</PanelBody>
+
+				{ attributes.showCover && (
+					<PanelBody
+						title={ __( 'Cover', 'endpaper' ) }
+						initialOpen={ false }
+					>
+						<EditionPicker
+							bookId={ attributes.bookId }
+							value={ attributes.editionId }
+							onChange={ ( editionId ) =>
+								setAttributes( { editionId } )
+							}
+						/>
+					</PanelBody>
+				) }
 			</InspectorControls>
 
 			<AccentColorControl

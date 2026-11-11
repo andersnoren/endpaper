@@ -16,6 +16,7 @@
 
 use function AndersNoren\Endpaper\format_date;
 use function AndersNoren\Endpaper\get_connection_status;
+use function AndersNoren\Endpaper\get_editions;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_token;
 use function AndersNoren\Endpaper\render_settings_page;
@@ -102,6 +103,48 @@ add_filter(
 
 		if ( false !== strpos( $query, 'EndpaperSearch' ) ) {
 			return $respond( 200, array( 'data' => array( 'search' => array( 'results' => array( 'hits' => array( array( 'document' => $book ) ) ) ) ) ) );
+		}
+
+		if ( false !== strpos( $query, 'EndpaperEditions' ) ) {
+			$edition = static function ( $id, $cover ) {
+				return array(
+					'id'             => $id,
+					'book_id'        => 42,
+					'title'          => 'The Stand',
+					'edition_format' => 'Paperback',
+					'release_date'   => '1990-05-01',
+					'image'          => $cover ? array( 'url' => 'https://assets.hardcover.app/' . $cover ) : null,
+					'language'       => array( 'language' => 'English' ),
+				);
+			};
+
+			// Four editions: two with covers of their own, one without a cover, and one that shares a cover.
+			return $respond( 200, array( 'data' => array( 'editions' => array( $edition( 101, 'edition-101.jpg' ), $edition( 102, null ), $edition( 103, 'edition-103.jpg' ), $edition( 104, 'edition-101.jpg' ) ) ) ) );
+		}
+
+		if ( false !== strpos( $query, 'EndpaperEdition(' ) ) {
+			$variables = json_decode( $args['body'], true )['variables'];
+
+			// Edition 103 belongs to book 42. Edition 900 belongs to another book. Anything else does not exist.
+			$editions = array(
+				103 => 42,
+				900 => 7,
+			);
+
+			return $respond(
+				200,
+				array(
+					'data' => array(
+						'editions' => isset( $editions[ $variables['id'] ] ) ? array(
+							array(
+								'id'      => $variables['id'],
+								'book_id' => $editions[ $variables['id'] ],
+								'image'   => array( 'url' => 'https://assets.hardcover.app/edition-' . $variables['id'] . '.jpg' ),
+							),
+						) : array(),
+					),
+				)
+			);
 		}
 
 		if ( false !== strpos( $query, 'EndpaperLibraryEntry' ) ) {
@@ -202,6 +245,20 @@ try {
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCover":false,"showMeta":false,"showRating":false,"showDescription":false,"linkToHardcover":false,"titleLevel":0} /-->' );
 	endpaper_check( 'it renders with everything switched off', false !== strpos( $endpaper_html, 'endpaper-book__title' ) && false === strpos( $endpaper_html, 'endpaper-book__cover' ) );
+
+	echo "Edition covers\n";
+	$endpaper_editions = get_editions( 42 );
+	endpaper_check( 'editions without a cover, or with one already listed, are left out', is_array( $endpaper_editions ) && array( 101, 103 ) === wp_list_pluck( $endpaper_editions, 'id' ) );
+	endpaper_check( 'an edition has a format, year and language', 'Paperback' === $endpaper_editions[0]['format'] && 1990 === $endpaper_editions[0]['year'] && 'English' === $endpaper_editions[0]['language'] );
+
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"editionId":103} /-->' );
+	endpaper_check( 'a picked edition decides the cover', false !== strpos( $endpaper_html, 'edition-103.jpg' ) && false === strpos( $endpaper_html, 'edition-entry.jpg' ) );
+
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"editionId":900} /-->' );
+	endpaper_check( 'an edition of another book is ignored', false === strpos( $endpaper_html, 'edition-900.jpg' ) && false !== strpos( $endpaper_html, 'edition-entry.jpg' ) );
+
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"editionId":555} /-->' );
+	endpaper_check( 'an edition that no longer exists is ignored', false !== strpos( $endpaper_html, 'edition-entry.jpg' ) );
 
 	echo "The Reading List block\n";
 

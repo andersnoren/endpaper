@@ -64,3 +64,48 @@
 .endpaper-book-search__details {
 	opacity: 0.7;
 }
+
+/*
+ * The cover picker in the sidebar.
+ */
+.endpaper-edition-picker__help {
+	opacity: 0.7;
+}
+
+.endpaper-edition-picker__list {
+	display: grid;
+	gap: 0.6em;
+	grid-template-columns: repeat(3, 1fr);
+	list-style: none;
+	margin: 0 0 1.25em;
+	padding: 0;
+}
+
+.endpaper-edition-picker__list li {
+	margin: 0;
+}
+
+.endpaper-edition-picker__edition.components-button {
+	background: transparent;
+	border-radius: 2px;
+	display: block;
+	height: auto;
+	padding: 0;
+	width: 100%;
+}
+
+.endpaper-edition-picker__edition img {
+	aspect-ratio: 2 / 3;
+	background: #ddd;
+	border-radius: 2px;
+	display: block;
+	object-fit: cover;
+	width: 100%;
+}
+
+/* The picked edition gets a ring in the editor's own highlight colour. */
+.endpaper-edition-picker__edition.components-button.is-pressed,
+.endpaper-edition-picker__edition.components-button.is-pressed:hover:not(:disabled) {
+	background: transparent;
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wp-admin-theme-color, #3858e9);
+}
