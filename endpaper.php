@@ -26,9 +26,20 @@ require_once ENDPAPER_DIR . 'includes/rest.php';
 /**
  * Registers the Endpaper blocks.
  *
+ * Every folder in build/blocks/ with a block.json file is registered as a block.
+ * The build folder is generated from src/ by `npm run build`.
+ *
  * @return void
  */
 function endpaper_register_blocks() {
-	register_block_type( ENDPAPER_DIR . 'blocks/book' );
+	$endpaper_blocks = glob( ENDPAPER_DIR . 'build/blocks/*/block.json' );
+
+	if ( ! $endpaper_blocks ) {
+		return;
+	}
+
+	foreach ( $endpaper_blocks as $endpaper_block ) {
+		register_block_type( dirname( $endpaper_block ) );
+	}
 }
 add_action( 'init', 'endpaper_register_blocks' );
