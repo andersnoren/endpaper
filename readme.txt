@@ -94,6 +94,10 @@ Yes. Both blocks support the color, typography, spacing, border and shadow setti
 
 The API key and everything the plugin has stored are removed.
 
+= What happens when my API key expires? =
+
+Hardcover keys can have an end date. When Hardcover stops accepting the key, the blocks keep showing what they last fetched for a while, and administrators see a notice in the admin with a link to the settings. Site Health reports it too. Save a new key and everything picks up again.
+
 == Screenshots ==
 
 1. The Book block.

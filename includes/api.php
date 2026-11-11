@@ -60,6 +60,42 @@ function get_token() {
 }
 
 /**
+ * Returns when an API key expires, if the key itself says so.
+ *
+ * Some keys are tokens with an expiry time written into them, readable
+ * without Hardcover's help. For any other kind of key nothing is known.
+ *
+ * @param string $token An API key.
+ * @return int The time the key expires, as a Unix timestamp, or 0 if it does not say.
+ */
+function get_token_expiry( $token ) {
+	$parts = explode( '.', (string) $token );
+
+	if ( 3 !== count( $parts ) ) {
+		return 0;
+	}
+
+	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- This is how the middle part of such a token is read. Nothing in it is run.
+	$claims = json_decode( (string) base64_decode( strtr( $parts[1], '-_', '+/' ), true ), true );
+
+	return is_array( $claims ) && isset( $claims['exp'] ) && is_numeric( $claims['exp'] ) && $claims['exp'] > 0 ? (int) $claims['exp'] : 0;
+}
+
+/**
+ * Tells whether Hardcover has turned down the saved API key.
+ *
+ * That is noted when it happens, and cleared the next time the key is
+ * accepted or replaced. See api_request().
+ *
+ * @return bool Whether the key in use was rejected the last time it was tried.
+ */
+function is_token_rejected() {
+	$token = get_token();
+
+	return '' !== $token && get_transient( 'endpaper_key_rejected' ) === substr( md5( $token ), 0, 10 );
+}
+
+/**
  * Sends a GraphQL request to the Hardcover API.
  *
  * @param string      $query     The GraphQL query.
@@ -68,7 +104,9 @@ function get_token() {
  * @return array|WP_Error The "data" part of the response, or an error.
  */
 function api_request( $query, $variables = array(), $token = null ) {
-	$token = null === $token ? get_token() : clean_token( $token );
+	// Only what happens to the saved key is noted, not to one that is being tried out.
+	$is_saved = null === $token;
+	$token    = $is_saved ? get_token() : clean_token( $token );
 
 	if ( '' === $token ) {
 		return new WP_Error(
@@ -104,6 +142,11 @@ function api_request( $query, $variables = array(), $token = null ) {
 	$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 	if ( 401 === $code ) {
+		// Note that the key was turned down, so that the site's administrators can be told. Without an end date, it stays until it is cleared.
+		if ( $is_saved ) {
+			set_transient( 'endpaper_key_rejected', substr( md5( $token ), 0, 10 ) );
+		}
+
 		return new WP_Error(
 			'endpaper_unauthorized',
 			__( 'Hardcover did not accept the API key. It may have expired or been deleted.', 'endpaper' ),
@@ -134,6 +177,11 @@ function api_request( $query, $variables = array(), $token = null ) {
 			sprintf( __( 'Hardcover returned an unexpected response (HTTP %d).', 'endpaper' ), $code ),
 			array( 'status' => 502 )
 		);
+	}
+
+	// Hardcover took the key, so an earlier rejection no longer stands.
+	if ( $is_saved && false !== get_transient( 'endpaper_key_rejected' ) ) {
+		delete_transient( 'endpaper_key_rejected' );
 	}
 
 	return isset( $body['data'] ) && is_array( $body['data'] ) ? $body['data'] : array();

@@ -15,13 +15,19 @@
  */
 
 use function AndersNoren\Endpaper\format_date;
+use function AndersNoren\Endpaper\api_request;
 use function AndersNoren\Endpaper\get_connection_status;
 use function AndersNoren\Endpaper\get_editions;
+use function AndersNoren\Endpaper\get_key_problem;
+use function AndersNoren\Endpaper\get_site_health_result;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_token;
+use function AndersNoren\Endpaper\get_token_expiry;
+use function AndersNoren\Endpaper\is_token_rejected;
 use function AndersNoren\Endpaper\render_settings_page;
 use function AndersNoren\Endpaper\sanitize_token_setting;
 use function AndersNoren\Endpaper\search_books;
+use function AndersNoren\Endpaper\the_key_notice;
 use function AndersNoren\Endpaper\trim_to_sentence;
 
 defined( 'ABSPATH' ) || exit;
@@ -225,7 +231,28 @@ try {
 	endpaper_check( 'a key Hardcover rejects is not saved', '' === sanitize_token_setting( 'wrong-key' ) );
 	endpaper_check( 'a valid key is saved, without "Bearer"', 'smoke-test-key' === sanitize_token_setting( ' Bearer smoke-test-key ' ) );
 
+	echo "A key that stops working\n";
+	update_option( 'endpaper_hardcover_token', 'key-that-expired' );
+	api_request( 'query EndpaperConnection { me { username } }' );
+	endpaper_check( 'a rejected key is noted', is_token_rejected() && 'rejected' === get_key_problem()['problem'] );
+	endpaper_check( 'Site Health reports it as critical', 'critical' === get_site_health_result()['status'] );
+
+	ob_start();
+	wp_set_current_user( 1 );
+	the_key_notice();
+	$endpaper_html = ob_get_clean();
+	wp_set_current_user( 0 );
+	endpaper_check( 'administrators get a notice, without the key in it', false !== strpos( $endpaper_html, 'notice-error' ) && false === strpos( $endpaper_html, 'key-that-expired' ) );
+
+	delete_transient( 'endpaper_api_backoff' );
 	update_option( 'endpaper_hardcover_token', 'smoke-test-key' );
+	api_request( 'query EndpaperConnection { me { username } }' );
+	endpaper_check( 'a key that works clears the note', ! is_token_rejected() && 'none' === get_key_problem()['problem'] && 'good' === get_site_health_result()['status'] );
+
+	$endpaper_expiry = time() + 5 * DAY_IN_SECONDS;
+	$endpaper_claims = rtrim( strtr( base64_encode( (string) wp_json_encode( array( 'exp' => $endpaper_expiry ) ) ), '+/', '-_' ), '=' ); // phpcs:ignore -- Builds a token to test with.
+	endpaper_check( 'the expiry time of a token is read', get_token_expiry( 'aaa.' . $endpaper_claims . '.bbb' ) === $endpaper_expiry && 0 === get_token_expiry( 'smoke-test-key' ) && 0 === get_token_expiry( 'a.b.c' ) );
+
 
 	$endpaper_status = get_connection_status();
 	endpaper_check( 'the connection check names the account', 'connected' === $endpaper_status['state'] && 'smoke' === $endpaper_status['username'] );
