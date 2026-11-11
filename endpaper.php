@@ -48,10 +48,47 @@ function register_blocks() {
 	}
 
 	foreach ( $blocks as $block ) {
-		register_block_type( dirname( $block ) );
+		$block_type = register_block_type( dirname( $block ) );
+
+		if ( $block_type ) {
+			set_block_style_versions( $block_type, dirname( $block ) . '/index.asset.php' );
+		}
 	}
 }
 add_action( 'init', __NAMESPACE__ . '\register_blocks' );
+
+/**
+ * Gives a block's stylesheets the version of its latest build.
+ *
+ * WordPress versions a block's stylesheets by the version in block.json,
+ * which only changes when someone remembers to change it. Browsers would
+ * then keep showing an old stylesheet after an update. The build writes a
+ * new version to index.asset.php every time anything changes, so that is
+ * used instead.
+ *
+ * @param \WP_Block_Type $block_type The registered block.
+ * @param string         $asset_file Path to the block's index.asset.php.
+ * @return void
+ */
+function set_block_style_versions( $block_type, $asset_file ) {
+	if ( ! is_readable( $asset_file ) ) {
+		return;
+	}
+
+	$asset = include $asset_file;
+
+	if ( ! is_array( $asset ) || empty( $asset['version'] ) ) {
+		return;
+	}
+
+	$styles = wp_styles();
+
+	foreach ( array_merge( $block_type->style_handles, $block_type->editor_style_handles ) as $handle ) {
+		if ( isset( $styles->registered[ $handle ] ) ) {
+			$styles->registered[ $handle ]->ver = $asset['version'];
+		}
+	}
+}
 
 /**
  * Notes that the plugin was just activated, so the next screen can be the settings screen.
