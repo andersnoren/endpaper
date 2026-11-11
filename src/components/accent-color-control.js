@@ -20,7 +20,7 @@ const PRESET_PATTERN = /^var:preset\|color\|(.+)$/;
  * Accent color setting, added to the block's Color panel. Shared by all blocks.
  *
  * Without a value, the block uses the accent color the theme sets, or the
- * text color if the theme sets none.
+ * plugin's own default if the theme sets none.
  *
  * @param {Object}                            props          Component props.
  * @param {string}                            props.clientId The block's client ID.
