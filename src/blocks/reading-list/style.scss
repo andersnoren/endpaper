@@ -205,14 +205,15 @@ $gap: var(--endpaper-gap, 1.5em);
 /*
  * With Link to Hardcover on, the title and the cover are links. The title
  * keeps looking like a title, and is underlined on hover. The cover fades a
- * little.
+ * little. The title's class is repeated to outweigh themes that underline
+ * every link in the content, such as Twenty Nineteen.
  */
-.wp-block-endpaper-reading-list .endpaper-reading-list__title a {
+.wp-block-endpaper-reading-list .endpaper-reading-list__title.endpaper-reading-list__title a {
 	color: inherit;
 	text-decoration: none;
 }
 
-.wp-block-endpaper-reading-list .endpaper-reading-list__title a:hover {
+.wp-block-endpaper-reading-list .endpaper-reading-list__title.endpaper-reading-list__title a:hover {
 	text-decoration: underline;
 }
 
