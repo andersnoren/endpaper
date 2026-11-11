@@ -111,17 +111,6 @@
 			"__experimentalSkipSerialization": true
 		}
 	},
-	"styles": [
-		{
-			"name": "default",
-			"label": "Default",
-			"isDefault": true
-		},
-		{
-			"name": "card",
-			"label": "Card"
-		}
-	],
 	"selectors": {
 		"root": ".wp-block-endpaper-reading-list",
 		"border": ".wp-block-endpaper-reading-list .endpaper-reading-list__card",

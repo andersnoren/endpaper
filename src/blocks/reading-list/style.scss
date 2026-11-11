@@ -19,15 +19,9 @@ $gap: var(--endpaper-gap, 1.5em);
 }
 
 /*
- * By default the list sits in the page without a frame. The Card style gives
- * it the same border as the Book block.
+ * By default the list sits in the page without a frame. One that is given a
+ * border, a background or a shadow gets room inside it, and rounded corners.
  */
-:where(.wp-block-endpaper-reading-list.is-style-card .endpaper-reading-list__card) {
-	border: 1px solid $border-color;
-}
-
-/* A framed list gets room inside the frame, and rounded corners. */
-:where(.wp-block-endpaper-reading-list.is-style-card .endpaper-reading-list__card),
 :where(.endpaper-reading-list__card--framed) {
 	border-radius: 1em;
 	padding: 1.5em;
@@ -240,7 +234,6 @@ $gap: var(--endpaper-gap, 1.5em);
 	opacity: $muted-opacity;
 }
 
-.is-style-card .endpaper-reading-list__attribution,
 .endpaper-reading-list__card--framed + .endpaper-reading-list__attribution {
 	text-align: center;
 }
