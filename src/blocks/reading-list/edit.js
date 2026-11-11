@@ -52,6 +52,25 @@ const DISPLAY_TOGGLES = [
 ];
 
 /**
+ * Turns the Block spacing setting into a CSS value.
+ *
+ * The setting is either a plain length, or a reference to one of the theme's
+ * spacing presets, stored as "var:preset|spacing|{slug}".
+ *
+ * @param {string|undefined} blockGap The stored setting.
+ * @return {string|undefined} A CSS value, or undefined if nothing is set.
+ */
+function getGapValue( blockGap ) {
+	if ( typeof blockGap !== 'string' || ! blockGap ) {
+		return undefined;
+	}
+
+	const preset = blockGap.match( /^var:preset\|spacing\|(.+)$/ );
+
+	return preset ? `var(--wp--preset--spacing--${ preset[ 1 ] })` : blockGap;
+}
+
+/**
  * Editor component for the Reading List block.
  *
  * The list itself comes from the server, so the editor shows a server-rendered preview.
@@ -62,7 +81,14 @@ const DISPLAY_TOGGLES = [
  * @return {Element} The editor element.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const blockProps = useBlockProps();
+	// The preview is rendered without the block's style settings, so the gap is set here.
+	const blockProps = useBlockProps( {
+		style: {
+			'--endpaper-gap': getGapValue(
+				attributes.style?.spacing?.blockGap
+			),
+		},
+	} );
 
 	return (
 		<>

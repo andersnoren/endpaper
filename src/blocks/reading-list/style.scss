@@ -12,7 +12,9 @@
 
 .endpaper-reading-list__items {
 	display: grid;
-	gap: var(--wp--style--block-gap, 1.5rem);
+
+	/* The gap comes from the Block spacing setting, then from the theme. */
+	gap: var(--endpaper-gap, var(--wp--style--block-gap, 1.5rem));
 	list-style: none;
 	margin: 0;
 	padding: 0;

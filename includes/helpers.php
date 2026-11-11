@@ -44,24 +44,25 @@ function format_text( $text ) {
 }
 
 /**
- * Turns one radius value from the block editor into a CSS value.
+ * Turns a length from the block editor into a CSS value.
  *
- * Accepts a length such as "8px" or "50%", or a reference to one of the
- * theme's radius presets, which the editor stores as
- * "var:preset|border-radius|{slug}".
+ * Accepts a plain length such as "8px" or "50%", or a reference to one of the
+ * theme's presets, which the editor stores as "var:preset|{type}|{slug}".
+ * Anything else is rejected, so the result is safe to use in an inline style.
  *
- * @param mixed $value The stored value.
+ * @param mixed  $value       The stored value.
+ * @param string $preset_type The kind of preset the value may refer to: "border-radius" or "spacing".
  * @return string A CSS value, or an empty string if the value is not valid.
  */
-function sanitize_radius_value( $value ) {
+function sanitize_css_length( $value, $preset_type ) {
 	if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
 		return '';
 	}
 
 	$value = trim( (string) $value );
 
-	if ( preg_match( '/^var:preset\|border-radius\|([a-zA-Z0-9_-]+)$/', $value, $matches ) ) {
-		return 'var(--wp--preset--border-radius--' . _wp_to_kebab_case( $matches[1] ) . ')';
+	if ( preg_match( '/^var:preset\|' . preg_quote( $preset_type, '/' ) . '\|([a-zA-Z0-9_-]+)$/', $value, $matches ) ) {
+		return 'var(--wp--preset--' . $preset_type . '--' . _wp_to_kebab_case( $matches[1] ) . ')';
 	}
 
 	if ( preg_match( '/^(\d*\.?\d+)(px|%|em|rem|vw|vh)?$/', $value, $matches ) ) {
@@ -90,7 +91,7 @@ function get_cover_radius_style( $attributes ) {
 		$corners = array();
 
 		foreach ( array( 'topLeft', 'topRight', 'bottomRight', 'bottomLeft' ) as $corner ) {
-			$corners[] = isset( $radius[ $corner ] ) ? sanitize_radius_value( $radius[ $corner ] ) : '';
+			$corners[] = isset( $radius[ $corner ] ) ? sanitize_css_length( $radius[ $corner ], 'border-radius' ) : '';
 		}
 
 		if ( ! array_filter( $corners, 'strlen' ) ) {
@@ -99,8 +100,25 @@ function get_cover_radius_style( $attributes ) {
 
 		$value = implode( ' ', array_map( static fn( $corner ) => '' === $corner ? '0' : $corner, $corners ) );
 	} else {
-		$value = sanitize_radius_value( $radius );
+		$value = sanitize_css_length( $radius, 'border-radius' );
 	}
 
 	return '' === $value ? '' : '--endpaper-cover-radius: ' . $value . ';';
+}
+
+/**
+ * Returns the inline style that sets the gap between the items of a block.
+ *
+ * Reads the Block spacing setting. WordPress only applies that setting itself
+ * for blocks that use its layout system, so it is passed to the stylesheet as
+ * a custom property on the block wrapper instead.
+ *
+ * @param array $attributes Block attributes.
+ * @return string An inline style declaration, or an empty string.
+ */
+function get_block_gap_style( $attributes ) {
+	$gap   = isset( $attributes['style']['spacing']['blockGap'] ) ? $attributes['style']['spacing']['blockGap'] : null;
+	$value = sanitize_css_length( $gap, 'spacing' );
+
+	return '' === $value ? '' : '--endpaper-gap: ' . $value . ';';
 }

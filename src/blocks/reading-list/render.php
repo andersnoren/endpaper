@@ -10,6 +10,7 @@
  */
 
 use function AndersNoren\Endpaper\format_text;
+use function AndersNoren\Endpaper\get_block_gap_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
@@ -47,7 +48,7 @@ if ( $endpaper_notice ) {
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
 		'class' => 'endpaper-reading-list--' . $endpaper_layout,
-		'style' => get_cover_radius_style( $attributes ),
+		'style' => get_cover_radius_style( $attributes ) . get_block_gap_style( $attributes ),
 	)
 );
 ?>
