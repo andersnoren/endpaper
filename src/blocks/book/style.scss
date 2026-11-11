@@ -155,7 +155,7 @@
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.75em 0.5em;
+	gap: 1em 0.5em;
 	justify-content: space-between;
 }
 
@@ -174,11 +174,11 @@
 	opacity: 0.75;
 }
 
-/* The logo is as tall as a line of text, and scales with the font size. */
+/* The logo is 18px tall at the default size, and scales with the font size. */
 .endpaper-book__credit .endpaper-logo {
 	display: block;
 	fill: currentcolor;
-	height: 1em;
+	height: 1.125em;
 	width: auto;
 }
 
