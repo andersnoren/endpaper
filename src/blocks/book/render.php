@@ -170,16 +170,17 @@ $endpaper_card_style = get_card_style( $attributes );
 
 				<?php if ( $endpaper_my_rating || $endpaper_show_progress || $endpaper_show_shelf ) : ?>
 					<div class="endpaper-book__mine">
+						<?php // The shelf comes first and the progress last, with the rating between them. Only one of the two is ever shown. ?>
+						<?php if ( $endpaper_show_shelf ) : ?>
+							<p class="endpaper-book__shelf"><span><?php echo esc_html( $endpaper_shelf ); ?></span></p>
+						<?php endif; ?>
+
 						<?php if ( $endpaper_my_rating ) : ?>
 							<?php the_star_rating( $endpaper_my_rating, 'endpaper-book__my-rating' ); ?>
 						<?php endif; ?>
 
 						<?php if ( $endpaper_show_progress ) : ?>
 							<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
-						<?php endif; ?>
-
-						<?php if ( $endpaper_show_shelf ) : ?>
-							<p class="endpaper-book__shelf"><span><?php echo esc_html( $endpaper_shelf ); ?></span></p>
 						<?php endif; ?>
 					</div>
 				<?php endif; ?>
