@@ -198,6 +198,30 @@ $gap: var(--endpaper-gap, 1.5em);
 	transform: scaleX(-1);
 }
 
+/*
+ * With Link to Hardcover on, the title and the cover are links. The title
+ * keeps looking like a title, and is underlined on hover. The cover fades a
+ * little.
+ */
+.wp-block-endpaper-reading-list .endpaper-reading-list__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.wp-block-endpaper-reading-list .endpaper-reading-list__title a:hover {
+	text-decoration: underline;
+}
+
+.endpaper-reading-list__cover a {
+	border-radius: inherit;
+	display: block;
+	transition: opacity 0.15s ease;
+}
+
+.endpaper-reading-list__cover a:hover {
+	opacity: 0.85;
+}
+
 .endpaper-reading-list__attribution {
 	font-size: $small-font-size;
 	opacity: $muted-opacity;

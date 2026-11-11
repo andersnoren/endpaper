@@ -71,6 +71,7 @@ $endpaper_card_style = get_card_style( $attributes );
 			<?php foreach ( $endpaper_entries as $endpaper_entry ) : ?>
 				<?php
 				$endpaper_book     = $endpaper_entry['book'];
+				$endpaper_link     = ! empty( $attributes['linkToHardcover'] ) && $endpaper_book['url'] ? $endpaper_book['url'] : '';
 				$endpaper_rating   = $endpaper_with_rating && $endpaper_entry['rating'] > 0 ? $endpaper_entry['rating'] : 0;
 				$endpaper_finished = $endpaper_with_date && ! empty( $endpaper_entry['finished'] ) ? format_date( $endpaper_entry['finished'] ) : '';
 				?>
@@ -78,10 +79,16 @@ $endpaper_card_style = get_card_style( $attributes );
 
 					<?php if ( ! empty( $attributes['showCover'] ) ) : ?>
 						<figure class="endpaper-reading-list__cover">
+							<?php if ( $endpaper_link ) : ?>
+								<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
+							<?php endif; ?>
 							<?php if ( $endpaper_book['cover'] ) : ?>
 								<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
 							<?php else : ?>
 								<span class="endpaper-cover-placeholder"></span>
+							<?php endif; ?>
+							<?php if ( $endpaper_link ) : ?>
+								</a>
 							<?php endif; ?>
 						</figure>
 					<?php endif; ?>
@@ -89,7 +96,13 @@ $endpaper_card_style = get_card_style( $attributes );
 					<div class="endpaper-reading-list__content">
 
 						<div class="endpaper-reading-list__header">
-							<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-reading-list__title"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></<?php echo tag_escape( $endpaper_tag ); ?>>
+							<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-reading-list__title">
+								<?php if ( $endpaper_link ) : ?>
+									<a href="<?php echo esc_url( $endpaper_link ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
+								<?php else : ?>
+									<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
+								<?php endif; ?>
+							</<?php echo tag_escape( $endpaper_tag ); ?>>
 
 							<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
 								<p class="endpaper-reading-list__authors">

@@ -15,7 +15,7 @@
 }
 
 /* Keep links in the preview from navigating away from the editor. */
-.wp-block-endpaper-book .endpaper-book__attribution a {
+.wp-block-endpaper-book a {
 	pointer-events: none;
 }
 

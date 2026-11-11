@@ -55,6 +55,9 @@ $endpaper_tag = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes[
 // The credit line under the card is always shown, and is the only link to Hardcover. It goes to the book's page there.
 $endpaper_url = $endpaper_book['url'] ? $endpaper_book['url'] : 'https://hardcover.app/';
 
+// The title and the cover link to the book on Hardcover, if that is switched on. The credit line always links.
+$endpaper_link = ! empty( $attributes['linkToHardcover'] ) && $endpaper_book['url'] ? $endpaper_book['url'] : '';
+
 // The shelf and progress come from the site owner's own library. They are extras, so a failed lookup never hides the book.
 $endpaper_entry = array();
 
@@ -118,10 +121,16 @@ $endpaper_card_style = get_card_style( $attributes );
 
 		<?php if ( ! empty( $attributes['showCover'] ) ) : ?>
 			<figure class="endpaper-book__cover">
+				<?php if ( $endpaper_link ) : ?>
+					<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
+				<?php endif; ?>
 				<?php if ( $endpaper_book['cover'] ) : ?>
 					<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
 				<?php else : ?>
 					<span class="endpaper-cover-placeholder"></span>
+				<?php endif; ?>
+				<?php if ( $endpaper_link ) : ?>
+					</a>
 				<?php endif; ?>
 			</figure>
 		<?php endif; ?>
@@ -130,7 +139,13 @@ $endpaper_card_style = get_card_style( $attributes );
 			<div class="endpaper-book__main">
 
 				<div class="endpaper-book__header">
-					<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-book__title"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></<?php echo tag_escape( $endpaper_tag ); ?>>
+					<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-book__title">
+						<?php if ( $endpaper_link ) : ?>
+							<a href="<?php echo esc_url( $endpaper_link ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
+						<?php else : ?>
+							<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
+						<?php endif; ?>
+					</<?php echo tag_escape( $endpaper_tag ); ?>>
 
 					<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
 						<p class="endpaper-book__authors">

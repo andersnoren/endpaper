@@ -52,6 +52,10 @@
 		"showProgress": {
 			"type": "boolean",
 			"default": true
+		},
+		"linkToHardcover": {
+			"type": "boolean",
+			"default": true
 		}
 	},
 	"supports": {

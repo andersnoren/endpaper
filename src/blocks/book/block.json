@@ -54,6 +54,10 @@
 		"descriptionLength": {
 			"type": "integer",
 			"default": 280
+		},
+		"linkToHardcover": {
+			"type": "boolean",
+			"default": true
 		}
 	},
 	"supports": {

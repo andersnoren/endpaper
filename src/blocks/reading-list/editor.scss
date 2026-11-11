@@ -15,6 +15,6 @@
 }
 
 /* Keep links in the preview from navigating away from the editor. */
-.wp-block-endpaper-reading-list .endpaper-reading-list__attribution a {
+.wp-block-endpaper-reading-list a {
 	pointer-events: none;
 }

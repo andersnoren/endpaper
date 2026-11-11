@@ -190,6 +190,19 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 							}
 						/>
 					) }
+
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Link to Hardcover', 'endpaper' ) }
+						help={ __(
+							'Links the title and the cover to the book on Hardcover.',
+							'endpaper'
+						) }
+						checked={ !! attributes.linkToHardcover }
+						onChange={ ( linkToHardcover ) =>
+							setAttributes( { linkToHardcover } )
+						}
+					/>
 				</PanelBody>
 			</InspectorControls>
 

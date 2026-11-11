@@ -72,6 +72,14 @@ const DISPLAY_TOGGLES = [
 		onlyForStatus: READ,
 		label: __( 'Date finished', 'endpaper' ),
 	},
+	{
+		attribute: 'linkToHardcover',
+		label: __( 'Link to Hardcover', 'endpaper' ),
+		help: __(
+			'Links the title and the cover to the book on Hardcover.',
+			'endpaper'
+		),
+	},
 ];
 
 /**
@@ -170,11 +178,12 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						( { onlyForStatus } ) =>
 							! onlyForStatus ||
 							onlyForStatus === attributes.status
-					).map( ( { attribute, label } ) => (
+					).map( ( { attribute, label, help } ) => (
 						<ToggleControl
 							key={ attribute }
 							__nextHasNoMarginBottom
 							label={ label }
+							help={ help }
 							checked={ !! attributes[ attribute ] }
 							onChange={ ( value ) =>
 								setAttributes( { [ attribute ]: value } )
