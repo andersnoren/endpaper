@@ -57,7 +57,7 @@ The service is provided by Hardcover: [terms of service](https://hardcover.app/p
 
 1. Install and activate Endpaper.
 2. Go to Settings, then Endpaper.
-3. Create an API key on Hardcover, with the permissions listed on that screen, and paste it in.
+3. Use the button on that screen to create an API key on Hardcover, with the right permissions already ticked, and paste it in.
 4. Add a Book or a Reading List block to a post or a page.
 
 To keep the key out of the database, you can define it in `wp-config.php` instead:

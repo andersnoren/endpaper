@@ -17,7 +17,7 @@ define( 'ENDPAPER_TOKEN_OPTION', 'endpaper_hardcover_token' );
 /**
  * Where a person creates an API key on Hardcover.
  */
-define( 'ENDPAPER_KEYS_URL', 'https://hardcover.app/account/api' );
+define( 'ENDPAPER_NEW_KEY_URL', 'https://hardcover.app/account/api/keys/new' );
 
 /**
  * Returns the URL of the settings screen.
@@ -414,6 +414,30 @@ function the_connection_notice() {
 }
 
 /**
+ * Returns the permissions an API key needs, and what each is for.
+ *
+ * @return array What each permission is for, by its name on Hardcover.
+ */
+function get_key_scopes() {
+	return array(
+		'read:catalog'        => __( 'Looking up and searching for books.', 'endpaper' ),
+		'read:library:public' => __( 'Your reading lists, shelves and progress. Public entries only.', 'endpaper' ),
+		'read:me:content'     => __( 'Your username, to confirm whose key it is.', 'endpaper' ),
+		'read:goals:public'   => __( 'Your reading goals, for a block to come.', 'endpaper' ),
+		'read:lists:public'   => __( 'Your lists, for a block to come.', 'endpaper' ),
+	);
+}
+
+/**
+ * Returns the link to Hardcover's form for a new API key, with the permissions Endpaper needs already ticked.
+ *
+ * @return string The URL.
+ */
+function get_new_key_url() {
+	return ENDPAPER_NEW_KEY_URL . '?scope=' . rawurlencode( implode( ' ', array_keys( get_key_scopes() ) ) );
+}
+
+/**
  * Outputs the settings screen.
  *
  * The saved key is never output, not even in part. When one is saved, the
@@ -430,14 +454,7 @@ function render_settings_page() {
 	$in_config = is_token_in_config();
 	$has_token = '' !== get_token();
 
-	// The permissions a key needs, and what each is for.
-	$scopes = array(
-		'read:catalog'        => __( 'Looking up and searching for books.', 'endpaper' ),
-		'read:library:public' => __( 'Your reading lists, shelves and progress. Public entries only.', 'endpaper' ),
-		'read:me:content'     => __( 'Your username, to confirm whose key it is.', 'endpaper' ),
-		'read:goals:public'   => __( 'Your reading goals, for a block to come.', 'endpaper' ),
-		'read:lists:public'   => __( 'Your lists, for a block to come.', 'endpaper' ),
-	);
+	$scopes = get_key_scopes();
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Endpaper', 'endpaper' ); ?></h1>
@@ -498,18 +515,21 @@ function render_settings_page() {
 		<h2><?php esc_html_e( 'Creating a key', 'endpaper' ); ?></h2>
 
 		<ol>
-			<li>
-				<?php
-				printf(
-					/* translators: %s: Link to Hardcover's API keys page. */
-					esc_html__( 'On Hardcover, go to %s and create a new API key.', 'endpaper' ),
-					'<a href="' . esc_url( ENDPAPER_KEYS_URL ) . '">' . esc_html__( 'your API keys', 'endpaper' ) . '</a>'
-				);
-				?>
-			</li>
-			<li><?php esc_html_e( 'Choose when it expires. With “Never” you will not have to replace it.', 'endpaper' ); ?></li>
-			<li><?php esc_html_e( 'Do not start from a preset. Tick these permissions and nothing else:', 'endpaper' ); ?></li>
+			<li><?php esc_html_e( 'Open the form for a new key on Hardcover with the button below. The permissions Endpaper needs are already ticked.', 'endpaper' ); ?></li>
+			<li><?php esc_html_e( 'Give the key a name, and choose when it expires. With “Never” you will not have to replace it.', 'endpaper' ); ?></li>
+			<li><?php esc_html_e( 'Create the key, copy it, and paste it into the field above.', 'endpaper' ); ?></li>
 		</ol>
+
+		<p>
+			<a class="button button-secondary" href="<?php echo esc_url( get_new_key_url() ); ?>" target="_blank" rel="noopener">
+				<?php esc_html_e( 'Create a key on Hardcover', 'endpaper' ); ?>
+				<span class="screen-reader-text"><?php esc_html_e( '(opens in a new tab)', 'endpaper' ); ?></span>
+			</a>
+		</p>
+
+		<h2><?php esc_html_e( 'What the key allows', 'endpaper' ); ?></h2>
+
+		<p><?php esc_html_e( 'The button asks for these permissions and nothing else:', 'endpaper' ); ?></p>
 
 		<table class="widefat striped">
 			<tbody>
@@ -523,7 +543,7 @@ function render_settings_page() {
 		</table>
 
 		<p class="description">
-			<?php esc_html_e( 'A key cannot be changed once it is created, which is why the last two are worth ticking now. None of these let Endpaper change anything on Hardcover, or read anything you have not made public.', 'endpaper' ); ?>
+			<?php esc_html_e( 'A key cannot be changed once it is created, which is why the last two are included now. None of these let Endpaper change anything on Hardcover, or read anything you have not made public.', 'endpaper' ); ?>
 		</p>
 	</div>
 	<?php

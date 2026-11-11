@@ -116,7 +116,7 @@ Endpaper isn’t in the WordPress.org plugin directory yet, so for now it has to
 
 3. Activate Endpaper on the Plugins screen in WordPress.
 
-4. Go to Settings, then Endpaper, and add your Hardcover API key. The screen explains how to create one, and which permissions it needs.
+4. Go to Settings, then Endpaper, and add your Hardcover API key. A button there opens Hardcover’s form for a new key with the right permissions already ticked.
 
 To keep the key out of the database, define it in `wp-config.php` instead, above the line that says to stop editing. It then takes precedence over the settings screen:
 
@@ -126,7 +126,7 @@ define( 'ENDPAPER_HARDCOVER_TOKEN', 'your-api-key' );
 
 ### Permissions for the API key
 
-Create the key without a preset, with these permissions and nothing else. A key cannot be changed after it is created, so the last two are worth ticking now.
+The button on the settings screen asks for these permissions and nothing else. A key cannot be changed after it is created, which is why the last two are included now.
 
 | Permission | Used for |
 | --- | --- |
