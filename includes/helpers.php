@@ -191,3 +191,98 @@ function get_accent_color_style( $attributes ) {
 
 	return '' === $value ? '' : '--endpaper-accent: ' . $value . ';';
 }
+
+/**
+ * Shortens text to a maximum length, ending on a whole sentence where possible.
+ *
+ * Line breaks are turned into spaces, so the result is a single paragraph.
+ *
+ * @param string $text       Plain text.
+ * @param int    $max_length Maximum number of characters. 0 returns the full text.
+ * @return string The shortened text.
+ */
+function trim_to_sentence( $text, $max_length ) {
+	$text       = trim( (string) preg_replace( '/\s+/u', ' ', (string) $text ) );
+	$max_length = absint( $max_length );
+
+	if ( ! $max_length || mb_strlen( $text ) <= $max_length ) {
+		return $text;
+	}
+
+	$cut = mb_substr( $text, 0, $max_length );
+
+	// Look for the last place a sentence ends: closing punctuation, followed by a space or the end of the cut.
+	if ( preg_match_all( '/[.!?…]["\'”’)]?(?=\s|$)/u', $cut, $matches, PREG_OFFSET_CAPTURE ) ) {
+		$last     = end( $matches[0] );
+		$sentence = substr( $cut, 0, $last[1] + strlen( $last[0] ) );
+
+		// Only use it if it keeps a reasonable share of the text.
+		if ( mb_strlen( $sentence ) >= $max_length * 0.4 ) {
+			return $sentence;
+		}
+	}
+
+	// Otherwise end on a whole word.
+	$words = (string) preg_replace( '/\s+\S*$/u', '', $cut );
+
+	return rtrim( $words, ' ,;:–—-' ) . '…';
+}
+
+/**
+ * Returns the inline styles for a block's card: its border, padding, background and shadow.
+ *
+ * These come from the standard block settings, but they belong on the card
+ * inside the block, not on the block's wrapper. WordPress is told not to
+ * output them itself, and they are applied here instead.
+ *
+ * @param array $attributes Block attributes.
+ * @return string CSS declarations, or an empty string.
+ */
+function get_card_style( $attributes ) {
+	$style  = isset( $attributes['style'] ) && is_array( $attributes['style'] ) ? $attributes['style'] : array();
+	$styles = array();
+
+	$border = isset( $style['border'] ) && is_array( $style['border'] ) ? $style['border'] : array();
+
+	if ( ! empty( $attributes['borderColor'] ) ) {
+		$border['color'] = 'var:preset|color|' . $attributes['borderColor'];
+	}
+
+	if ( $border ) {
+		$styles['border'] = $border;
+	}
+
+	if ( isset( $style['spacing']['padding'] ) ) {
+		$styles['spacing'] = array( 'padding' => $style['spacing']['padding'] );
+	}
+
+	$color = array();
+
+	if ( ! empty( $attributes['backgroundColor'] ) ) {
+		$color['background'] = 'var:preset|color|' . $attributes['backgroundColor'];
+	} elseif ( isset( $style['color']['background'] ) ) {
+		$color['background'] = $style['color']['background'];
+	}
+
+	if ( ! empty( $attributes['gradient'] ) ) {
+		$color['gradient'] = 'var:preset|gradient|' . $attributes['gradient'];
+	} elseif ( isset( $style['color']['gradient'] ) ) {
+		$color['gradient'] = $style['color']['gradient'];
+	}
+
+	if ( $color ) {
+		$styles['color'] = $color;
+	}
+
+	if ( isset( $style['shadow'] ) ) {
+		$styles['shadow'] = $style['shadow'];
+	}
+
+	if ( ! $styles ) {
+		return '';
+	}
+
+	$result = wp_style_engine_get_styles( $styles );
+
+	return isset( $result['css'] ) ? $result['css'] : '';
+}

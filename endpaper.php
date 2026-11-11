@@ -24,6 +24,7 @@ define( 'ENDPAPER_API_URL', 'https://api.hardcover.app/v1/graphql' );
 
 require_once ENDPAPER_DIR . 'includes/api.php';
 require_once ENDPAPER_DIR . 'includes/helpers.php';
+require_once ENDPAPER_DIR . 'includes/colors.php';
 require_once ENDPAPER_DIR . 'includes/rest.php';
 
 /**

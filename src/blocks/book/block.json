@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "endpaper/book",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"title": "Book",
 	"category": "embed",
 	"icon": "book",
@@ -51,9 +51,9 @@
 			"type": "boolean",
 			"default": true
 		},
-		"descriptionLines": {
+		"descriptionLength": {
 			"type": "integer",
-			"default": 4
+			"default": 280
 		},
 		"showLink": {
 			"type": "boolean",
@@ -67,6 +67,7 @@
 			"gradients": true,
 			"link": true,
 			"heading": true,
+			"__experimentalSkipSerialization": [ "background", "gradients" ],
 			"__experimentalDefaultControls": {
 				"background": true,
 				"text": true,
@@ -75,7 +76,8 @@
 		},
 		"spacing": {
 			"margin": true,
-			"padding": true
+			"padding": true,
+			"__experimentalSkipSerialization": [ "padding" ]
 		},
 		"typography": {
 			"fontSize": true,
@@ -95,6 +97,7 @@
 			"color": true,
 			"width": true,
 			"style": true,
+			"__experimentalSkipSerialization": true,
 			"__experimentalDefaultControls": {
 				"radius": true,
 				"color": true,
@@ -102,7 +105,20 @@
 				"style": true
 			}
 		},
-		"shadow": true
+		"shadow": {
+			"__experimentalSkipSerialization": true
+		}
+	},
+	"selectors": {
+		"root": ".wp-block-endpaper-book",
+		"border": ".wp-block-endpaper-book .endpaper-book__card",
+		"shadow": ".wp-block-endpaper-book .endpaper-book__card",
+		"color": {
+			"background": ".wp-block-endpaper-book .endpaper-book__card"
+		},
+		"spacing": {
+			"padding": ".wp-block-endpaper-book .endpaper-book__card"
+		}
 	},
 	"editorScript": "file:./index.js",
 	"style": "file:./style-index.css",

@@ -59,13 +59,34 @@ const DISPLAY_TOGGLES = [
 	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
 	{
 		attribute: 'showLink',
-		label: __( 'Link to Hardcover', 'endpaper' ),
+		label: __( 'Credit and link to Hardcover', 'endpaper' ),
 		help: __(
-			'Links the title and cover to the book on Hardcover, and adds a link below the description.',
+			'Adds “Powered by Hardcover” under the card, linked to the book on Hardcover.',
 			'endpaper'
 		),
 	},
 ];
+
+/**
+ * Returns the attributes to render the preview with.
+ *
+ * The block's wrapper in the editor already has the typography, margin and
+ * extra class name applied, so those are left out to avoid applying them
+ * twice. The settings that belong on the card, such as border and padding,
+ * are kept, since only the server-rendered preview can apply them.
+ *
+ * @param {Object} attributes Block attributes.
+ * @return {Object} The attributes for the preview.
+ */
+function getPreviewAttributes( attributes ) {
+	const { className, fontFamily, fontSize, style = {}, ...rest } = attributes;
+	const { elements, spacing = {}, typography, ...restStyle } = style;
+
+	return {
+		...rest,
+		style: { ...restStyle, spacing: { padding: spacing.padding } },
+	};
+}
 
 /**
  * Editor component for the Book block.
@@ -141,17 +162,18 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						<RangeControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={ __( 'Description lines', 'endpaper' ) }
+							label={ __( 'Description length', 'endpaper' ) }
 							help={ __(
-								'Set to 0 to show the full description.',
+								'The most characters to show. The text ends on a whole sentence where it can. Set to 0 to show the full description.',
 								'endpaper'
 							) }
 							min={ 0 }
-							max={ 12 }
-							value={ attributes.descriptionLines }
+							max={ 1000 }
+							step={ 20 }
+							value={ attributes.descriptionLength }
 							onChange={ ( value ) =>
 								setAttributes( {
-									descriptionLines: value || 0,
+									descriptionLength: value || 0,
 								} )
 							}
 						/>
@@ -177,8 +199,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 			<div { ...blockProps }>
 				<ServerSideRender
 					block={ metadata.name }
-					attributes={ attributes }
-					skipBlockSupportAttributes
+					attributes={ getPreviewAttributes( attributes ) }
 				/>
 			</div>
 		</>

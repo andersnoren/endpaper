@@ -12,3 +12,14 @@
  * 4. Indigo.
  */
 $accent-color: var(--endpaper-accent, var(--wp--custom--endpaper--accent, var(--wp--preset--color--accent, var(--wp--preset--color--accent-1, #4f46e5))));
+
+/*
+ * Colors derived from the text color, so they work on light and dark
+ * backgrounds alike.
+ */
+$border-color: color-mix(in srgb, currentcolor 10%, transparent);
+$track-color: color-mix(in srgb, currentcolor 20%, transparent);
+$dot-color: color-mix(in srgb, currentcolor 33%, transparent);
+
+/* Secondary text is the text color at reduced opacity. */
+$muted-opacity: 0.66;

@@ -12,11 +12,12 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 ## The Book block
 
 - Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page.
-- Shows the cover, title, authors, publication year, page count, Hardcover rating and description, with a link back to the book on Hardcover.
+- Shows the book as a card: the cover, title, authors, a description, and a row with the publication year, page count and Hardcover rating.
 - Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
-- Each part can be switched on or off, and the description can be limited to a number of lines.
-- Has very little styling of its own, so it picks up the fonts, colors and link styles of your theme.
-- Supports the color, spacing, typography and alignment settings in the block editor.
+- Credits Hardcover under the card, with a link to the book there.
+- Each part can be switched on or off. The description can be limited in length, and ends on a whole sentence where it can.
+- Sizes follow the block’s font size, and colors follow the text color, so the card fits light and dark designs alike.
+- Supports the color, typography, spacing, border and shadow settings in the block editor. The border, padding, background and shadow apply to the card.
 
 ## The Reading List block
 
@@ -45,8 +46,8 @@ Two settings are specific to Endpaper. A theme sets their defaults under `settin
 }
 ```
 
-- `accent` is the accent color, used for the reading progress bar. Without it, the blocks use the color with the slug `accent` or `accent-1` in the theme’s palette, and failing that, indigo (`#4f46e5`).
-- `coverRadius` is the corner radius of book covers. Without it, the radius is 4px.
+- `accent` is the accent color, used for the reading progress bar and the shelf label. Without it, the blocks use the color with the slug `accent` or `accent-1` in the theme’s palette, and failing that, indigo (`#4f46e5`).
+- `coverRadius` is the corner radius of book covers. Without it, the radius is 8px in the Book block and 4px in the Reading List.
 
 To set either for one block only, put the same `custom` settings under `settings.blocks`:
 

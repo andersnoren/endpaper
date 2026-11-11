@@ -2,6 +2,10 @@
 /**
  * Server-side rendering of the Book block.
  *
+ * The block is a card with the book in it, and a line crediting Hardcover
+ * underneath. The border, padding, background and shadow settings apply to
+ * the card, not to the block as a whole.
+ *
  * @package Endpaper
  *
  * @var array    $attributes Block attributes.
@@ -12,11 +16,14 @@
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_book;
+use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_library_entry;
+use function AndersNoren\Endpaper\get_on_accent_style;
 use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\the_progress_bar;
+use function AndersNoren\Endpaper\trim_to_sentence;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -42,11 +49,10 @@ if ( is_wp_error( $endpaper_book ) ) {
 	return;
 }
 
-// Without the link setting, nothing in the block links to Hardcover: not the title, the cover or the link below.
-$endpaper_url   = ! empty( $attributes['showLink'] ) ? $endpaper_book['url'] : '';
-$endpaper_tag   = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 2 );
-$endpaper_lines = isset( $attributes['descriptionLines'] ) ? absint( $attributes['descriptionLines'] ) : 4;
-$endpaper_meta  = array();
+$endpaper_tag = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 2 );
+
+// The link to Hardcover is the credit line under the card. Nothing else in the block links there.
+$endpaper_url = ! empty( $attributes['showLink'] ) ? $endpaper_book['url'] : '';
 
 // The shelf and progress come from the site owner's own library. They are extras, so a failed lookup never hides the book.
 $endpaper_entry = array();
@@ -70,98 +76,139 @@ if ( $endpaper_show_progress ) {
 	$endpaper_show_shelf = false;
 }
 
-if ( $endpaper_book['year'] ) {
-	$endpaper_meta[] = (string) $endpaper_book['year'];
-}
+$endpaper_description = '';
 
-if ( $endpaper_book['pages'] ) {
-	$endpaper_meta[] = sprintf(
-		/* translators: %s: Number of pages. */
-		_n( '%s page', '%s pages', $endpaper_book['pages'], 'endpaper' ),
-		number_format_i18n( $endpaper_book['pages'] )
+if ( ! empty( $attributes['showDescription'] ) ) {
+	$endpaper_description = trim_to_sentence(
+		$endpaper_book['description'],
+		isset( $attributes['descriptionLength'] ) ? absint( $attributes['descriptionLength'] ) : 280
 	);
 }
+
+// The facts shown in the row at the bottom of the card.
+$endpaper_facts = array();
+
+if ( ! empty( $attributes['showMeta'] ) ) {
+	if ( $endpaper_book['year'] ) {
+		$endpaper_facts[] = (string) $endpaper_book['year'];
+	}
+
+	if ( $endpaper_book['pages'] ) {
+		$endpaper_facts[] = sprintf(
+			/* translators: %s: Number of pages. */
+			_n( '%s page', '%s pages', $endpaper_book['pages'], 'endpaper' ),
+			number_format_i18n( $endpaper_book['pages'] )
+		);
+	}
+}
+
+$endpaper_show_rating = ! empty( $attributes['showRating'] ) && $endpaper_book['rating'] > 0;
+
+$endpaper_wrapper = get_block_wrapper_attributes(
+	array(
+		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes ) . get_on_accent_style( $attributes, 'endpaper/book' ),
+	)
+);
+
+$endpaper_card_style = get_card_style( $attributes );
 ?>
-<div <?php echo get_block_wrapper_attributes( array( 'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<div class="endpaper-book__inner">
+<div <?php echo $endpaper_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+	<div class="endpaper-book__card"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
 
 		<?php if ( ! empty( $attributes['showCover'] ) && $endpaper_book['cover'] ) : ?>
 			<figure class="endpaper-book__cover">
-				<?php if ( $endpaper_url ) : ?>
-					<a href="<?php echo esc_url( $endpaper_url ); ?>" tabindex="-1" aria-hidden="true">
-				<?php endif; ?>
 				<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
-				<?php if ( $endpaper_url ) : ?>
-					</a>
-				<?php endif; ?>
 			</figure>
 		<?php endif; ?>
 
 		<div class="endpaper-book__content">
+			<div class="endpaper-book__main">
 
-			<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-book__title">
-				<?php if ( $endpaper_url ) : ?>
-					<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
-				<?php else : ?>
-					<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
-				<?php endif; ?>
-			</<?php echo tag_escape( $endpaper_tag ); ?>>
+				<div class="endpaper-book__header">
+					<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-book__title"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></<?php echo tag_escape( $endpaper_tag ); ?>>
 
-			<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
-				<p class="endpaper-book__authors">
-					<?php
-					/* translators: %s: List of author names. */
-					echo esc_html( sprintf( __( 'by %s', 'endpaper' ), wp_sprintf( '%l', $endpaper_book['authors'] ) ) );
-					?>
-				</p>
-			<?php endif; ?>
-
-			<?php if ( ! empty( $attributes['showMeta'] ) && $endpaper_meta ) : ?>
-				<p class="endpaper-book__meta"><?php echo esc_html( implode( ' · ', $endpaper_meta ) ); ?></p>
-			<?php endif; ?>
-
-			<?php if ( ! empty( $attributes['showRating'] ) && $endpaper_book['rating'] > 0 ) : ?>
-				<p class="endpaper-book__rating">
-					<span class="endpaper-book__star" aria-hidden="true">★</span>
-					<?php
-					echo esc_html(
-						sprintf(
-							/* translators: 1: Average rating, 2: Number of ratings. */
-							_n( '%1$s out of 5 on Hardcover (%2$s rating)', '%1$s out of 5 on Hardcover (%2$s ratings)', $endpaper_book['ratings_count'], 'endpaper' ),
-							number_format_i18n( $endpaper_book['rating'], 2 ),
-							number_format_i18n( $endpaper_book['ratings_count'] )
-						)
-					);
-					?>
-				</p>
-			<?php endif; ?>
-
-			<?php if ( $endpaper_show_shelf ) : ?>
-				<p class="endpaper-book__shelf"><?php echo esc_html( $endpaper_shelf ); ?></p>
-			<?php endif; ?>
-
-			<?php if ( $endpaper_show_progress ) : ?>
-				<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
-			<?php endif; ?>
-
-			<?php if ( ! empty( $attributes['showDescription'] ) && $endpaper_book['description'] ) : ?>
-				<p
-					class="endpaper-book__description<?php echo $endpaper_lines ? ' is-clamped' : ''; ?>"
-					<?php if ( $endpaper_lines ) : ?>
-						style="--endpaper-lines: <?php echo esc_attr( $endpaper_lines ); ?>;"
+					<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
+						<p class="endpaper-book__authors">
+							<?php
+							echo wp_kses(
+								sprintf(
+									/* translators: %s: List of author names. */
+									__( 'By %s', 'endpaper' ),
+									'<strong>' . esc_html( wp_sprintf( '%l', $endpaper_book['authors'] ) ) . '</strong>'
+								),
+								array( 'strong' => array() )
+							);
+							?>
+						</p>
 					<?php endif; ?>
-				>
-					<?php echo format_text( $endpaper_book['description'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
+				</div>
+
+				<?php if ( $endpaper_show_progress ) : ?>
+					<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
+				<?php endif; ?>
+
+				<?php if ( $endpaper_show_shelf ) : ?>
+					<p class="endpaper-book__shelf"><span><?php echo esc_html( $endpaper_shelf ); ?></span></p>
+				<?php endif; ?>
+
+				<?php if ( $endpaper_description ) : ?>
+					<p class="endpaper-book__description"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+				<?php endif; ?>
+
+			</div>
+
+			<?php if ( $endpaper_facts || $endpaper_show_rating ) : ?>
+				<p class="endpaper-book__meta">
+					<?php foreach ( $endpaper_facts as $endpaper_fact ) : ?>
+						<span class="endpaper-book__fact"><?php echo esc_html( $endpaper_fact ); ?></span>
+					<?php endforeach; ?>
+
+					<?php if ( $endpaper_show_rating ) : ?>
+						<span class="endpaper-book__fact endpaper-book__rating">
+							<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?>★</span>
+							<span class="endpaper-book__rating-count" aria-hidden="true">
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: %s: Number of ratings. */
+										_n( '(%s rating)', '(%s ratings)', $endpaper_book['ratings_count'], 'endpaper' ),
+										number_format_i18n( $endpaper_book['ratings_count'] )
+									)
+								);
+								?>
+							</span>
+							<span class="screen-reader-text">
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: 1: Average rating, 2: Number of ratings. */
+										_n( 'Rated %1$s out of 5 on Hardcover, from %2$s rating', 'Rated %1$s out of 5 on Hardcover, from %2$s ratings', $endpaper_book['ratings_count'], 'endpaper' ),
+										number_format_i18n( $endpaper_book['rating'], 1 ),
+										number_format_i18n( $endpaper_book['ratings_count'] )
+									)
+								);
+								?>
+							</span>
+						</span>
+					<?php endif; ?>
 				</p>
 			<?php endif; ?>
-
-			<?php if ( $endpaper_url ) : ?>
-				<p class="endpaper-book__link">
-					<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php esc_html_e( 'View on Hardcover', 'endpaper' ); ?></a>
-				</p>
-			<?php endif; ?>
-
 		</div>
 
 	</div>
+
+	<?php if ( $endpaper_url ) : ?>
+		<p class="endpaper-book__attribution">
+			<?php
+			echo wp_kses(
+				sprintf(
+					/* translators: %s: Link to Hardcover. */
+					__( 'Powered by %s', 'endpaper' ),
+					'<a href="' . esc_url( $endpaper_url ) . '">Hardcover</a>'
+				),
+				array( 'a' => array( 'href' => array() ) )
+			);
+			?>
+		</p>
+	<?php endif; ?>
 </div>

@@ -3,23 +3,46 @@
 /*
  * Book block.
  *
- * Kept deliberately small, so the block inherits fonts, colors and link
- * styles from the active theme.
+ * Every size is in em, relative to the block's font size. The block itself
+ * defaults to 16px, which the Size setting or the theme can change.
+ * Colors follow the text color, so the block works on any background.
  */
 
-/* Keep padding and borders set in the editor inside the block's width. */
-.wp-block-endpaper-book {
-	box-sizing: border-box;
+/* Defaults with no specificity, so the editor's settings and theme.json win. */
+:where(.wp-block-endpaper-book) {
+	font-size: 16px;
+	line-height: 1.4;
 }
 
-.endpaper-book__inner {
-	align-items: flex-start;
+:where(.endpaper-book__card) {
+	border: 1px solid $border-color;
+	border-radius: 1em;
+	padding: 1.5em;
+}
+
+.wp-block-endpaper-book {
+	box-sizing: border-box;
 	display: flex;
-	gap: var(--wp--style--block-gap, 1.5rem);
+	flex-direction: column;
+	gap: 1em;
+}
+
+/* Spacing inside the block is set with gaps, not with the theme's margins. */
+.wp-block-endpaper-book p,
+.wp-block-endpaper-book .endpaper-book__title {
+	margin: 0;
+}
+
+/* The card wraps when it gets narrow, which puts the text under the cover. */
+.endpaper-book__card {
+	box-sizing: border-box;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.5em;
 }
 
 .endpaper-book__cover {
-	flex: 0 0 clamp(6rem, 25%, 11rem);
+	flex: 0 0 min(12.5em, 35%);
 	margin: 0;
 }
 
@@ -27,54 +50,132 @@
 
 	/*
 	 * The radius comes from the block setting, then from the theme, which can
-	 * set it in theme.json under settings.custom.endpaper.coverRadius. Without
-	 * either, it is 4px.
+	 * set it in theme.json under settings.custom.endpaper.coverRadius.
 	 */
-	border-radius: var(--endpaper-cover-radius, var(--wp--custom--endpaper--cover-radius, 4px));
+	border-radius: var(--endpaper-cover-radius, var(--wp--custom--endpaper--cover-radius, 0.5em));
 	display: block;
 	height: auto;
 	width: 100%;
 }
 
+/* The facts row sits at the bottom, level with the foot of the cover. */
 .endpaper-book__content {
-	flex: 1 1 0;
+	display: flex;
+	flex: 1 1 15em;
+	flex-direction: column;
+	gap: 1.5em;
+	justify-content: space-between;
 	min-width: 0;
 }
 
-.endpaper-book__content > * {
-	margin-block: 0;
+.endpaper-book__main {
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
 }
 
-.endpaper-book__content > * + * {
-	margin-block-start: 0.5em;
+.endpaper-book__header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	width: 100%;
 }
 
-.endpaper-book__authors,
-.endpaper-book__meta,
-.endpaper-book__rating,
-.endpaper-book__shelf,
-.endpaper-book__progress,
-.endpaper-book__link {
-	font-size: 0.875em;
+/* The size is set here. The weight and font come from the theme's headings. */
+.wp-block-endpaper-book .endpaper-book__title {
+	font-size: 2em;
+	line-height: 1.2;
 }
 
-.endpaper-book__description.is-clamped {
-	-webkit-box-orient: vertical;
-	display: -webkit-box;
-	-webkit-line-clamp: var(--endpaper-lines, 4);
-	line-clamp: var(--endpaper-lines, 4);
-	overflow: hidden;
+.endpaper-book__authors strong {
+	font-weight: 700;
 }
 
 .endpaper-book__progress {
 	align-items: center;
 	display: flex;
-	gap: 0.5em;
+	gap: 0.875em;
 }
 
 .endpaper-book__progress progress {
-
-	accent-color: $accent-color;
-	flex: 0 1 8rem;
+	appearance: none;
+	background: $track-color;
+	border: 0;
+	border-radius: 999px;
+	flex: 0 1 9em;
+	font-size: inherit;
+	height: 0.5em;
 	min-width: 0;
+	overflow: hidden;
+}
+
+.endpaper-book__progress progress::-webkit-progress-bar {
+	background: transparent;
+}
+
+.endpaper-book__progress progress::-webkit-progress-value {
+	background: $accent-color;
+	border-radius: 999px;
+}
+
+.endpaper-book__progress progress::-moz-progress-bar {
+	background: $accent-color;
+	border-radius: 999px;
+}
+
+.endpaper-book__progress span {
+	font-size: 0.75em;
+	opacity: $muted-opacity;
+}
+
+/* The shelf is an accent-colored pill. PHP picks a contrasting text color. */
+.endpaper-book__shelf span {
+	background: $accent-color;
+	border-radius: 999px;
+	color: var(--endpaper-on-accent, #fff);
+	display: inline-block;
+	font-size: 0.875em;
+	font-weight: 700;
+	line-height: 1.2;
+	padding: 0.36em 0.86em;
+}
+
+.endpaper-book__meta {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 0.875em;
+	font-weight: 700;
+	gap: 0.25em 0.57em;
+	line-height: 1.2;
+}
+
+/* A dot after every fact but the last. */
+.endpaper-book__fact:not(:last-child)::after {
+	background: $dot-color;
+	border-radius: 50%;
+	content: "";
+	display: inline-block;
+	height: 0.36em;
+	margin-inline-start: 0.57em;
+	vertical-align: middle;
+	width: 0.36em;
+}
+
+.endpaper-book__rating-count {
+	font-size: 0.857em;
+	font-weight: 400;
+	margin-inline-start: 0.3em;
+	opacity: $muted-opacity;
+}
+
+.endpaper-book__attribution {
+	font-size: 0.75em;
+	opacity: $muted-opacity;
+	text-align: center;
+}
+
+.endpaper-book__attribution a {
+	color: inherit;
 }
