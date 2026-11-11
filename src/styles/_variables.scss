@@ -40,3 +40,15 @@ $muted-opacity: 0.75;
 
 /* The smallest text: 13px at the default size. */
 $small-font-size: 0.8125em;
+
+/*
+ * Stands in for the cover of a book that has none: a faint box in the shape
+ * of a book. 2:3 is the most common shape. The corners are set where it is
+ * used.
+ */
+@mixin cover-placeholder {
+	aspect-ratio: 2 / 3;
+	background: $border-color;
+	display: block;
+	width: 100%;
+}

@@ -76,9 +76,13 @@ $endpaper_card_style = get_card_style( $attributes );
 				?>
 				<li class="endpaper-reading-list__item">
 
-					<?php if ( ! empty( $attributes['showCover'] ) && $endpaper_book['cover'] ) : ?>
+					<?php if ( ! empty( $attributes['showCover'] ) ) : ?>
 						<figure class="endpaper-reading-list__cover">
-							<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
+							<?php if ( $endpaper_book['cover'] ) : ?>
+								<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
+							<?php else : ?>
+								<span class="endpaper-cover-placeholder"></span>
+							<?php endif; ?>
 						</figure>
 					<?php endif; ?>
 

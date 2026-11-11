@@ -64,7 +64,8 @@ $gap: var(--endpaper-gap, 1.5em);
 	margin: 0;
 }
 
-.endpaper-reading-list__cover img {
+.endpaper-reading-list__cover img,
+.endpaper-reading-list__cover .endpaper-cover-placeholder {
 
 	/*
 	 * The radius comes from the block setting, then from the theme, which can
@@ -74,6 +75,11 @@ $gap: var(--endpaper-gap, 1.5em);
 	display: block;
 	height: auto;
 	width: 100%;
+}
+
+.endpaper-reading-list__cover .endpaper-cover-placeholder {
+
+	@include cover-placeholder;
 }
 
 /* The text is centered against the cover, until it grows taller than it. */

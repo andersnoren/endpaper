@@ -48,7 +48,8 @@
 	margin: 0;
 }
 
-.endpaper-book__cover img {
+.endpaper-book__cover img,
+.endpaper-book__cover .endpaper-cover-placeholder {
 
 	/*
 	 * The radius comes from the block setting, then from the theme, which can
@@ -58,6 +59,11 @@
 	display: block;
 	height: auto;
 	width: 100%;
+}
+
+.endpaper-book__cover .endpaper-cover-placeholder {
+
+	@include cover-placeholder;
 }
 
 /* The facts row sits at the bottom, level with the foot of the cover. */

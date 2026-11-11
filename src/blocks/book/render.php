@@ -116,9 +116,13 @@ $endpaper_card_style = get_card_style( $attributes );
 <div <?php echo $endpaper_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 	<div class="endpaper-book__card"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
 
-		<?php if ( ! empty( $attributes['showCover'] ) && $endpaper_book['cover'] ) : ?>
+		<?php if ( ! empty( $attributes['showCover'] ) ) : ?>
 			<figure class="endpaper-book__cover">
-				<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
+				<?php if ( $endpaper_book['cover'] ) : ?>
+					<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
+				<?php else : ?>
+					<span class="endpaper-cover-placeholder"></span>
+				<?php endif; ?>
 			</figure>
 		<?php endif; ?>
 
