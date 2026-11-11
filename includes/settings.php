@@ -545,6 +545,28 @@ function render_settings_page() {
 		<p class="description">
 			<?php esc_html_e( 'A key cannot be changed once it is created, which is why the last two are included now. None of these let Endpaper change anything on Hardcover, or read anything you have not made public.', 'endpaper' ); ?>
 		</p>
+
+		<h2><?php esc_html_e( 'How your key is kept safe', 'endpaper' ); ?></h2>
+
+		<ul class="ul-disc">
+			<li><?php esc_html_e( 'It is only sent to Hardcover. Your server makes all the requests, so the key never reaches your visitors’ browsers, the page source or the editor.', 'endpaper' ); ?></li>
+			<li><?php esc_html_e( 'It is never shown again. Once saved, nobody can read it back from this screen, administrators included.', 'endpaper' ); ?></li>
+			<li><?php esc_html_e( 'It can only read. The permissions above do not let anyone change your Hardcover account, or see anything you have not made public.', 'endpaper' ); ?></li>
+			<li><?php esc_html_e( 'It is removed with the plugin. Deleting Endpaper deletes the key.', 'endpaper' ); ?></li>
+		</ul>
+
+		<p><?php esc_html_e( 'The key is stored in your site’s database as it is, not encrypted, which is how WordPress stores settings. Anyone who can read the database, or a backup of it, can read the key. If you think it has got out, delete it on Hardcover and create a new one: the old key stops working at once.', 'endpaper' ); ?></p>
+
+		<p>
+			<?php
+			printf(
+				/* translators: 1: The name of a PHP constant, 2: A file name. */
+				esc_html__( 'To keep the key out of the database, define it as %1$s in %2$s instead. This screen then stops asking for it.', 'endpaper' ),
+				'<code>ENDPAPER_HARDCOVER_TOKEN</code>',
+				'<code>wp-config.php</code>'
+			);
+			?>
+		</p>
 	</div>
 	<?php
 }

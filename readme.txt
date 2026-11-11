@@ -76,7 +76,9 @@ Yes. The plugin reads from Hardcover with an API key from your own account. Acco
 
 = Is my API key safe? =
 
-The key stays on your server. It is only sent to Hardcover, never to a visitor’s browser, and the settings screen never shows a saved key.
+The key is only ever sent to Hardcover. Your server makes all the requests, so the key never reaches your visitors’ browsers, the page source or the editor, and once it is saved the settings screen never shows it again. The permissions the plugin asks for can only read, and only what you have made public. Deleting the plugin deletes the key.
+
+The key is stored in your site’s database as it is, not encrypted, which is how WordPress stores settings. Anyone who can read the database, or a backup of it, can read the key. If you think it has got out, delete it on Hardcover and create a new one. Developers can keep it out of the database by defining `ENDPAPER_HARDCOVER_TOKEN` in `wp-config.php` instead.
 
 = Will the blocks slow my site down? =
 
