@@ -18,6 +18,7 @@ use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\has_card_frame;
+use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
 use function AndersNoren\Endpaper\the_star_rating;
 
@@ -146,15 +147,6 @@ $endpaper_card_style = get_card_style( $attributes );
 		</ul>
 	</div>
 	<p class="endpaper-reading-list__attribution">
-		<?php
-		echo wp_kses(
-			sprintf(
-				/* translators: %s: Link to Hardcover. */
-				__( 'Powered by %s', 'endpaper' ),
-				'<a href="https://hardcover.app/">Hardcover</a>'
-			),
-			array( 'a' => array( 'href' => array() ) )
-		);
-		?>
+		<?php the_hardcover_credit( '', 'endpaper-reading-list__credit' ); ?>
 	</p>
 </div>

@@ -228,23 +228,26 @@ $gap: var(--endpaper-gap, 1.5em);
 	opacity: 0.75;
 }
 
-/* The credit lines up with the list, and is centered under a framed one. */
-.endpaper-reading-list__attribution {
-	font-size: $small-font-size;
-	opacity: $muted-opacity;
-}
-
-.endpaper-reading-list__card--framed + .endpaper-reading-list__attribution {
-	text-align: center;
-}
-
-.wp-block-endpaper-reading-list .endpaper-reading-list__attribution a {
+/*
+ * The credit to Hardcover: their logo under the list, lined up with it. It
+ * is 18px tall at the default size, and scales with the font size.
+ */
+.wp-block-endpaper-reading-list .endpaper-reading-list__credit {
 	color: inherit;
-	text-decoration: underline;
+	display: block;
+	transition: opacity 0.15s ease;
+	width: fit-content;
 }
 
-.wp-block-endpaper-reading-list .endpaper-reading-list__attribution a:hover {
-	text-decoration: none;
+.endpaper-reading-list__credit:hover {
+	opacity: 0.75;
+}
+
+.endpaper-reading-list__credit .endpaper-logo {
+	display: block;
+	fill: currentcolor;
+	height: 1.125em;
+	width: auto;
 }
 
 /*
