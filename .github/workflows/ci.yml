@@ -107,4 +107,4 @@ jobs:
       # Renders both blocks and the settings screen against a faked Hardcover API.
       # Any PHP notice, warning or deprecation fails the run.
       - name: Run the smoke test
-        run: wp eval-file wp-content/plugins/endpaper/tests/smoke.php --path=/tmp/wordpress
+        run: wp eval-file "$GITHUB_WORKSPACE/tests/smoke.php" --path=/tmp/wordpress
