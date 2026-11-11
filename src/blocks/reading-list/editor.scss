@@ -2,6 +2,18 @@
  * Editor styles for the Reading List block.
  */
 
+/*
+ * In the editor the block is there twice: the editor's own wrapper, with the
+ * block's settings on it, and inside it the preview from the server, which
+ * has a wrapper of its own. The inner one must not apply the block's default
+ * text size and margin again, or it would undo the settings on the outer one.
+ */
+.wp-block-endpaper-reading-list .wp-block-endpaper-reading-list {
+	font-size: inherit;
+	line-height: inherit;
+	margin: 0;
+}
+
 /* Keep links in the preview from navigating away from the editor. */
 .wp-block-endpaper-reading-list .endpaper-reading-list__attribution a {
 	pointer-events: none;
