@@ -95,6 +95,9 @@ $gap: var(--endpaper-gap, 1.5em);
 .wp-block-endpaper-reading-list .endpaper-reading-list__title {
 	font-size: 1.25em;
 	line-height: 1.2;
+
+	/* A word too long for the line breaks, so it never sticks out of the card. */
+	overflow-wrap: anywhere;
 }
 
 /* A title that is a heading takes its weight from the theme's headings. */

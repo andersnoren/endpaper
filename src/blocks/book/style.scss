@@ -87,6 +87,9 @@
 .wp-block-endpaper-book .endpaper-book__title {
 	font-size: 1.75em;
 	line-height: 1.2;
+
+	/* A word too long for the line breaks, so it never sticks out of the card. */
+	overflow-wrap: anywhere;
 }
 
 .endpaper-book__progress {
