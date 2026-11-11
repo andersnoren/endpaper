@@ -126,9 +126,32 @@ function rest_library_entry( $request ) {
 /**
  * Handles a request for the editions of a book, for the cover picker.
  *
+ * Along with the editions come the languages the picker lists first: that of
+ * the edition in the site owner's library, of the site, and of the person
+ * editing. The last two are locales, which the editor turns into names.
+ *
  * @param WP_REST_Request $request The request.
- * @return WP_REST_Response|WP_Error List of editions with a cover, or an error.
+ * @return WP_REST_Response|WP_Error The editions with a cover and the languages to list first, or an error.
  */
 function rest_editions( $request ) {
-	return rest_ensure_response( get_editions( absint( $request->get_param( 'book_id' ) ) ) );
+	$book_id  = absint( $request->get_param( 'book_id' ) );
+	$editions = get_editions( $book_id );
+
+	if ( is_wp_error( $editions ) ) {
+		return $editions;
+	}
+
+	// The library entry is an extra here, so a failed lookup only means its language is not listed first.
+	$entry = get_library_entry( $book_id );
+
+	return rest_ensure_response(
+		array(
+			'editions'  => $editions,
+			'languages' => array(
+				'edition' => ! is_wp_error( $entry ) && ! empty( $entry['language'] ) ? $entry['language'] : '',
+				'site'    => get_locale(),
+				'user'    => get_user_locale(),
+			),
+		)
+	);
 }

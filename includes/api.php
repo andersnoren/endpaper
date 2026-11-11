@@ -281,7 +281,8 @@ function normalize_edition( $raw ) {
 /**
  * Returns the editions of a book that have a cover, the most read first.
  *
- * Used by the editor, to pick a cover from. A failed request is not held
+ * Used by the editor, to pick a cover from. Up to 250 editions are asked
+ * for, so that less read ones, such as translations, are among them. A failed request is not held
  * against the other lookups: nothing on the site depends on this list.
  *
  * @param int $book_id Hardcover book ID.
@@ -294,7 +295,7 @@ function get_editions( $book_id ) {
 		return new WP_Error( 'endpaper_invalid_book', __( 'No book selected.', 'endpaper' ), array( 'status' => 400 ) );
 	}
 
-	$cache_key = 'endpaper_editions_' . $book_id;
+	$cache_key = 'endpaper_editions_v2_' . $book_id;
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -302,7 +303,7 @@ function get_editions( $book_id ) {
 	}
 
 	$data = api_request(
-		'query EndpaperEditions($book_id: Int!) { editions(where: {book_id: {_eq: $book_id}}, order_by: {users_count: desc}, limit: 60) { id book_id title edition_format release_date image { url } language { language } } }',
+		'query EndpaperEditions($book_id: Int!) { editions(where: {book_id: {_eq: $book_id}}, order_by: {users_count: desc}, limit: 250) { id book_id title edition_format release_date image { url } language { language } } }',
 		array( 'book_id' => $book_id )
 	);
 
@@ -324,8 +325,6 @@ function get_editions( $book_id ) {
 		$covers[ $edition['cover'] ] = true;
 		$editions[]                  = $edition;
 	}
-
-	$editions = array_slice( $editions, 0, 30 );
 
 	set_transient( $cache_key, $editions, DAY_IN_SECONDS );
 
@@ -546,6 +545,8 @@ function normalize_library_entry( $raw ) {
 		'finished'  => $finished,
 		// The cover of the edition the entry is for, which can differ from the cover Hardcover shows for the book.
 		'cover'     => isset( $raw['edition']['image']['url'] ) && is_string( $raw['edition']['image']['url'] ) ? esc_url_raw( $raw['edition']['image']['url'] ) : '',
+		// The language of that edition, as Hardcover names it. The cover picker lists it first.
+		'language'  => isset( $raw['edition']['language']['language'] ) ? sanitize_text_field( $raw['edition']['language']['language'] ) : '',
 	);
 }
 
@@ -584,7 +585,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = 'endpaper_entry_v2_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id;
+	$cache_key = 'endpaper_entry_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id;
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
 
@@ -600,7 +601,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	$data = api_request(
-		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating edition { image { url } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating edition { image { url } language { language } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
 		array( 'book_id' => $book_id )
 	);
 

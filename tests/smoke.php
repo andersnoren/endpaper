@@ -158,7 +158,10 @@ add_filter(
 									array(
 										'status_id'       => 2,
 										'rating'          => null,
-										'edition'         => array( 'image' => array( 'url' => 'https://assets.hardcover.app/edition-entry.jpg' ) ),
+										'edition'         => array(
+											'image'    => array( 'url' => 'https://assets.hardcover.app/edition-entry.jpg' ),
+											'language' => array( 'language' => 'Swedish' ),
+										),
 										'user_book_reads' => array( array( 'progress' => 68.4 ) ),
 									),
 								),
@@ -250,6 +253,11 @@ try {
 	$endpaper_editions = get_editions( 42 );
 	endpaper_check( 'editions without a cover, or with one already listed, are left out', is_array( $endpaper_editions ) && array( 101, 103 ) === wp_list_pluck( $endpaper_editions, 'id' ) );
 	endpaper_check( 'an edition has a format, year and language', 'Paperback' === $endpaper_editions[0]['format'] && 1990 === $endpaper_editions[0]['year'] && 'English' === $endpaper_editions[0]['language'] );
+
+	// The route is for people who can edit, so ask as the administrator.
+	wp_set_current_user( 1 );
+	$endpaper_response = rest_do_request( new WP_REST_Request( 'GET', '/endpaper/v1/editions/42' ) )->get_data();
+	endpaper_check( 'the editor gets the editions and the languages to list first', 2 === count( $endpaper_response['editions'] ) && 'Swedish' === $endpaper_response['languages']['edition'] && get_locale() === $endpaper_response['languages']['site'] );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"editionId":103} /-->' );
 	endpaper_check( 'a picked edition decides the cover', false !== strpos( $endpaper_html, 'edition-103.jpg' ) && false === strpos( $endpaper_html, 'edition-entry.jpg' ) );
