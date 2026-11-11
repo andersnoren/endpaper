@@ -22,6 +22,7 @@ use function AndersNoren\Endpaper\get_library_entry;
 use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
+use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
 use function AndersNoren\Endpaper\trim_to_sentence;
 
@@ -170,56 +171,48 @@ $endpaper_card_style = get_card_style( $attributes );
 
 			</div>
 
-			<?php if ( $endpaper_facts || $endpaper_show_rating ) : ?>
-				<p class="endpaper-book__meta">
-					<?php foreach ( $endpaper_facts as $endpaper_fact ) : ?>
-						<span class="endpaper-book__fact"><?php echo esc_html( $endpaper_fact ); ?></span>
-					<?php endforeach; ?>
+			<div class="endpaper-book__footer">
+				<?php if ( $endpaper_facts || $endpaper_show_rating ) : ?>
+					<p class="endpaper-book__meta">
+						<?php foreach ( $endpaper_facts as $endpaper_fact ) : ?>
+							<span class="endpaper-book__fact"><?php echo esc_html( $endpaper_fact ); ?></span>
+						<?php endforeach; ?>
 
-					<?php if ( $endpaper_show_rating ) : ?>
-						<span class="endpaper-book__fact endpaper-book__rating">
-							<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?><?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?></span>
-							<span class="endpaper-book__rating-count" aria-hidden="true">
-								<?php
-								echo esc_html(
-									sprintf(
-										/* translators: %s: Number of ratings. */
-										_n( '(%s rating)', '(%s ratings)', $endpaper_book['ratings_count'], 'endpaper' ),
-										number_format_i18n( $endpaper_book['ratings_count'] )
-									)
-								);
-								?>
+						<?php if ( $endpaper_show_rating ) : ?>
+							<span class="endpaper-book__fact endpaper-book__rating">
+								<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?><?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?></span>
+								<span class="endpaper-book__rating-count" aria-hidden="true">
+									<?php
+									echo esc_html(
+										sprintf(
+											/* translators: %s: Number of ratings. */
+											_n( '(%s rating)', '(%s ratings)', $endpaper_book['ratings_count'], 'endpaper' ),
+											number_format_i18n( $endpaper_book['ratings_count'] )
+										)
+									);
+									?>
+								</span>
+								<span class="screen-reader-text">
+									<?php
+									echo esc_html(
+										sprintf(
+											/* translators: 1: Average rating, 2: Number of ratings. */
+											_n( 'Rated %1$s out of 5 on Hardcover, from %2$s rating', 'Rated %1$s out of 5 on Hardcover, from %2$s ratings', $endpaper_book['ratings_count'], 'endpaper' ),
+											number_format_i18n( $endpaper_book['rating'], 1 ),
+											number_format_i18n( $endpaper_book['ratings_count'] )
+										)
+									);
+									?>
+								</span>
 							</span>
-							<span class="screen-reader-text">
-								<?php
-								echo esc_html(
-									sprintf(
-										/* translators: 1: Average rating, 2: Number of ratings. */
-										_n( 'Rated %1$s out of 5 on Hardcover, from %2$s rating', 'Rated %1$s out of 5 on Hardcover, from %2$s ratings', $endpaper_book['ratings_count'], 'endpaper' ),
-										number_format_i18n( $endpaper_book['rating'], 1 ),
-										number_format_i18n( $endpaper_book['ratings_count'] )
-									)
-								);
-								?>
-							</span>
-						</span>
-					<?php endif; ?>
-				</p>
-			<?php endif; ?>
+						<?php endif; ?>
+					</p>
+				<?php endif; ?>
+
+				<?php the_hardcover_credit( $endpaper_url, 'endpaper-book__credit' ); ?>
+			</div>
 		</div>
 
 	</div>
 
-	<p class="endpaper-book__attribution">
-		<?php
-		echo wp_kses(
-			sprintf(
-				/* translators: %s: Link to Hardcover. */
-				__( 'Powered by %s', 'endpaper' ),
-				'<a href="' . esc_url( $endpaper_url ) . '">Hardcover</a>'
-			),
-			array( 'a' => array( 'href' => array() ) )
-		);
-		?>
-	</p>
 </div>

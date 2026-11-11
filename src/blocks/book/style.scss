@@ -24,11 +24,6 @@
 
 .wp-block-endpaper-book {
 	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-
-	/* Between the card and the credit under it. */
-	gap: 0.5em;
 }
 
 /* Spacing inside the block is set with gaps, not with the theme's margins. */
@@ -151,6 +146,42 @@
 	padding: 0.36em 0.86em;
 }
 
+/*
+ * The bottom row: the facts on one side and the credit to Hardcover on the
+ * other. On a narrow card the credit moves to a line of its own, under the
+ * facts. Without facts it sits alone at the far end.
+ */
+.endpaper-book__footer {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75em 0.5em;
+	justify-content: space-between;
+}
+
+.wp-block-endpaper-book .endpaper-book__credit {
+	color: inherit;
+	display: block;
+	flex: none;
+	transition: opacity 0.15s ease;
+}
+
+.endpaper-book__credit:only-child {
+	margin-inline-start: auto;
+}
+
+.endpaper-book__credit:hover {
+	opacity: 0.75;
+}
+
+/* The logo is as tall as a line of text, and scales with the font size. */
+.endpaper-book__credit .endpaper-logo {
+	display: block;
+	fill: currentcolor;
+	height: 1em;
+	width: auto;
+}
+
 .endpaper-book__meta {
 	align-items: baseline;
 	display: flex;
@@ -222,19 +253,4 @@
 
 .endpaper-book__cover a:hover {
 	opacity: 0.75;
-}
-
-.endpaper-book__attribution {
-	font-size: $small-font-size;
-	opacity: $muted-opacity;
-	text-align: center;
-}
-
-.wp-block-endpaper-book .endpaper-book__attribution a {
-	color: inherit;
-	text-decoration: underline;
-}
-
-.wp-block-endpaper-book .endpaper-book__attribution a:hover {
-	text-decoration: none;
 }
