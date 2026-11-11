@@ -1,0 +1,66 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "endpaper/book",
+	"version": "0.1.0",
+	"title": "Book",
+	"category": "embed",
+	"icon": "book",
+	"description": "Embed a book from Hardcover with its cover, description and rating.",
+	"keywords": [ "hardcover", "reading", "endpaper" ],
+	"textdomain": "endpaper",
+	"attributes": {
+		"bookId": {
+			"type": "integer"
+		},
+		"showCover": {
+			"type": "boolean",
+			"default": true
+		},
+		"showAuthors": {
+			"type": "boolean",
+			"default": true
+		},
+		"showMeta": {
+			"type": "boolean",
+			"default": true
+		},
+		"showRating": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDescription": {
+			"type": "boolean",
+			"default": true
+		},
+		"descriptionLines": {
+			"type": "integer",
+			"default": 4
+		},
+		"showLink": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"color": {
+			"background": true,
+			"text": true,
+			"link": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"editorStyle": "file:./editor.css",
+	"render": "file:./render.php"
+}

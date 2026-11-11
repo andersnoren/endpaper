@@ -1,0 +1,51 @@
+/*
+ * Book block.
+ *
+ * Kept deliberately small, so the block inherits fonts, colors and link
+ * styles from the active theme.
+ */
+
+.endpaper-book__inner {
+	align-items: flex-start;
+	display: flex;
+	gap: var(--wp--style--block-gap, 1.5rem);
+}
+
+.endpaper-book__cover {
+	flex: 0 0 clamp(6rem, 25%, 11rem);
+	margin: 0;
+}
+
+.endpaper-book__cover img {
+	display: block;
+	height: auto;
+	width: 100%;
+}
+
+.endpaper-book__content {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.endpaper-book__content > * {
+	margin-block: 0;
+}
+
+.endpaper-book__content > * + * {
+	margin-block-start: 0.5em;
+}
+
+.endpaper-book__authors,
+.endpaper-book__meta,
+.endpaper-book__rating,
+.endpaper-book__link {
+	font-size: 0.875em;
+}
+
+.endpaper-book__description.is-clamped {
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	-webkit-line-clamp: var(--endpaper-lines, 4);
+	line-clamp: var(--endpaper-lines, 4);
+	overflow: hidden;
+}
