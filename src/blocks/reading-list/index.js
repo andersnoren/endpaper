@@ -42,7 +42,7 @@ registerBlockType( metadata.name, {
 				'Show the books you finished most recently, from your Hardcover library.',
 				'endpaper'
 			),
-			attributes: { status: 3, showProgress: false },
+			attributes: { status: 3 },
 			isActive,
 		},
 		{
@@ -52,7 +52,7 @@ registerBlockType( metadata.name, {
 				'Show books you want to read, from your Hardcover library.',
 				'endpaper'
 			),
-			attributes: { status: 1, showProgress: false },
+			attributes: { status: 1 },
 			isActive,
 		},
 	],

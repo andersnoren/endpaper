@@ -21,7 +21,9 @@ import ServerSideRender from '@wordpress/server-side-render';
  */
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
+import getPreviewAttributes from '../../utils/get-preview-attributes';
 import metadata from './block.json';
+import './editor.scss';
 
 /**
  * The levels the book titles can have. 0 is a paragraph, the others are heading levels.
@@ -29,12 +31,16 @@ import metadata from './block.json';
 const TITLE_LEVELS = [ 0, 2, 3, 4, 5, 6 ];
 
 /**
- * The reading statuses a list can show. The values are Hardcover's status IDs.
+ * Hardcover's status IDs for the lists the block can show.
  */
+const WANT_TO_READ = 1;
+const CURRENTLY_READING = 2;
+const READ = 3;
+
 const STATUS_OPTIONS = [
-	{ value: 2, label: __( 'Currently Reading', 'endpaper' ) },
-	{ value: 3, label: __( 'Read', 'endpaper' ) },
-	{ value: 1, label: __( 'Want to Read', 'endpaper' ) },
+	{ value: CURRENTLY_READING, label: __( 'Currently Reading', 'endpaper' ) },
+	{ value: READ, label: __( 'Read', 'endpaper' ) },
+	{ value: WANT_TO_READ, label: __( 'Want to Read', 'endpaper' ) },
 ];
 
 const LAYOUT_OPTIONS = [
@@ -44,12 +50,28 @@ const LAYOUT_OPTIONS = [
 
 /**
  * The parts of each book that can be shown or hidden, in display order.
+ *
+ * Some only apply to one list: progress to the books being read, the rating
+ * and the date to the finished ones.
  */
 const DISPLAY_TOGGLES = [
 	{ attribute: 'showCover', label: __( 'Cover', 'endpaper' ) },
 	{ attribute: 'showAuthors', label: __( 'Authors', 'endpaper' ) },
-	{ attribute: 'showRating', label: __( 'Your rating', 'endpaper' ) },
-	{ attribute: 'showProgress', label: __( 'Reading progress', 'endpaper' ) },
+	{
+		attribute: 'showProgress',
+		onlyForStatus: CURRENTLY_READING,
+		label: __( 'Reading progress', 'endpaper' ),
+	},
+	{
+		attribute: 'showRating',
+		onlyForStatus: READ,
+		label: __( 'Your rating', 'endpaper' ),
+	},
+	{
+		attribute: 'showDate',
+		onlyForStatus: READ,
+		label: __( 'Date finished', 'endpaper' ),
+	},
 ];
 
 /**
@@ -83,7 +105,7 @@ function getGapValue( blockGap ) {
  * @return {Element} The editor element.
  */
 export default function Edit( { attributes, clientId, setAttributes } ) {
-	// The preview is rendered without the block's style settings, so the gap is set here.
+	// The preview is rendered without the Block spacing setting, so the gap is set here.
 	const blockProps = useBlockProps( {
 		style: {
 			'--endpaper-gap': getGapValue(
@@ -144,7 +166,11 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 							setAttributes( { layout: value } )
 						}
 					/>
-					{ DISPLAY_TOGGLES.map( ( { attribute, label } ) => (
+					{ DISPLAY_TOGGLES.filter(
+						( { onlyForStatus } ) =>
+							! onlyForStatus ||
+							onlyForStatus === attributes.status
+					).map( ( { attribute, label } ) => (
 						<ToggleControl
 							key={ attribute }
 							__nextHasNoMarginBottom
@@ -176,8 +202,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 			<div { ...blockProps }>
 				<ServerSideRender
 					block={ metadata.name }
-					attributes={ attributes }
-					skipBlockSupportAttributes
+					attributes={ getPreviewAttributes( attributes ) }
 				/>
 			</div>
 		</>

@@ -288,13 +288,90 @@ function get_card_style( $attributes ) {
 }
 
 /**
- * Returns the star icon, as inline SVG.
+ * Returns a star icon, as inline SVG.
  *
- * This is the filled star from the WordPress icon library. It takes the
- * color of the text around it.
+ * These are the stars from the WordPress icon library. They take the color
+ * of the text around them.
  *
+ * @param string $type Which star: "filled", "half" or "empty".
  * @return string SVG markup.
  */
-function get_star_icon() {
-	return '<svg class="endpaper-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M11.776 4.454a.25.25 0 01.448 0l2.069 4.192a.25.25 0 00.188.137l4.626.672a.25.25 0 01.139.426l-3.348 3.263a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.362.263l-4.138-2.175a.25.25 0 00-.232 0l-4.138 2.175a.25.25 0 01-.363-.263l.79-4.607a.25.25 0 00-.071-.222L4.754 9.881a.25.25 0 01.139-.426l4.626-.672a.25.25 0 00.188-.137l2.069-4.192z" /></svg>';
+function get_star_icon( $type = 'filled' ) {
+	$paths = array(
+		'filled' => '<path d="M11.776 4.454a.25.25 0 01.448 0l2.069 4.192a.25.25 0 00.188.137l4.626.672a.25.25 0 01.139.426l-3.348 3.263a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.362.263l-4.138-2.175a.25.25 0 00-.232 0l-4.138 2.175a.25.25 0 01-.363-.263l.79-4.607a.25.25 0 00-.071-.222L4.754 9.881a.25.25 0 01.139-.426l4.626-.672a.25.25 0 00.188-.137l2.069-4.192z" />',
+		'half'   => '<path d="M9.518 8.783a.25.25 0 00.188-.137l2.069-4.192a.25.25 0 01.448 0l2.07 4.192a.25.25 0 00.187.137l4.626.672a.25.25 0 01.139.427l-3.347 3.262a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.363.264l-4.137-2.176a.25.25 0 00-.233 0l-4.138 2.175a.25.25 0 01-.362-.263l.79-4.607a.25.25 0 00-.072-.222L4.753 9.882a.25.25 0 01.14-.427l4.625-.672zM12 14.533c.28 0 .559.067.814.2l1.895.997-.362-2.11a1.75 1.75 0 01.504-1.55l1.533-1.495-2.12-.308a1.75 1.75 0 01-1.317-.957L12 7.39v7.143z" />',
+		'empty'  => '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.706 8.646a.25.25 0 01-.188.137l-4.626.672a.25.25 0 00-.139.427l3.348 3.262a.25.25 0 01.072.222l-.79 4.607a.25.25 0 00.362.264l4.138-2.176a.25.25 0 01.233 0l4.137 2.175a.25.25 0 00.363-.263l-.79-4.607a.25.25 0 01.072-.222l3.347-3.262a.25.25 0 00-.139-.427l-4.626-.672a.25.25 0 01-.188-.137l-2.069-4.192a.25.25 0 00-.448 0L9.706 8.646zM12 7.39l-.948 1.921a1.75 1.75 0 01-1.317.957l-2.12.308 1.534 1.495c.412.402.6.982.503 1.55l-.362 2.11 1.896-.997a1.75 1.75 0 011.629 0l1.895.997-.362-2.11a1.75 1.75 0 01.504-1.55l1.533-1.495-2.12-.308a1.75 1.75 0 01-1.317-.957L12 7.39z" />',
+	);
+
+	if ( ! isset( $paths[ $type ] ) ) {
+		$type = 'filled';
+	}
+
+	return '<svg class="endpaper-icon endpaper-icon--star-' . $type . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">' . $paths[ $type ] . '</svg>';
+}
+
+/**
+ * Outputs a rating as five stars.
+ *
+ * The stars are decoration. Screen readers get the rating as text instead.
+ *
+ * @param float  $rating     A rating from 0 to 5. It is rounded to the nearest half star.
+ * @param string $class_name Class for the wrapping element.
+ * @return void
+ */
+function the_star_rating( $rating, $class_name ) {
+	$rating = max( 0.0, min( 5.0, round( (float) $rating * 2 ) / 2 ) );
+	$stars  = '';
+
+	for ( $star = 1; $star <= 5; $star++ ) {
+		if ( $rating >= $star ) {
+			$stars .= get_star_icon( 'filled' );
+		} elseif ( $rating >= $star - 0.5 ) {
+			$stars .= get_star_icon( 'half' );
+		} else {
+			$stars .= get_star_icon( 'empty' );
+		}
+	}
+
+	// Whole ratings are read as "4", half ones as "4.5".
+	$number = number_format_i18n( $rating, floor( $rating ) === $rating ? 0 : 1 );
+
+	printf(
+		'<span class="%1$s"><span class="endpaper-stars" aria-hidden="true">%2$s</span><span class="screen-reader-text">%3$s</span></span>',
+		esc_attr( $class_name ),
+		$stars, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup.
+		/* translators: %s: A rating, such as 4.5. */
+		esc_html( sprintf( __( 'Rated %s out of 5', 'endpaper' ), $number ) )
+	);
+}
+
+/**
+ * Formats a date from Hardcover the way the site shows dates.
+ *
+ * The format comes from the Date Format setting, and month names are translated.
+ *
+ * @param string $date A date as YYYY-MM-DD.
+ * @return string The formatted date, or an empty string if the date is not valid.
+ */
+function format_date( $date ) {
+	if ( ! is_string( $date ) || ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $date, $matches ) ) {
+		return '';
+	}
+
+	if ( ! checkdate( (int) $matches[2], (int) $matches[3], (int) $matches[1] ) ) {
+		return '';
+	}
+
+	// The date has no time of day, so it is formatted in UTC to keep it on the same day everywhere.
+	$timezone = new \DateTimeZone( 'UTC' );
+	$datetime = date_create( $date . ' 12:00:00', $timezone );
+	$format   = get_option( 'date_format' );
+
+	if ( ! $datetime ) {
+		return '';
+	}
+
+	$formatted = wp_date( $format ? $format : 'F j, Y', $datetime->getTimestamp(), $timezone );
+
+	return $formatted ? $formatted : '';
 }

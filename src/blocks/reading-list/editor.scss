@@ -1,0 +1,8 @@
+/*
+ * Editor styles for the Reading List block.
+ */
+
+/* Keep links in the preview from navigating away from the editor. */
+.wp-block-endpaper-reading-list .endpaper-reading-list__attribution a {
+	pointer-events: none;
+}

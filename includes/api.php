@@ -371,10 +371,21 @@ function normalize_library_entry( $raw ) {
 		$progress = max( 0.0, min( 100.0, $progress ) );
 	}
 
+	// The day the book was finished: the one Hardcover keeps on the entry, or else the one on the latest read.
+	$finished = '';
+
+	foreach ( array( isset( $raw['last_read_date'] ) ? $raw['last_read_date'] : null, isset( $read['finished_at'] ) ? $read['finished_at'] : null ) as $date ) {
+		if ( is_string( $date ) && preg_match( '/^\d{4}-\d{2}-\d{2}/', $date, $matches ) ) {
+			$finished = $matches[0];
+			break;
+		}
+	}
+
 	return array(
 		'status_id' => isset( $raw['status_id'] ) ? absint( $raw['status_id'] ) : 0,
 		'rating'    => isset( $raw['rating'] ) && is_numeric( $raw['rating'] ) ? (float) $raw['rating'] : 0.0,
 		'progress'  => $progress,
+		'finished'  => $finished,
 	);
 }
 
@@ -469,8 +480,8 @@ function get_reading_list( $status_id, $limit ) {
 		return new WP_Error( 'endpaper_invalid_status', __( 'Unknown reading status.', 'endpaper' ), array( 'status' => 400 ) );
 	}
 
-	// The token is part of the key, so switching to another account starts fresh.
-	$cache_key = 'endpaper_list_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit;
+	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
+	$cache_key = 'endpaper_list_v2_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit;
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entries'] ) ? $cached['entries'] : null;
 
@@ -491,7 +502,7 @@ function get_reading_list( $status_id, $limit ) {
 		: '[{updated_at: desc}]';
 
 	$data = api_request(
-		'query EndpaperReadingList($status_id: Int!, $limit: Int!) { me { user_books(where: {status_id: {_eq: $status_id}, privacy_setting_id: {_eq: 1}}, order_by: ' . $order_by . ', limit: $limit) { rating book { id title slug pages release_year image { url } cached_contributors } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		'query EndpaperReadingList($status_id: Int!, $limit: Int!) { me { user_books(where: {status_id: {_eq: $status_id}, privacy_setting_id: {_eq: 1}}, order_by: ' . $order_by . ', limit: $limit) { rating last_read_date book { id title slug pages release_year image { url } cached_contributors } user_book_reads(order_by: {id: desc}, limit: 1) { progress finished_at } } } }',
 		array(
 			'status_id' => $status_id,
 			'limit'     => $limit,

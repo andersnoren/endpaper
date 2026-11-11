@@ -26,6 +26,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 import BookSearch from './book-search';
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
+import getPreviewAttributes from '../../utils/get-preview-attributes';
 import metadata from './block.json';
 import './editor.scss';
 
@@ -66,27 +67,6 @@ const DISPLAY_TOGGLES = [
 	},
 	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
 ];
-
-/**
- * Returns the attributes to render the preview with.
- *
- * The block's wrapper in the editor already has the typography, margin and
- * extra class name applied, so those are left out to avoid applying them
- * twice. The settings that belong on the card, such as border and padding,
- * are kept, since only the server-rendered preview can apply them.
- *
- * @param {Object} attributes Block attributes.
- * @return {Object} The attributes for the preview.
- */
-function getPreviewAttributes( attributes ) {
-	const { className, fontFamily, fontSize, style = {}, ...rest } = attributes;
-	const { elements, spacing = {}, typography, ...restStyle } = style;
-
-	return {
-		...rest,
-		style: { ...restStyle, spacing: { padding: spacing.padding } },
-	};
-}
 
 /**
  * Editor component for the Book block.

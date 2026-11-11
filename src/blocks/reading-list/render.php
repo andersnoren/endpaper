@@ -9,14 +9,16 @@
  * @var WP_Block $block      Block instance.
  */
 
+use function AndersNoren\Endpaper\format_date;
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_block_gap_style;
+use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
-use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\the_progress_bar;
+use function AndersNoren\Endpaper\the_star_rating;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -48,72 +50,90 @@ if ( $endpaper_notice ) {
 	return;
 }
 
+// Each list has its own extras: progress for the books being read, the rating and the date for the finished ones.
+$endpaper_with_progress = 2 === $endpaper_status && ! empty( $attributes['showProgress'] );
+$endpaper_with_rating   = 3 === $endpaper_status && ! empty( $attributes['showRating'] );
+$endpaper_with_date     = 3 === $endpaper_status && ! empty( $attributes['showDate'] );
+
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
 		'class' => 'endpaper-reading-list--' . $endpaper_layout,
 		'style' => get_cover_radius_style( $attributes ) . get_block_gap_style( $attributes ) . get_accent_color_style( $attributes ),
 	)
 );
+
+$endpaper_card_style = get_card_style( $attributes );
 ?>
 <div <?php echo $endpaper_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<ul class="endpaper-reading-list__items">
+	<div class="endpaper-reading-list__card"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
+		<ul class="endpaper-reading-list__items">
 
-		<?php foreach ( $endpaper_entries as $endpaper_entry ) : ?>
-			<?php
-			$endpaper_book = $endpaper_entry['book'];
-			$endpaper_url  = $endpaper_book['url'];
-			?>
-			<li class="endpaper-reading-list__item">
+			<?php foreach ( $endpaper_entries as $endpaper_entry ) : ?>
+				<?php
+				$endpaper_book     = $endpaper_entry['book'];
+				$endpaper_rating   = $endpaper_with_rating && $endpaper_entry['rating'] > 0 ? $endpaper_entry['rating'] : 0;
+				$endpaper_finished = $endpaper_with_date && ! empty( $endpaper_entry['finished'] ) ? format_date( $endpaper_entry['finished'] ) : '';
+				?>
+				<li class="endpaper-reading-list__item">
 
-				<?php if ( ! empty( $attributes['showCover'] ) && $endpaper_book['cover'] ) : ?>
-					<figure class="endpaper-reading-list__cover">
-						<?php if ( $endpaper_url ) : ?>
-							<a href="<?php echo esc_url( $endpaper_url ); ?>" tabindex="-1" aria-hidden="true">
-						<?php endif; ?>
-						<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
-						<?php if ( $endpaper_url ) : ?>
-							</a>
-						<?php endif; ?>
-					</figure>
-				<?php endif; ?>
-
-				<div class="endpaper-reading-list__content">
-
-					<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-reading-list__title">
-						<?php if ( $endpaper_url ) : ?>
-							<a href="<?php echo esc_url( $endpaper_url ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
-						<?php else : ?>
-							<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
-						<?php endif; ?>
-					</<?php echo tag_escape( $endpaper_tag ); ?>>
-
-					<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
-						<p class="endpaper-reading-list__authors">
-							<?php
-							/* translators: %s: List of author names. */
-							echo esc_html( sprintf( __( 'by %s', 'endpaper' ), wp_sprintf( '%l', $endpaper_book['authors'] ) ) );
-							?>
-						</p>
+					<?php if ( ! empty( $attributes['showCover'] ) && $endpaper_book['cover'] ) : ?>
+						<figure class="endpaper-reading-list__cover">
+							<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
+						</figure>
 					<?php endif; ?>
 
-					<?php if ( ! empty( $attributes['showRating'] ) && $endpaper_entry['rating'] > 0 ) : ?>
-						<p class="endpaper-reading-list__rating">
-							<?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?>
-							<?php
-							/* translators: %s: A rating, such as 4.5. */
-							echo esc_html( sprintf( __( '%s out of 5', 'endpaper' ), number_format_i18n( $endpaper_entry['rating'], 1 ) ) );
-							?>
-						</p>
-					<?php endif; ?>
+					<div class="endpaper-reading-list__content">
 
-					<?php if ( ! empty( $attributes['showProgress'] ) && 2 === $endpaper_status && null !== $endpaper_entry['progress'] ) : ?>
-						<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-reading-list__progress' ); ?>
-					<?php endif; ?>
+						<div class="endpaper-reading-list__header">
+							<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-reading-list__title"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></<?php echo tag_escape( $endpaper_tag ); ?>>
 
-				</div>
+							<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
+								<p class="endpaper-reading-list__authors">
+									<?php
+									/* translators: %s: List of author names. */
+									echo esc_html( sprintf( __( 'by %s', 'endpaper' ), wp_sprintf( '%l', $endpaper_book['authors'] ) ) );
+									?>
+								</p>
+							<?php endif; ?>
+						</div>
 
-			</li>
-		<?php endforeach; ?>
+						<?php if ( $endpaper_with_progress && null !== $endpaper_entry['progress'] ) : ?>
+							<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-reading-list__progress' ); ?>
+						<?php endif; ?>
 
-	</ul>
+						<?php if ( $endpaper_rating || $endpaper_finished ) : ?>
+							<p class="endpaper-reading-list__read">
+								<?php if ( $endpaper_rating ) : ?>
+									<?php the_star_rating( $endpaper_rating, 'endpaper-reading-list__rating' ); ?>
+								<?php endif; ?>
+								<?php if ( $endpaper_finished ) : ?>
+									<span class="endpaper-reading-list__finished">
+										<?php
+										/* translators: %s: A date, such as November 30, 2015. */
+										echo esc_html( sprintf( __( 'Finished %s', 'endpaper' ), $endpaper_finished ) );
+										?>
+									</span>
+								<?php endif; ?>
+							</p>
+						<?php endif; ?>
+
+					</div>
+
+				</li>
+			<?php endforeach; ?>
+
+		</ul>
+	</div>
+	<p class="endpaper-reading-list__attribution">
+		<?php
+		echo wp_kses(
+			sprintf(
+				/* translators: %s: Link to Hardcover. */
+				__( 'Powered by %s', 'endpaper' ),
+				'<a href="https://hardcover.app/">Hardcover</a>'
+			),
+			array( 'a' => array( 'href' => array() ) )
+		);
+		?>
+	</p>
 </div>

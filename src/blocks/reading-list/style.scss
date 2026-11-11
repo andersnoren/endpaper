@@ -3,20 +3,46 @@
 /*
  * Reading List block.
  *
- * Kept deliberately small, so the block inherits fonts, colors and link
- * styles from the active theme.
+ * Every size is in em, relative to the block's font size. The block itself
+ * defaults to 1rem, which is 16px unless the reader has changed their browser's
+ * text size. The Size setting or the theme can change it.
+ * Colors follow the text color, so the block works on any background.
  */
 
-/* Keep padding and borders set in the editor inside the block's width. */
+/* Defaults with no specificity, so the editor's settings and theme.json win. */
+:where(.wp-block-endpaper-reading-list) {
+	font-size: 1rem;
+	line-height: 1.4;
+}
+
+:where(.endpaper-reading-list__card) {
+	border: 1px solid $border-color;
+	border-radius: 1em;
+	padding: 1.5em;
+}
+
 .wp-block-endpaper-reading-list {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+}
+
+/* Spacing inside the block is set with gaps, not with the theme's margins. */
+.wp-block-endpaper-reading-list p,
+.wp-block-endpaper-reading-list .endpaper-reading-list__title {
+	margin: 0;
+}
+
+.endpaper-reading-list__card {
 	box-sizing: border-box;
 }
 
-.endpaper-reading-list__items {
+.wp-block-endpaper-reading-list .endpaper-reading-list__items {
 	display: grid;
 
-	/* The gap comes from the Block spacing setting, then from the theme. */
-	gap: var(--endpaper-gap, var(--wp--style--block-gap, 1.5rem));
+	/* The gap between books comes from the Block spacing setting. */
+	gap: var(--endpaper-gap, 1.5em);
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -25,12 +51,13 @@
 .endpaper-reading-list__item {
 	align-items: flex-start;
 	display: flex;
-	gap: 1rem;
+	gap: 1.5em;
 	margin: 0;
+	min-width: 0;
 }
 
 .endpaper-reading-list__cover {
-	flex: 0 0 4rem;
+	flex: 0 0 4em;
 	margin: 0;
 }
 
@@ -38,60 +65,141 @@
 
 	/*
 	 * The radius comes from the block setting, then from the theme, which can
-	 * set it in theme.json under settings.custom.endpaper.coverRadius. Without
-	 * either, it is 4px.
+	 * set it in theme.json under settings.custom.endpaper.coverRadius.
 	 */
-	border-radius: var(--endpaper-cover-radius, var(--wp--custom--endpaper--cover-radius, 4px));
+	border-radius: var(--endpaper-cover-radius, var(--wp--custom--endpaper--cover-radius, 0.25em));
 	display: block;
 	height: auto;
 	width: 100%;
 }
 
+/* The text is centered against the cover, until it grows taller than it. */
 .endpaper-reading-list__content {
+	align-self: stretch;
+	display: flex;
 	flex: 1 1 0;
+	flex-direction: column;
+	gap: 0.75em;
+	justify-content: center;
 	min-width: 0;
 }
 
-.endpaper-reading-list__content > * {
-	margin-block: 0;
+.endpaper-reading-list__header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
 }
 
-.endpaper-reading-list__content > * + * {
-	margin-block-start: 0.25em;
+.wp-block-endpaper-reading-list .endpaper-reading-list__title {
+	font-size: 1.125em;
+	line-height: 1.2;
 }
 
-.endpaper-reading-list__authors,
-.endpaper-reading-list__rating,
-.wp-block-endpaper-reading-list .endpaper-icon {
-
-	@include icon;
-}
-
-.endpaper-reading-list__progress {
-	font-size: 0.875em;
+/* A title that is a heading takes its weight from the theme's headings. */
+.wp-block-endpaper-reading-list p.endpaper-reading-list__title {
+	font-weight: 700;
 }
 
 .endpaper-reading-list__progress {
 	align-items: center;
 	display: flex;
-	gap: 0.5em;
+	gap: 0.8125em;
 }
 
 .endpaper-reading-list__progress progress {
-
-	accent-color: $accent-color;
-	flex: 0 1 8rem;
+	appearance: none;
+	background: $track-color;
+	border: 0;
+	border-radius: 999px;
+	flex: 0 1 9em;
+	font-size: inherit;
+	height: 0.5em;
 	min-width: 0;
+	overflow: hidden;
+}
+
+.endpaper-reading-list__progress progress::-webkit-progress-bar {
+	background: transparent;
+}
+
+.endpaper-reading-list__progress progress::-webkit-progress-value {
+	background: $accent-color;
+	border-radius: 999px;
+}
+
+.endpaper-reading-list__progress progress::-moz-progress-bar {
+	background: $accent-color;
+	border-radius: 999px;
+}
+
+.endpaper-reading-list__progress span,
+.endpaper-reading-list__finished {
+	font-size: $small-font-size;
+}
+
+/* The rating and the date finished, side by side. */
+.endpaper-reading-list__read {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25em 0.8125em;
+}
+
+.endpaper-reading-list__rating {
+	display: inline-flex;
+}
+
+/*
+ * The star icons have empty space around the shape. They overlap by that
+ * much, and the row is pulled in at both ends, so the first star lines up
+ * with the text above it.
+ */
+.endpaper-stars {
+	color: $accent-color;
+	display: inline-flex;
+	margin-inline: -0.25em;
+}
+
+.endpaper-stars .endpaper-icon {
+	display: block;
+	fill: currentcolor;
+	flex: none;
+	height: 1.5em;
+	width: 1.5em;
+}
+
+.endpaper-stars .endpaper-icon + .endpaper-icon {
+	margin-inline-start: -0.25em;
+}
+
+/* The half star is filled on the side the reading direction starts from. */
+[dir="rtl"] .endpaper-stars .endpaper-icon--star-half {
+	transform: scaleX(-1);
+}
+
+.endpaper-reading-list__attribution {
+	font-size: $small-font-size;
+	opacity: $muted-opacity;
+	text-align: center;
+}
+
+.wp-block-endpaper-reading-list .endpaper-reading-list__attribution a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.wp-block-endpaper-reading-list .endpaper-reading-list__attribution a:hover {
+	text-decoration: none;
 }
 
 /* Grid layout: covers side by side, with the text underneath. */
-.endpaper-reading-list--grid .endpaper-reading-list__items {
-	grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+.wp-block-endpaper-reading-list.endpaper-reading-list--grid .endpaper-reading-list__items {
+	grid-template-columns: repeat(auto-fill, minmax(7em, 1fr));
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__item {
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 0.75em;
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__cover {
@@ -100,6 +208,12 @@
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__content {
+	align-self: auto;
 	flex: none;
+	justify-content: flex-start;
 	width: 100%;
+}
+
+.endpaper-reading-list--grid .endpaper-reading-list__progress progress {
+	flex: 1 1 0;
 }

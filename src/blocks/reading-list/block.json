@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "endpaper/reading-list",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"title": "Reading List",
 	"category": "widgets",
 	"icon": "book-alt",
@@ -45,6 +45,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"showDate": {
+			"type": "boolean",
+			"default": true
+		},
 		"showProgress": {
 			"type": "boolean",
 			"default": true
@@ -57,6 +61,7 @@
 			"gradients": true,
 			"link": true,
 			"heading": true,
+			"__experimentalSkipSerialization": [ "background", "gradients" ],
 			"__experimentalDefaultControls": {
 				"background": true,
 				"text": true,
@@ -67,6 +72,7 @@
 			"margin": true,
 			"padding": true,
 			"blockGap": true,
+			"__experimentalSkipSerialization": [ "padding" ],
 			"__experimentalDefaultControls": {
 				"blockGap": true
 			}
@@ -89,6 +95,7 @@
 			"color": true,
 			"width": true,
 			"style": true,
+			"__experimentalSkipSerialization": true,
 			"__experimentalDefaultControls": {
 				"radius": true,
 				"color": true,
@@ -96,9 +103,23 @@
 				"style": true
 			}
 		},
-		"shadow": true
+		"shadow": {
+			"__experimentalSkipSerialization": true
+		}
+	},
+	"selectors": {
+		"root": ".wp-block-endpaper-reading-list",
+		"border": ".wp-block-endpaper-reading-list .endpaper-reading-list__card",
+		"shadow": ".wp-block-endpaper-reading-list .endpaper-reading-list__card",
+		"color": {
+			"background": ".wp-block-endpaper-reading-list .endpaper-reading-list__card"
+		},
+		"spacing": {
+			"padding": ".wp-block-endpaper-reading-list .endpaper-reading-list__card"
+		}
 	},
 	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"render": "file:./render.php"
 }
