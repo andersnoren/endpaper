@@ -221,6 +221,12 @@ try {
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
 
 	delete_option( 'endpaper_hardcover_token' );
+
+	echo "Translations\n";
+	foreach ( array( 'endpaper-book-editor-script', 'endpaper-reading-list-editor-script' ) as $endpaper_handle ) {
+		$endpaper_script = wp_scripts()->registered[ $endpaper_handle ] ?? null;
+		endpaper_check( $endpaper_handle . ' loads translations for the editor', $endpaper_script && 'endpaper' === $endpaper_script->textdomain );
+	}
 } catch ( Throwable $endpaper_error ) {
 	$endpaper_message                = get_class( $endpaper_error ) . ': ' . $endpaper_error->getMessage() . ' in ' . $endpaper_error->getFile() . ':' . $endpaper_error->getLine();
 	$GLOBALS['endpaper_failures'][] = $endpaper_message;
