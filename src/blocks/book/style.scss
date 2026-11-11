@@ -167,6 +167,11 @@
 	@include icon;
 }
 
+/* A little room between the rating and its star. */
+.wp-block-endpaper-book .endpaper-book__rating .endpaper-icon {
+	margin-inline-start: 0;
+}
+
 .endpaper-book__rating-count {
 	font-size: 0.857em;
 	font-weight: 400;
