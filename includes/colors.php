@@ -124,11 +124,75 @@ function get_contrast_ratio( $first, $second ) {
 }
 
 /**
- * Returns the accent color a block ends up with, following the same order as the stylesheet.
+ * Returns the color a block's contents sit on: the block's own background, or else the site's.
+ *
+ * @param array $attributes Block attributes.
+ * @return array Red, green and blue from 0 to 255. White if the color cannot be worked out.
+ */
+function get_surface_color( $attributes ) {
+	$surface = null;
+
+	if ( ! empty( $attributes['backgroundColor'] ) && is_string( $attributes['backgroundColor'] ) ) {
+		$surface = resolve_color( 'var:preset|color|' . $attributes['backgroundColor'] );
+	} elseif ( isset( $attributes['style']['color']['background'] ) ) {
+		$surface = resolve_color( $attributes['style']['color']['background'] );
+	}
+
+	if ( ! $surface ) {
+		$surface = resolve_color( wp_get_global_styles( array( 'color', 'background' ), array( 'transforms' => array( 'resolve-variables' ) ) ) );
+	}
+
+	return $surface ? $surface : array( 255, 255, 255 );
+}
+
+/**
+ * Picks an accent color for a block that has not been given one.
+ *
+ * Many themes have a color called "accent" that is too pale to see as a
+ * progress bar or a star: Twenty Twenty-Four's is beige. So the color has to
+ * stand out from the background, by the 3:1 that WCAG asks of graphics. The
+ * candidates are the theme's "accent" color, then "accent-1" to "accent-6".
+ * If the theme has accent colors but none stands out, the text color is
+ * used. A theme without accent colors gets indigo.
+ *
+ * @param array $attributes Block attributes.
+ * @return string A palette reference, a hex color, or "currentcolor".
+ */
+function get_default_accent_color( $attributes ) {
+	$palette    = get_palette_colors();
+	$surface    = get_surface_color( $attributes );
+	$candidates = 0;
+
+	foreach ( array( 'accent', 'accent-1', 'accent-2', 'accent-3', 'accent-4', 'accent-5', 'accent-6' ) as $slug ) {
+		if ( ! isset( $palette[ $slug ] ) ) {
+			continue;
+		}
+
+		++$candidates;
+		$color = parse_color( $palette[ $slug ] );
+
+		// A color in a format that cannot be measured is taken on trust.
+		if ( ! $color || get_contrast_ratio( $color, $surface ) >= 3 ) {
+			return 'var:preset|color|' . $slug;
+		}
+	}
+
+	if ( ! $candidates && get_contrast_ratio( array( 79, 70, 229 ), $surface ) >= 3 ) {
+		return '#4f46e5';
+	}
+
+	return 'currentcolor';
+}
+
+/**
+ * Returns the accent color a block ends up with.
+ *
+ * It comes from the block's own setting, then from the theme's setting in
+ * theme.json, and otherwise it is picked from the theme's palette.
  *
  * @param array  $attributes Block attributes.
  * @param string $block_name Block name, such as "endpaper/book".
- * @return string A CSS color or a palette reference.
+ * @return string A CSS color, a palette reference, or "currentcolor".
  */
 function get_accent_color( $attributes, $block_name ) {
 	if ( isset( $attributes['accentColor'] ) && '' !== sanitize_css_color( $attributes['accentColor'] ) ) {
@@ -141,15 +205,35 @@ function get_accent_color( $attributes, $block_name ) {
 		return $from_theme;
 	}
 
-	$palette = get_palette_colors();
+	return get_default_accent_color( $attributes );
+}
 
-	foreach ( array( 'accent', 'accent-1' ) as $slug ) {
-		if ( isset( $palette[ $slug ] ) ) {
-			return 'var:preset|color|' . $slug;
+/**
+ * Returns the inline style that sets a block's accent color.
+ *
+ * The color is passed to the stylesheet as a custom property on the block
+ * wrapper. A color set in the theme's theme.json needs nothing here: the
+ * stylesheet reads that itself.
+ *
+ * @param array  $attributes Block attributes.
+ * @param string $block_name Block name, such as "endpaper/book".
+ * @return string An inline style declaration, or an empty string.
+ */
+function get_accent_color_style( $attributes, $block_name ) {
+	$value = sanitize_css_color( isset( $attributes['accentColor'] ) ? $attributes['accentColor'] : null );
+
+	if ( '' === $value ) {
+		$from_theme = wp_get_global_settings( array( 'custom', 'endpaper', 'accent' ), array( 'block_name' => $block_name ) );
+
+		if ( is_string( $from_theme ) && '' !== $from_theme ) {
+			return '';
 		}
+
+		$picked = get_default_accent_color( $attributes );
+		$value  = 'currentcolor' === $picked ? $picked : sanitize_css_color( $picked );
 	}
 
-	return '#4f46e5';
+	return '' === $value ? '' : '--endpaper-accent: ' . $value . ';';
 }
 
 /**
@@ -175,17 +259,20 @@ function get_on_accent_style( $attributes, $block_name ) {
 		$text_source = wp_get_global_styles( array( 'color', 'text' ), $resolved );
 	}
 
-	$accent     = resolve_color( get_accent_color( $attributes, $block_name ) );
+	$accent     = get_accent_color( $attributes, $block_name );
 	$background = resolve_color( wp_get_global_styles( array( 'color', 'background' ), $resolved ) );
 	$text       = resolve_color( $text_source );
-
-	if ( ! $accent ) {
-		return '';
-	}
 
 	// Without a known color, assume the usual: dark text on a light background.
 	$background = $background ? $background : array( 255, 255, 255 );
 	$text       = $text ? $text : array( 0, 0, 0 );
+
+	// An accent that is the text color itself is measured as the text color.
+	$accent = 'currentcolor' === $accent ? $text : resolve_color( $accent );
+
+	if ( ! $accent ) {
+		return '';
+	}
 
 	if ( get_contrast_ratio( $accent, $text ) > get_contrast_ratio( $accent, $background ) ) {
 		return '--endpaper-on-accent: currentcolor;';

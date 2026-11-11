@@ -177,22 +177,6 @@ function sanitize_css_color( $value ) {
 }
 
 /**
- * Returns the inline style that sets a block's accent color.
- *
- * The color is passed to the stylesheet as a custom property on the block
- * wrapper. Without a value in the block attributes, nothing is returned and
- * the stylesheet falls back to the theme's accent color.
- *
- * @param array $attributes Block attributes.
- * @return string An inline style declaration, or an empty string.
- */
-function get_accent_color_style( $attributes ) {
-	$value = sanitize_css_color( isset( $attributes['accentColor'] ) ? $attributes['accentColor'] : null );
-
-	return '' === $value ? '' : '--endpaper-accent: ' . $value . ';';
-}
-
-/**
  * Shortens text to a maximum length, ending on a whole sentence where possible.
  *
  * Line breaks are turned into spaces, so the result is a single paragraph.

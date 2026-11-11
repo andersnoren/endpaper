@@ -110,7 +110,7 @@ $endpaper_show_rating = ! empty( $attributes['showRating'] ) && $endpaper_book['
 
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
-		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes ) . get_on_accent_style( $attributes, 'endpaper/book' ),
+		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ) . get_on_accent_style( $attributes, 'endpaper/book' ),
 	)
 );
 

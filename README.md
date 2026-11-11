@@ -67,7 +67,7 @@ Two settings are specific to Endpaper. A theme sets their defaults under `settin
 }
 ```
 
-- `accent` is the accent color, used for the reading progress bar and the shelf label. Without it, the blocks use the color with the slug `accent` or `accent-1` in the theme’s palette, and failing that, indigo (`#4f46e5`).
+- `accent` is the accent color, used for the reading progress bar, the rating stars and the shelf label. Without it, the blocks pick one from the theme’s palette: the first of `accent` and `accent-1` to `accent-6` that stands out from the background, with a contrast of at least 3:1. If none does, they use the text color. A theme without accent colors gets indigo (`#4f46e5`).
 - `coverRadius` is the corner radius of book covers. Without it, the radius is 8px in the Book block and 4px in the Reading List.
 
 To set either for one block only, put the same `custom` settings under `settings.blocks`:
