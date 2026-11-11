@@ -115,6 +115,7 @@ add_filter(
 									array(
 										'status_id'       => 2,
 										'rating'          => null,
+										'edition'         => array( 'image' => array( 'url' => 'https://assets.hardcover.app/edition-entry.jpg' ) ),
 										'user_book_reads' => array( array( 'progress' => 68.4 ) ),
 									),
 								),
@@ -126,13 +127,15 @@ add_filter(
 		}
 
 		if ( false !== strpos( $query, 'EndpaperReadingList' ) ) {
-			$entry = static function ( $rating, $cover ) use ( $book ) {
+			// The first book has an edition with its own cover, the second has no cover at all, the third has an edition without one.
+			$entry = static function ( $rating, $cover, $edition_cover = '' ) use ( $book ) {
 				$copy          = $book;
 				$copy['image'] = $cover ? $book['image'] : null;
 
 				return array(
 					'rating'          => $rating,
 					'last_read_date'  => '2015-11-30',
+					'edition'         => array( 'image' => $edition_cover ? array( 'url' => $edition_cover ) : null ),
 					'book'            => $copy,
 					'user_book_reads' => array(
 						array(
@@ -143,7 +146,7 @@ add_filter(
 				);
 			};
 
-			return $respond( 200, array( 'data' => array( 'me' => array( array( 'user_books' => array( $entry( 4.5, true ), $entry( 3, false ), $entry( null, true ) ) ) ) ) ) );
+			return $respond( 200, array( 'data' => array( 'me' => array( array( 'user_books' => array( $entry( 4.5, true, 'https://assets.hardcover.app/edition-list.jpg' ), $entry( 3, false ), $entry( null, true ) ) ) ) ) ) );
 		}
 
 		return $respond( 200, array( 'data' => array( 'books' => array( $book ) ) ) );
@@ -193,6 +196,7 @@ try {
 	endpaper_check( 'it renders a card', false !== strpos( $endpaper_html, 'endpaper-book__card' ) );
 	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '"Complete"' ) && false !== strpos( $endpaper_html, 'Complete' ) );
 	endpaper_check( 'it shows the reading progress', false !== strpos( $endpaper_html, '<progress' ) );
+	endpaper_check( 'it uses the cover of the edition in the library', false !== strpos( $endpaper_html, 'edition-entry.jpg' ) && false === strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 	endpaper_check( 'it credits Hardcover', false !== strpos( $endpaper_html, 'endpaper-logo' ) && false !== strpos( $endpaper_html, 'Powered by Hardcover' ) );
 	endpaper_check( 'the key is not in the output', false === strpos( $endpaper_html, 'smoke-test-key' ) );
 
@@ -210,6 +214,8 @@ try {
 	endpaper_check( 'the grid renders, framed', false !== strpos( $endpaper_html, 'endpaper-reading-list--grid' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list__card--framed' ) );
 	endpaper_check( 'a rating is shown as stars', false !== strpos( $endpaper_html, 'endpaper-icon--star-half' ) && false !== strpos( $endpaper_html, 'Rated 4.5 out of 5' ) );
 	endpaper_check( 'a book without a cover gets a placeholder', false !== strpos( $endpaper_html, 'endpaper-cover-placeholder' ) );
+	endpaper_check( 'the cover of the edition in the library is used', 1 === substr_count( $endpaper_html, 'edition-list.jpg' ) );
+	endpaper_check( 'an edition without a cover falls back to the cover of the book', 1 === substr_count( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 	endpaper_check( 'a spacing of zero gets a unit', false !== strpos( $endpaper_html, '--endpaper-gap: 0px' ) );
 
 	echo "The settings screen\n";

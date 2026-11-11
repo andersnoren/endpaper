@@ -58,16 +58,15 @@ $endpaper_url = $endpaper_book['url'] ? $endpaper_book['url'] : 'https://hardcov
 // The title and the cover link to the book on Hardcover, if that is switched on. The credit line always links.
 $endpaper_link = ! empty( $attributes['linkToHardcover'] ) && $endpaper_book['url'] ? $endpaper_book['url'] : '';
 
-// The shelf and progress come from the site owner's own library. They are extras, so a failed lookup never hides the book.
-$endpaper_entry = array();
+// The shelf, the progress and the cover of the owner's edition come from the site owner's own library. They are extras, so a failed lookup never hides the book.
+$endpaper_entry = get_library_entry( $endpaper_book_id );
 
-if ( ! empty( $attributes['showShelf'] ) || ! empty( $attributes['showProgress'] ) ) {
-	$endpaper_entry = get_library_entry( $endpaper_book_id );
-
-	if ( is_wp_error( $endpaper_entry ) ) {
-		$endpaper_entry = array();
-	}
+if ( is_wp_error( $endpaper_entry ) ) {
+	$endpaper_entry = array();
 }
+
+// The edition in the library can have another cover than the one Hardcover shows for the book.
+$endpaper_cover = ! empty( $endpaper_entry['cover'] ) ? $endpaper_entry['cover'] : $endpaper_book['cover'];
 
 $endpaper_shelves = get_shelf_labels();
 $endpaper_shelf   = $endpaper_entry && isset( $endpaper_shelves[ $endpaper_entry['status_id'] ] ) ? $endpaper_shelves[ $endpaper_entry['status_id'] ] : '';
@@ -124,8 +123,8 @@ $endpaper_card_style = get_card_style( $attributes );
 				<?php if ( $endpaper_link ) : ?>
 					<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
 				<?php endif; ?>
-				<?php if ( $endpaper_book['cover'] ) : ?>
-					<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
+				<?php if ( $endpaper_cover ) : ?>
+					<img src="<?php echo esc_url( $endpaper_cover ); ?>" alt="" loading="lazy" decoding="async" />
 				<?php else : ?>
 					<span class="endpaper-cover-placeholder"></span>
 				<?php endif; ?>

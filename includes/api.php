@@ -414,6 +414,8 @@ function normalize_library_entry( $raw ) {
 		'rating'    => isset( $raw['rating'] ) && is_numeric( $raw['rating'] ) ? (float) $raw['rating'] : 0.0,
 		'progress'  => $progress,
 		'finished'  => $finished,
+		// The cover of the edition the entry is for, which can differ from the cover Hardcover shows for the book.
+		'cover'     => isset( $raw['edition']['image']['url'] ) && is_string( $raw['edition']['image']['url'] ) ? esc_url_raw( $raw['edition']['image']['url'] ) : '',
 	);
 }
 
@@ -427,11 +429,16 @@ function normalize_reading_list_entry( $raw ) {
 	$entry         = normalize_library_entry( $raw );
 	$entry['book'] = normalize_book( isset( $raw['book'] ) && is_array( $raw['book'] ) ? $raw['book'] : array() );
 
+	// Show the cover of the edition that was read, if it has one.
+	if ( $entry['cover'] ) {
+		$entry['book']['cover'] = $entry['cover'];
+	}
+
 	return $entry;
 }
 
 /**
- * Returns the library entry for one book: which shelf it is on, and how far along it is.
+ * Returns the library entry for one book: which shelf it is on, how far along it is, and the cover of its edition.
  *
  * The library is that of the person the API token belongs to. Only an entry
  * that is public on Hardcover is returned.
@@ -446,8 +453,8 @@ function get_library_entry( $book_id ) {
 		return array();
 	}
 
-	// The token is part of the key, so switching to another account starts fresh.
-	$cache_key = 'endpaper_entry_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id;
+	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
+	$cache_key = 'endpaper_entry_v2_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id;
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
 
@@ -463,7 +470,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	$data = api_request(
-		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating edition { image { url } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
 		array( 'book_id' => $book_id )
 	);
 
@@ -509,7 +516,7 @@ function get_reading_list( $status_id, $limit ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = 'endpaper_list_v2_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit;
+	$cache_key = 'endpaper_list_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit;
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entries'] ) ? $cached['entries'] : null;
 
@@ -530,7 +537,7 @@ function get_reading_list( $status_id, $limit ) {
 		: '[{updated_at: desc}]';
 
 	$data = api_request(
-		'query EndpaperReadingList($status_id: Int!, $limit: Int!) { me { user_books(where: {status_id: {_eq: $status_id}, privacy_setting_id: {_eq: 1}}, order_by: ' . $order_by . ', limit: $limit) { rating last_read_date book { id title slug pages release_year image { url } cached_contributors } user_book_reads(order_by: {id: desc}, limit: 1) { progress finished_at } } } }',
+		'query EndpaperReadingList($status_id: Int!, $limit: Int!) { me { user_books(where: {status_id: {_eq: $status_id}, privacy_setting_id: {_eq: 1}}, order_by: ' . $order_by . ', limit: $limit) { rating last_read_date edition { image { url } } book { id title slug pages release_year image { url } cached_contributors } user_book_reads(order_by: {id: desc}, limit: 1) { progress finished_at } } } }',
 		array(
 			'status_id' => $status_id,
 			'limit'     => $limit,
