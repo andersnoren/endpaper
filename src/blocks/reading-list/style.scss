@@ -212,8 +212,11 @@ $gap: var(--endpaper-gap, 1.5em);
 	text-decoration: underline;
 }
 
-.endpaper-reading-list__cover a {
+.wp-block-endpaper-reading-list .endpaper-reading-list__cover a {
 	border-radius: inherit;
+
+	/* Keeps the placeholder gray, not the color of links. */
+	color: inherit;
 	display: block;
 	transition: opacity 0.15s ease;
 }
@@ -268,4 +271,22 @@ $gap: var(--endpaper-gap, 1.5em);
 
 .endpaper-reading-list--grid .endpaper-reading-list__progress progress {
 	flex: 1 1 0;
+}
+
+/*
+ * Covers differ in height. Each book takes two rows of the grid, one for the
+ * cover and one for the text, and shares them with the books beside it. The
+ * covers stand on the bottom of their row, so the titles line up.
+ */
+@supports (grid-template-rows: subgrid) {
+
+	.endpaper-reading-list--grid.endpaper-reading-list--has-covers .endpaper-reading-list__item {
+		display: grid;
+		grid-row: span 2;
+		grid-template-rows: subgrid;
+	}
+
+	.endpaper-reading-list--grid.endpaper-reading-list--has-covers .endpaper-reading-list__cover {
+		align-self: end;
+	}
 }

@@ -57,7 +57,7 @@ $endpaper_with_date     = 3 === $endpaper_status && ! empty( $attributes['showDa
 
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'endpaper-reading-list--' . $endpaper_layout,
+		'class' => 'endpaper-reading-list--' . $endpaper_layout . ( ! empty( $attributes['showCover'] ) ? ' endpaper-reading-list--has-covers' : '' ),
 		'style' => get_cover_radius_style( $attributes ) . get_block_gap_style( $attributes ) . get_accent_color_style( $attributes ),
 	)
 );
