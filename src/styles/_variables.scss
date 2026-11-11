@@ -1,5 +1,5 @@
 /*
- * Values shared by the block stylesheets.
+ * Values and mixins shared by the block stylesheets.
  */
 
 /*
@@ -23,3 +23,17 @@ $dot-color: color-mix(in srgb, currentcolor 33%, transparent);
 
 /* Secondary text is the text color at reduced opacity. */
 $muted-opacity: 0.66;
+
+/*
+ * An inline icon from the WordPress icon library. The icons have empty space
+ * around the shape, so the box is larger than the text and pulled in with
+ * negative margins, which makes the shape itself match the text.
+ */
+@mixin icon {
+	display: inline-block;
+	fill: currentcolor;
+	height: 1.4em;
+	margin-inline: -0.2em;
+	vertical-align: -0.38em;
+	width: 1.4em;
+}

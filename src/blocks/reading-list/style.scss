@@ -62,6 +62,11 @@
 
 .endpaper-reading-list__authors,
 .endpaper-reading-list__rating,
+.wp-block-endpaper-reading-list .endpaper-icon {
+
+	@include icon;
+}
+
 .endpaper-reading-list__progress {
 	font-size: 0.875em;
 }

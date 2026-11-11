@@ -126,7 +126,6 @@
 
 .endpaper-book__progress span {
 	font-size: 0.75em;
-	opacity: $muted-opacity;
 }
 
 /* The shelf is an accent-colored pill. PHP picks a contrasting text color. */
@@ -161,6 +160,11 @@
 	margin-inline-start: 0.57em;
 	vertical-align: middle;
 	width: 0.36em;
+}
+
+.wp-block-endpaper-book .endpaper-icon {
+
+	@include icon;
 }
 
 .endpaper-book__rating-count {

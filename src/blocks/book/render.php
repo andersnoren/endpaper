@@ -21,6 +21,7 @@ use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_library_entry;
 use function AndersNoren\Endpaper\get_on_accent_style;
 use function AndersNoren\Endpaper\get_shelf_labels;
+use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\the_progress_bar;
 use function AndersNoren\Endpaper\trim_to_sentence;
@@ -165,7 +166,7 @@ $endpaper_card_style = get_card_style( $attributes );
 
 					<?php if ( $endpaper_show_rating ) : ?>
 						<span class="endpaper-book__fact endpaper-book__rating">
-							<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?>★</span>
+							<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?><?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?></span>
 							<span class="endpaper-book__rating-count" aria-hidden="true">
 								<?php
 								echo esc_html(

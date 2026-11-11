@@ -14,6 +14,7 @@ use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_block_gap_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
+use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\the_progress_bar;
 
@@ -97,7 +98,7 @@ $endpaper_wrapper = get_block_wrapper_attributes(
 
 					<?php if ( ! empty( $attributes['showRating'] ) && $endpaper_entry['rating'] > 0 ) : ?>
 						<p class="endpaper-reading-list__rating">
-							<span aria-hidden="true">★</span>
+							<?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?>
 							<?php
 							/* translators: %s: A rating, such as 4.5. */
 							echo esc_html( sprintf( __( '%s out of 5', 'endpaper' ), number_format_i18n( $endpaper_entry['rating'], 1 ) ) );
