@@ -303,6 +303,10 @@
 	@include muted-text;
 }
 
+.wp-block-endpaper-book a.endpaper-book__review-part:hover {
+	text-decoration: none;
+}
+
 .wp-block-endpaper-book .endpaper-book__review-part:not(:last-child)::after {
 
 	@include dot-after;
