@@ -270,60 +270,67 @@
 
 .endpaper-style-choice__options {
 	display: grid;
-	gap: 12px;
-	grid-template-columns: repeat(2, minmax(0, 200px));
+	gap: 16px;
+	grid-template-columns: repeat(2, minmax(0, 240px));
 }
 
 .endpaper-style-choice__option {
-	border: 1px solid #c3c4c7;
-	border-radius: 2px;
 	cursor: pointer;
 	display: block;
-	padding: 10px 12px 12px;
 }
 
-.endpaper-style-choice__option:has(input:checked) {
+/* The page the book is drawn on. */
+.endpaper-style-choice__preview {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 2px;
+	box-sizing: border-box;
+	display: block;
+	padding: 14px;
+}
+
+.endpaper-style-choice__option:has(input:checked) .endpaper-style-choice__preview {
 	border-color: #2271b1;
 	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.endpaper-style-choice__drawing {
+	align-items: flex-start;
+	display: flex;
+	gap: 10px;
+	padding: 10px;
+}
+
+/* Card sits on a tinted panel, Plain on the bare page. */
+.endpaper-style-choice__drawing--card {
+	background: #e4e5e6;
+	border-radius: 6px;
 }
 
 .endpaper-style-choice__name {
 	display: block;
 	font-weight: 600;
-	margin-bottom: 8px;
-}
-
-.endpaper-style-choice__preview {
-	align-items: flex-start;
-	display: flex;
-	gap: 8px;
-	padding: 10px;
-}
-
-/* Card sits on a tinted panel, Plain on the bare page. */
-.endpaper-style-choice__preview--card {
-	background: #e4e5e6;
-	border-radius: 6px;
+	margin-top: 10px;
 }
 
 .endpaper-style-choice__text {
 	color: #646970;
 	display: block;
-	margin-top: 8px;
+	margin: 2px 0 0 25px;
 }
 
 .endpaper-style-choice__cover {
 	background: #a7aaad;
 	border-radius: 2px;
 	flex: none;
-	height: 36px;
-	width: 26px;
+	height: 40px;
+	width: 28px;
 }
 
 .endpaper-style-choice__lines {
 	display: grid;
 	flex: 1;
-	gap: 5px;
+	gap: 6px;
 	padding-top: 4px;
 }
 
@@ -343,5 +350,5 @@
 }
 
 .endpaper-style-choice .description {
-	margin-top: 12px;
+	margin-top: 16px;
 }
