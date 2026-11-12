@@ -794,6 +794,16 @@ function render_settings_page() {
 					?>
 					<?php
 					printf(
+						/* translators: %s: Hardcover, linked to their website. */
+						esc_html__( 'It is made possible by %s and their wonderful API.', 'endpaper' ),
+						'<a href="https://hardcover.app">Hardcover</a>'
+					);
+					?>
+				</p>
+
+				<p>
+					<?php
+					printf(
 						/* translators: %s: A link to the plugin's issues on GitHub. */
 						esc_html__( 'Have an idea for a feature? %s.', 'endpaper' ),
 						'<a href="' . esc_url( ENDPAPER_ISSUES_URL ) . '">' . esc_html__( 'Suggest it on GitHub', 'endpaper' ) . '</a>'
