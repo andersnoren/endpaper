@@ -8,11 +8,13 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Show books from Hardcover in your posts and pages: a single book as a card, or the books you are reading from your own library.
+Show books from Hardcover on your site: a single book, or the books you are reading. Unofficial, not maintained or endorsed by Hardcover.
 
 == Description ==
 
 Endpaper adds two blocks that show books from [Hardcover](https://hardcover.app), the book tracking site.
+
+**Endpaper is an unofficial plugin.** It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Hardcover does not provide support for it: for help, use the plugin’s support forum here on WordPress.org.
 
 **The Book block** shows one book as a card: the cover, title, authors, a short description, the publication year, the page count and the rating on Hardcover. Search by title, author or ISBN, or paste a link to the book’s page on Hardcover. It can also show which of your own shelves the book is on, and how far you have read. The cover is the one of your own edition when the book is in your library, and you can pick the cover of any other edition.
 
@@ -24,8 +26,6 @@ The blocks are made to fit your theme:
 * The accent color comes from your theme. You can change it for a single block.
 * The standard color, typography, spacing, border and shadow settings are supported, in the editor and in `theme.json`.
 * Only books that are public on Hardcover are shown. A book you keep private there never appears on your site.
-
-Endpaper is not affiliated with or endorsed by Hardcover.
 
 In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
 
