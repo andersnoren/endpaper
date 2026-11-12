@@ -563,7 +563,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( ENDPAPER_DIR . 'endpaper.p
  *
  * The icons are the ones the blocks have in the editor: a block with a path
  * in assets/icons.json, under its icon name, is drawn from that SVG path on a
- * 20 by 20 grid, and any other falls back to the Dashicon named in icon. The
+ * 20 by 20 grid, and any other falls back to a Dashicon of that name. The
  * same file gives the editor its icons.
  *
  * @return array The blocks, each with a name, icon, title, description and shortcut.
@@ -579,7 +579,7 @@ function get_settings_blocks() {
 		),
 		array(
 			'name'        => 'endpaper/reading-list',
-			'icon'        => 'book-alt',
+			'icon'        => 'reading-list',
 			'title'       => __( 'Reading List', 'endpaper' ),
 			'description' => __( 'The books you are currently reading, want to read or have read, as a list or a grid.', 'endpaper' ),
 			'shortcut'    => '/reading list',

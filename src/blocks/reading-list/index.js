@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import BlockIcon from '../../components/block-icon';
 import Edit from './edit';
 import metadata from './block.json';
 import './style.scss';
@@ -23,6 +24,7 @@ const isActive = ( blockAttributes, variationAttributes ) =>
 
 // The block is dynamic: it is rendered on the server by render.php, so there is no save function.
 registerBlockType( metadata.name, {
+	icon: <BlockIcon name="reading-list" />,
 	edit: Edit,
 	variations: [
 		{
