@@ -12,24 +12,39 @@ Show books from Hardcover on your site: a single book, your reading lists or a r
 
 == Description ==
 
-Endpaper adds three blocks that show books from [Hardcover](https://hardcover.app), the book tracking site.
+Endpaper brings your reading life from [Hardcover](https://hardcover.app), the book tracking site, to your WordPress site. Put a book in a post, show what you are reading right now, or share how far along you are on your reading goal. Everything is a block, and everything looks like it belongs on your site.
 
 **Endpaper is an unofficial plugin.** It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Hardcover does not provide support for it: for help, use the plugin’s support forum here on WordPress.org.
 
-**The Book block** shows one book: the cover, title, authors, a short description, the publication year, the page count and the rating on Hardcover. Search by title, author or ISBN, or paste a link to the book’s page on Hardcover. A link pasted on a line of its own in the editor becomes a Book block. It can also show which of your own shelves the book is on, how far you have read, and your own review in place of the description, with a link to it on Hardcover. The cover is the one of your own edition when the book is in your library, and you can pick the cover of any other edition. You can make the cover small, medium or large, put it on the left, on the right or above the text, and align the text left, center or right. The Card style puts a light background, rounded corners and padding behind it. You choose which style new Book blocks start with under Settings, Endpaper.
+= Show off the books you love =
 
-**The Reading List block** shows books from your own Hardcover library: the ones you are reading now, have read, or want to read. Show them as a list or as a grid of covers with up to six columns, with your reading progress, your ratings and the dates you finished. Ready-made Currently Reading, Recently Read and Want to Read versions are in the block inserter.
+* **Embed any book.** Search Hardcover by title, author or ISBN, or paste a link to the book’s page on a line of its own, and it becomes a Book block. You get the cover, title, authors, a description, the year, the page count and the Hardcover rating.
+* **Add your own take.** Show your rating, which of your shelves the book is on and how far you have read. Or let your own review take the place of the description, with a link to it on Hardcover. Reviews keep their headings, quotes and lists, and a review with spoilers stays closed until a visitor opens it.
+* **Choose the right cover.** A book shows the cover of your own edition when it is in your library, and you can pick the cover of any other edition.
+* **Pick a look.** Plain sits in the page with no frame. Card puts the book on a light background with rounded corners. Choose which one new Book blocks start with under Settings, Endpaper. The cover can be small, medium or large, and sit on the left, on the right or above the text.
 
-**The Reading Goal block** shows how far along you are on one of your reading goals on Hardcover: the number of books read, pages read or hours listened, the days left, and a progress bar or a half-circle gauge. It can show the percentage too. Only goals that are public on Hardcover can be shown.
+= Show what you are reading =
 
-Two patterns get you started: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the books you last finished. You find them in the block inserter, under Patterns, in the Endpaper category.
+* **Share your shelves.** The Reading List block shows the books you are reading now, have read or want to read, as a list or as a grid of covers with up to six columns. Ready-made versions are in the block inserter, and two patterns get you started.
+* **Show your progress.** Add how far you have read, your star ratings and the dates you finished. Each part is optional.
+* **Track a reading goal.** The Reading Goal block shows how far along you are on one of your Hardcover goals, counted in books, pages or hours, as a progress bar or a half-circle gauge. It shows the days left, and says so when you have reached the goal.
 
-The blocks are made to fit your theme:
+= Made to fit your theme =
 
-* Sizes follow the block’s font size, and colors follow the text color, so the blocks work on light and dark designs alike.
-* The accent color comes from your theme. You can change it for a single block.
-* The standard color, typography, spacing, border and shadow settings are supported, in the editor and in `theme.json`.
-* Only books that are public on Hardcover are shown. A book you keep private there never appears on your site.
+* **Looks like your site.** Sizes follow the block’s font size, and colors follow the text color, so the blocks work on light and dark designs alike. The accent color comes from your theme, and you can change it for a single block.
+* **The controls you know.** The standard color, typography, spacing, border and shadow settings are supported, in the editor and in `theme.json`, along with wide and full alignment.
+
+= Fast, and respectful of your visitors =
+
+* **Nobody waits for Hardcover.** What the plugin fetches is saved on your site and refreshed in the background, so your pages load as fast as any other page.
+* **Covers from your own site.** They are saved in the right sizes and loaded lazily, and your visitors’ browsers never contact Hardcover. The plugin sets no cookies.
+* **Only what is public.** A book you keep private on Hardcover never appears on your site.
+* **Your key stays on your server.** It is only ever sent to Hardcover, and the permissions it needs can only read.
+
+= For developers =
+
+* **Style it in `theme.json`.** Set the accent color, the corner radius of covers and how faded secondary text is, for all blocks or for one block, or use the CSS variables.
+* **Filters for covers.** Change the sizes and quality covers are saved in, or switch saving off.
 
 In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
 
