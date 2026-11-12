@@ -69,27 +69,6 @@ Endpaper is made to be restyled. The blocks have very little styling of their ow
 
 For what `theme.json` can’t express, such as the opacity of muted text or the accent color, there are a few Endpaper settings, listed below.
 
-Both blocks have a margin above and below by default: 1.5em, and never less than 32px. A theme changes it the same way as any other style:
-
-```json
-{
-	"styles": {
-		"blocks": {
-			"endpaper/book": {
-				"spacing": {
-					"margin": {
-						"top": "3rem",
-						"bottom": "3rem"
-					}
-				}
-			}
-		}
-	}
-}
-```
-
-The Margin setting of a single block in the editor takes precedence over the theme.
-
 A few settings are specific to Endpaper. A theme sets their defaults under `settings.custom`:
 
 ```json
