@@ -41,7 +41,8 @@
 	text-transform: uppercase;
 }
 
-.endpaper-book-search__empty {
+/* Repeats the parent, to win over the block's paragraph reset. */
+.endpaper-book-search .endpaper-book-search__empty {
 	margin: 1em 0 0;
 }
 
