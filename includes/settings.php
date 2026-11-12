@@ -866,15 +866,15 @@ function render_settings_page() {
 							<div class="endpaper-style-choice__options">
 								<?php foreach ( $endpaper_styles as $endpaper_style => $endpaper_style_data ) : ?>
 									<label class="endpaper-style-choice__option">
-										<span class="endpaper-style-choice__preview" aria-hidden="true">
-											<span class="endpaper-style-choice__drawing endpaper-style-choice__drawing--<?php echo esc_attr( $endpaper_style ); ?>">
-												<span class="endpaper-style-choice__cover"></span>
-												<span class="endpaper-style-choice__lines"><span></span><span></span><span></span></span>
-											</span>
-										</span>
 										<span class="endpaper-style-choice__name">
 											<input type="radio" name="<?php echo esc_attr( ENDPAPER_DEFAULT_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $endpaper_style ); ?>"<?php checked( get_default_book_style(), $endpaper_style ); ?> />
 											<?php echo esc_html( $endpaper_style_data['label'] ); ?>
+										</span>
+										<span class="endpaper-style-choice__preview" aria-hidden="true">
+											<span class="endpaper-style-choice__drawing endpaper-style-choice__drawing--<?php echo esc_attr( $endpaper_style ); ?>">
+												<span class="endpaper-style-choice__cover"></span>
+												<span class="endpaper-style-choice__lines"><span></span><span></span><span></span><span></span></span>
+											</span>
 										</span>
 										<span class="endpaper-style-choice__text"><?php echo esc_html( $endpaper_style_data['description'] ); ?></span>
 									</label>
