@@ -127,3 +127,11 @@
 	line-height: 1.4;
 	margin: 0 0 16px;
 }
+
+/* The line shown while a pasted link is looked up. */
+.endpaper-book-lookup {
+	align-items: center;
+	display: flex;
+	gap: 8px;
+	margin: 0;
+}

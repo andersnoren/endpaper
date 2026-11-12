@@ -11,7 +11,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 ## The Book block
 
-- Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page.
+- Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page. A link pasted on a line of its own in the editor becomes a Book block.
 - Shows the book as a card: the cover, title, authors, a description, and a row with the publication year, page count and Hardcover rating.
 - Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
 - Uses the cover of the edition in your Hardcover library when the book is public there. You can pick the cover of another edition in the block’s settings.

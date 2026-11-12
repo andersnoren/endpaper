@@ -13,6 +13,9 @@
 		"bookId": {
 			"type": "integer"
 		},
+		"bookUrl": {
+			"type": "string"
+		},
 		"editionId": {
 			"type": "integer"
 		},

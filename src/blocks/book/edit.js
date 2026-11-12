@@ -13,9 +13,11 @@ import {
 } from '@wordpress/block-editor';
 /* eslint-disable @wordpress/no-unsafe-wp-apis -- The segmented control core uses for choices like these has no stable equivalent yet. */
 import {
+	Notice,
 	PanelBody,
 	Placeholder,
 	RangeControl,
+	Spinner,
 	ToggleControl,
 	ToolbarButton,
 	ToolbarGroup,
@@ -23,6 +25,7 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 /* eslint-enable @wordpress/no-unsafe-wp-apis */
+import { addQueryArgs } from '@wordpress/url';
 import ServerSideRender from '@wordpress/server-side-render';
 
 /**
@@ -107,6 +110,63 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 		};
 	}, [ attributes.bookId ] );
 
+	// A link to a book that was pasted into the editor is looked up, to find the book it points to.
+	const [ lookupError, setLookupError ] = useState( '' );
+
+	useEffect( () => {
+		if ( attributes.bookId || ! attributes.bookUrl ) {
+			return;
+		}
+
+		let isCurrent = true;
+		setLookupError( '' );
+
+		apiFetch( {
+			path: addQueryArgs( '/endpaper/v1/search', {
+				q: attributes.bookUrl,
+			} ),
+		} )
+			.then( ( books ) => {
+				if ( ! isCurrent ) {
+					return;
+				}
+
+				if ( Array.isArray( books ) && books[ 0 ]?.id ) {
+					setAttributes( {
+						bookId: books[ 0 ].id,
+						bookUrl: undefined,
+					} );
+					return;
+				}
+
+				setLookupError(
+					__(
+						'That book could not be found on Hardcover.',
+						'endpaper'
+					)
+				);
+				setAttributes( { bookUrl: undefined } );
+			} )
+			.catch( ( error ) => {
+				if ( ! isCurrent ) {
+					return;
+				}
+
+				setLookupError(
+					error?.message ||
+						__(
+							'Something went wrong while searching.',
+							'endpaper'
+						)
+				);
+				setAttributes( { bookUrl: undefined } );
+			} );
+
+		return () => {
+			isCurrent = false;
+		};
+	}, [ attributes.bookId, attributes.bookUrl ] ); // eslint-disable-line react-hooks/exhaustive-deps -- setAttributes does not change.
+
 	if ( ! attributes.bookId ) {
 		return (
 			<div { ...blockProps }>
@@ -117,11 +177,31 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						'endpaper'
 					) }
 				>
-					<BookSearch
-						onSelect={ ( bookId ) =>
-							setAttributes( { bookId, editionId: undefined } )
-						}
-					/>
+					{ attributes.bookUrl ? (
+						<p className="endpaper-book-lookup">
+							<Spinner />
+							{ __(
+								'Finding the book on Hardcover…',
+								'endpaper'
+							) }
+						</p>
+					) : (
+						<>
+							{ lookupError && (
+								<Notice status="error" isDismissible={ false }>
+									{ lookupError }
+								</Notice>
+							) }
+							<BookSearch
+								onSelect={ ( bookId ) =>
+									setAttributes( {
+										bookId,
+										editionId: undefined,
+									} )
+								}
+							/>
+						</>
+					) }
 				</Placeholder>
 			</div>
 		);
