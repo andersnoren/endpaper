@@ -78,7 +78,7 @@ function register_block_styles() {
 			'label'      => __( 'Card', 'endpaper' ),
 			'style_data' => array(
 				'color'   => array(
-					'background' => 'color-mix(in srgb, currentcolor 6%, transparent)',
+					'background' => 'color-mix(in srgb, currentcolor 5%, transparent)',
 				),
 				'border'  => array(
 					'radius' => '0.75em',
