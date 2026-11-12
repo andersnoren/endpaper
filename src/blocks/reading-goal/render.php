@@ -85,7 +85,7 @@ $endpaper_card_style = get_card_style( $attributes );
 			<?php if ( $endpaper_status ) : ?>
 				<p class="endpaper-reading-goal__status"><?php echo esc_html( $endpaper_status ); ?></p>
 			<?php endif; ?>
-			<p class="endpaper-reading-goal__percent<?php echo $endpaper_reached ? ' endpaper-reading-goal__percent--reached' : ''; ?>"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
+			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
 		</div>
 
 		<progress class="endpaper-reading-goal__bar" max="100" value="<?php echo esc_attr( $endpaper_bar ); ?>" aria-label="<?php echo esc_attr( $endpaper_percent_label ); ?>"></progress>
