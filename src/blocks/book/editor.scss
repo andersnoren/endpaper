@@ -64,6 +64,13 @@
 	min-width: 0;
 }
 
+.endpaper-book-search__result mark {
+	background: color-mix(in srgb, currentcolor 15%, transparent);
+	border-radius: 2px;
+	color: inherit;
+	padding: 0;
+}
+
 .endpaper-book-search__details {
 	color: color-mix(in srgb, currentcolor 70%, transparent);
 }

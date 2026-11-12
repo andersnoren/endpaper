@@ -18,6 +18,32 @@ import getBookUrl from '../../utils/book-url';
 const SEARCH_DELAY = 400;
 
 /**
+ * Wraps each match of the search words in <mark>, without using HTML strings.
+ *
+ * @param {string} text Text to show.
+ * @param {string} term What the user typed.
+ * @return {Array|string} Text and <mark> elements.
+ */
+function highlight( text, term ) {
+	const words = term
+		.trim()
+		.split( /\s+/ )
+		.filter( ( word ) => word.length > 0 )
+		.map( ( word ) => word.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) );
+
+	if ( ! words.length || getBookUrl( term ) ) {
+		return text;
+	}
+
+	// A capture group makes split() keep the matches, at odd indexes.
+	return text
+		.split( new RegExp( `(${ words.join( '|' ) })`, 'i' ) )
+		.map( ( part, index ) =>
+			index % 2 ? <mark key={ index }>{ part }</mark> : part
+		);
+}
+
+/**
  * Search field and result list, shown until a book is picked.
  *
  * Searches go through the plugin's own REST route, which keeps the Hardcover
@@ -176,14 +202,19 @@ export default function BookSearch( { onSelect } ) {
 									<span className="endpaper-book-search__cover" />
 								) }
 								<span className="endpaper-book-search__text">
-									<strong>{ book.title }</strong>
+									<strong>
+										{ highlight( book.title, term ) }
+									</strong>
 									<span className="endpaper-book-search__details">
-										{ [
+										{ highlight(
 											( book.authors || [] ).join( ', ' ),
-											book.year || '',
-										]
-											.filter( Boolean )
-											.join( ' · ' ) }
+											term
+										) }
+										{ book.year
+											? ( book.authors || [] ).length >
+													0 && ' · '
+											: '' }
+										{ book.year ? book.year : '' }
 									</span>
 								</span>
 							</Button>
