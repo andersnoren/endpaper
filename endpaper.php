@@ -54,10 +54,42 @@ function register_blocks() {
 
 		if ( $block_type ) {
 			set_block_style_versions( $block_type, dirname( $block ) . '/index.asset.php' );
+			add_editor_data( $block_type );
 		}
 	}
 }
 add_action( 'init', __NAMESPACE__ . '\register_blocks' );
+
+/**
+ * Tells a block's editor script whether the API key works.
+ *
+ * The block shows a message with a link to the settings, instead of a search
+ * that cannot work, when there is no usable key. The link is only given to
+ * people who can open the settings.
+ *
+ * @param \WP_Block_Type $block_type The registered block.
+ * @return void
+ */
+function add_editor_data( $block_type ) {
+	$handle = $block_type->editor_script_handles[0] ?? '';
+
+	if ( ! $handle ) {
+		return;
+	}
+
+	// Looked up when the editor loads, not on every request.
+	add_action(
+		'enqueue_block_editor_assets',
+		function () use ( $handle ) {
+			$data = array(
+				'keyTrouble'  => get_token_trouble(),
+				'settingsUrl' => current_user_can( 'manage_options' ) ? get_settings_url() : '',
+			);
+
+			wp_add_inline_script( $handle, 'window.endpaperEditor = ' . wp_json_encode( $data ) . ';', 'before' );
+		}
+	);
+}
 
 /**
  * Gives a block's stylesheets the version of its latest build.

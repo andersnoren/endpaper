@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import {
 	AlignmentControl,
@@ -35,6 +35,7 @@ import BookSearch from './book-search';
 import EditionPicker from './edition-picker';
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
+import getEditorData from '../../utils/editor-data';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
 import metadata from './block.json';
 import './editor.scss';
@@ -75,11 +76,32 @@ const DISPLAY_TOGGLES = [
  * @param {Object}                       props               Component props.
  * @param {Object}                       props.attributes    Block attributes.
  * @param {string}                       props.clientId      The block's client ID.
+ * @param {boolean}                      props.isSelected    Whether the block is selected.
  * @param {(attributes: Object) => void} props.setAttributes Attribute setter.
  * @return {Element} The editor element.
  */
-export default function Edit( { attributes, clientId, setAttributes } ) {
-	const blockProps = useBlockProps();
+export default function Edit( {
+	attributes,
+	clientId,
+	isSelected,
+	setAttributes,
+} ) {
+	const wrapper = useRef( null );
+
+	// A book just picked here fades in, and focus moves to the block, so it is not lost with the search field.
+	const [ justPicked, setJustPicked ] = useState( false );
+	const blockProps = useBlockProps( {
+		ref: wrapper,
+		className: justPicked ? 'endpaper-is-new' : undefined,
+		onAnimationEnd: () => setJustPicked( false ),
+	} );
+	const { keyTrouble, settingsUrl } = getEditorData();
+
+	useEffect( () => {
+		if ( justPicked && attributes.bookId ) {
+			wrapper.current?.focus();
+		}
+	}, [ justPicked, attributes.bookId ] );
 
 	// The shelf the book is on in the site owner's library, once known. Some settings only apply to certain shelves.
 	const [ shelf, setShelf ] = useState( null );
@@ -168,40 +190,75 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 	}, [ attributes.bookId, attributes.bookUrl ] ); // eslint-disable-line react-hooks/exhaustive-deps -- setAttributes does not change.
 
 	if ( ! attributes.bookId ) {
+		let placeholderBody;
+
+		if ( keyTrouble ) {
+			placeholderBody = (
+				<Notice status="warning" isDismissible={ false }>
+					{ 'rejected' === keyTrouble
+						? __(
+								'Hardcover did not accept the API key.',
+								'endpaper'
+							)
+						: __(
+								'Add your Hardcover API key to search for books.',
+								'endpaper'
+							) }{ ' ' }
+					{ settingsUrl ? (
+						<a href={ settingsUrl }>
+							{ __( 'Go to the Endpaper settings', 'endpaper' ) }
+						</a>
+					) : (
+						__(
+							'Ask a site administrator to check the Endpaper settings.',
+							'endpaper'
+						)
+					) }
+				</Notice>
+			);
+		} else if ( attributes.bookUrl ) {
+			placeholderBody = (
+				<p className="endpaper-book-lookup">
+					<Spinner />
+					{ __( 'Finding the book on Hardcover…', 'endpaper' ) }
+				</p>
+			);
+		} else {
+			placeholderBody = (
+				<>
+					{ lookupError && (
+						<Notice status="error" isDismissible={ false }>
+							{ lookupError }
+						</Notice>
+					) }
+					<BookSearch
+						focusOnMount={ isSelected }
+						onSelect={ ( bookId ) => {
+							setJustPicked( true );
+							setAttributes( {
+								bookId,
+								editionId: undefined,
+							} );
+						} }
+					/>
+				</>
+			);
+		}
+
 		return (
 			<div { ...blockProps }>
 				<Placeholder
 					label={ __( 'Book', 'endpaper' ) }
-					instructions={ __(
-						'Search Hardcover for a book, or paste a link to its Hardcover page.',
-						'endpaper'
-					) }
+					instructions={
+						keyTrouble
+							? undefined
+							: __(
+									'Search Hardcover for a book, or paste a link to its Hardcover page.',
+									'endpaper'
+								)
+					}
 				>
-					{ attributes.bookUrl ? (
-						<p className="endpaper-book-lookup">
-							<Spinner />
-							{ __(
-								'Finding the book on Hardcover…',
-								'endpaper'
-							) }
-						</p>
-					) : (
-						<>
-							{ lookupError && (
-								<Notice status="error" isDismissible={ false }>
-									{ lookupError }
-								</Notice>
-							) }
-							<BookSearch
-								onSelect={ ( bookId ) =>
-									setAttributes( {
-										bookId,
-										editionId: undefined,
-									} )
-								}
-							/>
-						</>
-					) }
+					{ placeholderBody }
 				</Placeholder>
 			</div>
 		);
@@ -233,7 +290,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 							} )
 						}
 					>
-						{ __( 'Replace', 'endpaper' ) }
+						{ __( 'Change book', 'endpaper' ) }
 					</ToolbarButton>
 				</ToolbarGroup>
 			</BlockControls>

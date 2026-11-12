@@ -33,6 +33,14 @@
 	padding: 0;
 }
 
+.endpaper-book-search .endpaper-book-search__heading {
+	color: color-mix(in srgb, currentcolor 70%, transparent);
+	font-size: 0.8em;
+	letter-spacing: 0.04em;
+	margin: 1.5em 0 0.25em;
+	text-transform: uppercase;
+}
+
 .endpaper-book-search__empty {
 	margin: 1em 0 0;
 }
@@ -204,5 +212,13 @@
 
 	from {
 		opacity: 0;
+	}
+}
+
+/* A book just picked fades in once, instead of snapping into place. */
+@media (prefers-reduced-motion: no-preference) {
+
+	.endpaper-is-new .endpaper-book__card {
+		animation: endpaper-book-search-fade 0.3s ease-out;
 	}
 }

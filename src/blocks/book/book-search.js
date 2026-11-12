@@ -14,6 +14,7 @@ import { speak } from '@wordpress/a11y';
  * Internal dependencies
  */
 import getBookUrl from '../../utils/book-url';
+import { addRecentBook, getRecentBooks } from '../../utils/recent-books';
 
 /**
  * How long to wait after the last keystroke before searching, in milliseconds.
@@ -79,22 +80,78 @@ function Cover( { cover } ) {
 }
 
 /**
+ * A list of books to pick from.
+ *
+ * @param {Object}                 props        Component props.
+ * @param {Array}                  props.books  The books to list.
+ * @param {string}                 props.term   What was searched for, to highlight in the list.
+ * @param {(book: Object) => void} props.onPick Called with the book that was clicked.
+ * @return {Element} The list.
+ */
+function ResultList( { books, term, onPick } ) {
+	return (
+		<ul className="endpaper-book-search__results">
+			{ books.map( ( book ) => (
+				<li key={ book.id }>
+					<Button
+						className="endpaper-book-search__result"
+						onClick={ () => onPick( book ) }
+					>
+						<Cover cover={ book.cover } />
+						<span className="endpaper-book-search__text">
+							<strong>{ highlight( book.title, term ) }</strong>
+							<span className="endpaper-book-search__details">
+								{ highlight(
+									( book.authors || [] ).join( ', ' ),
+									term
+								) }
+								{ book.year
+									? ( book.authors || [] ).length > 0 && ' · '
+									: '' }
+								{ book.year ? book.year : '' }
+							</span>
+						</span>
+					</Button>
+				</li>
+			) ) }
+		</ul>
+	);
+}
+
+/**
  * Search field and result list, shown until a book is picked.
  *
  * Searches go through the plugin's own REST route, which keeps the Hardcover
  * API token on the server.
  *
- * @param {Object}                   props          Component props.
- * @param {(bookId: number) => void} props.onSelect Called with the picked book's Hardcover ID.
+ * @param {Object}                   props              Component props.
+ * @param {(bookId: number) => void} props.onSelect     Called with the picked book's Hardcover ID.
+ * @param {boolean}                  props.focusOnMount Whether to put the cursor in the search field when it appears.
  * @return {Element} The search element.
  */
-export default function BookSearch( { onSelect } ) {
+export default function BookSearch( { onSelect, focusOnMount = false } ) {
 	const [ term, setTerm ] = useState( '' );
 	const [ results, setResults ] = useState( [] );
 	const [ status, setStatus ] = useState( 'idle' );
 	const [ message, setMessage ] = useState( '' );
 	const latestRequest = useRef( 0 );
 	const wrapper = useRef( null );
+	const [ recent, setRecent ] = useState( getRecentBooks );
+
+	useEffect( () => {
+		if ( focusOnMount ) {
+			wrapper.current?.querySelector( 'input[type="search"]' )?.focus();
+		}
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps -- Only when the search field first appears.
+
+	// Picks a book from a list, and remembers it for next time.
+	const pick = ( book ) => {
+		setRecent( addRecentBook( book ) );
+		onSelect( book.id );
+	};
+
+	const showRecent =
+		term.trim().length < 3 && 'idle' === status && recent.length > 0;
 
 	useEffect( () => {
 		const query = term.trim();
@@ -221,6 +278,7 @@ export default function BookSearch( { onSelect } ) {
 				}
 
 				if ( Array.isArray( books ) && books[ 0 ]?.id ) {
+					addRecentBook( books[ 0 ] );
 					onSelect( books[ 0 ].id );
 					return;
 				}
@@ -304,34 +362,16 @@ export default function BookSearch( { onSelect } ) {
 			) }
 
 			{ 'loading' !== status && results.length > 0 && (
-				<ul className="endpaper-book-search__results">
-					{ results.map( ( book ) => (
-						<li key={ book.id }>
-							<Button
-								className="endpaper-book-search__result"
-								onClick={ () => onSelect( book.id ) }
-							>
-								<Cover cover={ book.cover } />
-								<span className="endpaper-book-search__text">
-									<strong>
-										{ highlight( book.title, term ) }
-									</strong>
-									<span className="endpaper-book-search__details">
-										{ highlight(
-											( book.authors || [] ).join( ', ' ),
-											term
-										) }
-										{ book.year
-											? ( book.authors || [] ).length >
-													0 && ' · '
-											: '' }
-										{ book.year ? book.year : '' }
-									</span>
-								</span>
-							</Button>
-						</li>
-					) ) }
-				</ul>
+				<ResultList books={ results } term={ term } onPick={ pick } />
+			) }
+
+			{ showRecent && (
+				<>
+					<p className="endpaper-book-search__heading">
+						{ __( 'Recent books', 'endpaper' ) }
+					</p>
+					<ResultList books={ recent } term="" onPick={ pick } />
+				</>
 			) }
 		</div>
 	);
