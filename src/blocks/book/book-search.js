@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { Button, Notice, SearchControl, Spinner } from '@wordpress/components';
+import { Button, Notice, SearchControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -174,7 +174,25 @@ export default function BookSearch( { onSelect } ) {
 				onChange={ setTerm }
 			/>
 
-			{ 'loading' === status && <Spinner /> }
+			{ 'loading' === status && (
+				<ul
+					className="endpaper-book-search__results endpaper-book-search__results--loading"
+					aria-hidden="true"
+				>
+					{ [ 1, 2, 3, 4 ].map( ( row ) => (
+						<li
+							key={ row }
+							className="endpaper-book-search__result"
+						>
+							<span className="endpaper-book-search__cover" />
+							<span className="endpaper-book-search__text">
+								<span className="endpaper-book-search__line" />
+								<span className="endpaper-book-search__line endpaper-book-search__line--short" />
+							</span>
+						</li>
+					) ) }
+				</ul>
+			) }
 
 			{ 'error' === status && (
 				<Notice status="error" isDismissible={ false }>
@@ -186,7 +204,7 @@ export default function BookSearch( { onSelect } ) {
 				<p>{ __( 'No books found.', 'endpaper' ) }</p>
 			) }
 
-			{ results.length > 0 && (
+			{ 'loading' !== status && results.length > 0 && (
 				<ul className="endpaper-book-search__results">
 					{ results.map( ( book ) => (
 						<li key={ book.id }>

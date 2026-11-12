@@ -146,3 +146,44 @@
 	gap: 8px;
 	margin: 0;
 }
+
+/* Placeholder rows while a search is under way. */
+.endpaper-book-search__results--loading .endpaper-book-search__result {
+	display: flex;
+	gap: 1em;
+	padding: 0.5em;
+}
+
+.endpaper-book-search__results--loading .endpaper-book-search__text {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 0.6em;
+	justify-content: center;
+}
+
+.endpaper-book-search__line {
+	background: color-mix(in srgb, currentcolor 10%, transparent);
+	border-radius: 2px;
+	height: 0.9em;
+	width: 60%;
+}
+
+.endpaper-book-search__line--short {
+	width: 35%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+	.endpaper-book-search__results--loading .endpaper-book-search__cover,
+	.endpaper-book-search__line {
+		animation: endpaper-book-search-pulse 1.2s ease-in-out infinite;
+	}
+}
+
+@keyframes endpaper-book-search-pulse {
+
+	50% {
+		opacity: 0.5;
+	}
+}
