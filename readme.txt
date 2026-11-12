@@ -91,7 +91,7 @@ The key is stored in your site’s database as it is, not encrypted, which is ho
 
 = Will the blocks slow my site down? =
 
-No. Endpaper saves what it fetches on your site, so your pages do not wait for Hardcover each time they are viewed. Books are saved for a week, and reading lists, shelves and progress for an hour. When a saved copy gets old, visitors still get it at once, and a new one is fetched in the background, so nobody waits for Hardcover. (This uses WP-Cron. On a site where WP-Cron is switched off, the next visitor waits for the new copy instead.) If Hardcover cannot be reached, the blocks show the last copy they have.
+No. Endpaper saves what it fetches on your site, so your pages do not wait for Hardcover each time they are viewed. Books are saved for a week, and reading lists, shelves and progress for an hour. When a saved copy gets old, visitors still get it at once, and a new one is fetched in the background, so nobody waits for Hardcover. The same goes for something that is not saved yet, such as the first view after you clear the cache: that visitor sees nothing in its place, and the next one has it. (This uses WP-Cron. On a site where WP-Cron is switched off, the visitor waits for the data instead.) If Hardcover cannot be reached, the blocks show the last copy they have.
 
 = Why is a book, my shelf or my rating missing? =
 

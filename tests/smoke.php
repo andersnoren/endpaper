@@ -371,8 +371,18 @@ try {
 	wp_set_current_user( 0 );
 
 	echo "Refreshing in the background\n";
-	$endpaper_book_key    = AndersNoren\Endpaper\cache_key( 'endpaper_book_42' );
+	$endpaper_book_key = AndersNoren\Endpaper\cache_key( 'endpaper_book_42' );
+	delete_transient( $endpaper_book_key );
+	wp_unschedule_hook( 'endpaper_refresh' );
+	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
+
+	$endpaper_nothing_saved = AndersNoren\Endpaper\get_book( 42 );
+	endpaper_check( 'a visitor does not wait for a book that is not saved: nothing is requested, and a fetch is queued', is_wp_error( $endpaper_nothing_saved ) && 'endpaper_pending' === $endpaper_nothing_saved->get_error_code() && $endpaper_requests === $GLOBALS['endpaper_api_requests'] && false !== wp_next_scheduled( 'endpaper_refresh', array( 'book', array( 42 ) ) ) );
+
+	wp_unschedule_hook( 'endpaper_refresh' );
+	set_current_screen( 'dashboard' );
 	AndersNoren\Endpaper\get_book( 42 );
+	set_current_screen( 'front' );
 	$endpaper_book_cached            = get_transient( $endpaper_book_key );
 	$endpaper_book_cached['fetched'] = time() - 2 * WEEK_IN_SECONDS;
 	set_transient( $endpaper_book_key, $endpaper_book_cached, MONTH_IN_SECONDS );
@@ -396,6 +406,9 @@ try {
 	AndersNoren\Endpaper\get_book( 42 );
 	set_current_screen( 'front' );
 	endpaper_check( 'in the admin, the book is fetched at once and nothing is queued', $endpaper_requests + 1 === $GLOBALS['endpaper_api_requests'] && false === wp_next_scheduled( 'endpaper_refresh', array( 'book', array( 42 ) ) ) );
+
+	// The block tests fetch what they show at once, as the editor does. A visitor's first view of something that is not saved is covered above.
+	set_current_screen( 'dashboard' );
 
 	echo "The Book block\n";
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showShelf":true,"showProgress":true} /-->' );

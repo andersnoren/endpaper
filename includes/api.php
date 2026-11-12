@@ -79,12 +79,13 @@ function cache_key( $name ) {
 /**
  * Lets a visitor have the saved copy now, and has Hardcover asked in the background.
  *
- * Used when a saved copy has run past the time it counts as fresh. The editor
- * and WP-Cron get fresh data instead, and so does a site where WP-Cron is
- * switched off, since a background request would never run there. A request
- * already waiting for the same thing is not added a second time.
+ * Used when a saved copy has run past the time it counts as fresh, or when
+ * there is none yet. The editor and WP-Cron get fresh data instead, and so
+ * does a site where WP-Cron is switched off, since a background request would
+ * never run there. A request already waiting for the same thing is not added a
+ * second time.
  *
- * @param string $kind What to refresh: book, entry, list or goals.
+ * @param string $kind What to refresh: book, edition, entry, list or goals.
  * @param array  $args The arguments of the function that fetches it.
  * @return bool Whether the saved copy should be used for now.
  */
@@ -97,9 +98,28 @@ function refresh_later( $kind, $args ) {
 
 	if ( ! wp_next_scheduled( 'endpaper_refresh', $event ) ) {
 		wp_schedule_single_event( time(), 'endpaper_refresh', $event );
+
+		// Starts it now, in a request of its own, instead of waiting for the next visitor.
+		spawn_cron();
 	}
 
 	return true;
+}
+
+/**
+ * Returns the error for something that is not saved yet and is being fetched in the background.
+ *
+ * Visitors never wait for Hardcover. When there is no saved copy at all, they
+ * get this, which the blocks show as nothing, and the next visit has the copy.
+ *
+ * @return WP_Error The error.
+ */
+function get_pending_error() {
+	return new WP_Error(
+		'endpaper_pending',
+		__( 'This is being fetched from Hardcover. Reload the page in a moment.', 'endpaper' ),
+		array( 'status' => 503 )
+	);
 }
 
 /**
@@ -123,7 +143,7 @@ function is_refreshing_now( $set = null ) {
 /**
  * Fetches something from Hardcover again, in the background, and saves it.
  *
- * @param string $kind What to refresh: book, entry, list or goals.
+ * @param string $kind What to refresh: book, edition, entry, list or goals.
  * @param array  $args The arguments of the function that fetches it.
  * @return void
  */
@@ -134,6 +154,8 @@ function run_refresh( $kind, $args ) {
 
 	if ( 'book' === $kind ) {
 		get_book( ...$args );
+	} elseif ( 'edition' === $kind ) {
+		get_edition( ...$args );
 	} elseif ( 'entry' === $kind ) {
 		get_library_entry( ...$args );
 	} elseif ( 'list' === $kind ) {
@@ -496,8 +518,9 @@ function get_book( $book_id ) {
 		return $stale;
 	}
 
-	if ( $stale && refresh_later( 'book', array( $book_id ) ) ) {
-		return $stale;
+	// A visitor does not wait for Hardcover: they get the saved copy, or nothing for now, and the background fetches it.
+	if ( refresh_later( 'book', array( $book_id ) ) ) {
+		return $stale ? $stale : get_pending_error();
 	}
 
 	// After a failed request, wait a few minutes before asking Hardcover again.
@@ -622,6 +645,10 @@ function get_edition( $edition_id ) {
 
 	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < WEEK_IN_SECONDS ) {
 		return $stale;
+	}
+
+	if ( refresh_later( 'edition', array( $edition_id ) ) ) {
+		return null !== $stale ? $stale : get_pending_error();
 	}
 
 	// After a failed request, wait a few minutes before asking Hardcover again.
@@ -895,8 +922,8 @@ function get_library_entry( $book_id ) {
 		return $stale;
 	}
 
-	if ( null !== $stale && refresh_later( 'entry', array( $book_id ) ) ) {
-		return $stale;
+	if ( refresh_later( 'entry', array( $book_id ) ) ) {
+		return null !== $stale ? $stale : get_pending_error();
 	}
 
 	// After a failed request, wait a few minutes before asking Hardcover again.
@@ -966,8 +993,8 @@ function get_reading_list( $status_id, $limit ) {
 		return $stale;
 	}
 
-	if ( null !== $stale && refresh_later( 'list', array( $status_id, $limit ) ) ) {
-		return $stale;
+	if ( refresh_later( 'list', array( $status_id, $limit ) ) ) {
+		return null !== $stale ? $stale : get_pending_error();
 	}
 
 	// After a failed request, wait a few minutes before asking Hardcover again.
@@ -1069,8 +1096,8 @@ function get_goals() {
 		return $stale;
 	}
 
-	if ( null !== $stale && refresh_later( 'goals', array() ) ) {
-		return $stale;
+	if ( refresh_later( 'goals', array() ) ) {
+		return null !== $stale ? $stale : get_pending_error();
 	}
 
 	// After a failed request, wait a few minutes before asking Hardcover again.
