@@ -208,6 +208,7 @@ add_filter(
 					'data' => array(
 						'me' => array(
 							array(
+								'username'   => 'smoke-reader',
 								'user_books' => array(
 									array(
 										'status_id'           => 2,
@@ -409,16 +410,18 @@ try {
 
 	$endpaper_html_review = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
 	endpaper_check( 'the review can take the place of the description', false !== strpos( $endpaper_html_review, 'A quiet, sharp book' ) && false !== strpos( $endpaper_html_review, 'endpaper-book__description--review' ) && false === strpos( $endpaper_html_review, '<details' ) );
+	endpaper_check( 'the review links to its page on Hardcover', false !== strpos( $endpaper_html_review, '/reviews/@smoke-reader"' ) && false !== strpos( $endpaper_html_review, 'Read the review on Hardcover' ) );
+	endpaper_check( 'the review link is left out without the link to Hardcover, and without a review', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"linkToHardcover":false} /-->' ), '/reviews/@' ) && false === strpos( $endpaper_html, '/reviews/@' ) );
 	endpaper_check( 'the review can be shown without the description', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"showDescription":false} /-->' ), 'A quiet, sharp book' ) );
 	endpaper_check( 'the review is cut to its own length', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"reviewLength":20} /-->' ), 'The ending stayed' ) );
 
 	$GLOBALS['endpaper_review_spoilers'] = true;
-	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v4_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
+	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v5_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
 	$endpaper_html_spoilers = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
 	endpaper_check( 'a review with spoilers is closed behind a summary', false !== strpos( $endpaper_html_spoilers, '<details class="endpaper-book__spoilers">' ) && false !== strpos( $endpaper_html_spoilers, 'This review contains spoilers' ) );
 	endpaper_check( 'the description is not put behind a summary when the review is off', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), '<details' ) );
 	$GLOBALS['endpaper_review_spoilers'] = false;
-	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v4_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
+	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v5_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
 
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCredit":true} /-->' );
 	endpaper_check( 'it credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );

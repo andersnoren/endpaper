@@ -112,6 +112,17 @@ if ( ! empty( $attributes['showReview'] ) && ! empty( $endpaper_entry['review'] 
 	);
 }
 
+// A review links to its page on Hardcover, if the book is linked there too. The address is built from the book and the name of the profile.
+$endpaper_review_link = '';
+
+if ( $endpaper_is_review && $endpaper_link && ! empty( $endpaper_entry['username'] ) ) {
+	$endpaper_review_link = sprintf(
+		'<p class="endpaper-book__review-link"><a href="%1$s">%2$s</a></p>',
+		esc_url( $endpaper_link . '/reviews/@' . rawurlencode( $endpaper_entry['username'] ) ),
+		esc_html__( 'Read the review on Hardcover', 'endpaper' )
+	);
+}
+
 // The facts shown in the row at the bottom of the card.
 $endpaper_facts = array();
 
@@ -224,9 +235,11 @@ $endpaper_card_style = get_card_style( $attributes );
 					<details class="endpaper-book__spoilers">
 						<summary><?php esc_html_e( 'This review contains spoilers', 'endpaper' ); ?></summary>
 						<p class="endpaper-book__description endpaper-book__description--review"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+						<?php echo $endpaper_review_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when it is built. ?>
 					</details>
 				<?php elseif ( $endpaper_description ) : ?>
 					<p class="endpaper-book__description<?php echo $endpaper_is_review ? ' endpaper-book__description--review' : ''; ?>"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+					<?php echo $endpaper_review_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when it is built. ?>
 				<?php endif; ?>
 
 			</div>

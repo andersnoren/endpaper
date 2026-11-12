@@ -772,7 +772,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = cache_key( 'endpaper_entry_v4_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id );
+	$cache_key = cache_key( 'endpaper_entry_v5_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id );
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
 
@@ -792,7 +792,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	$data = api_request(
-		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating review_raw review_has_spoilers edition { image { url } language { language } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		'query EndpaperLibraryEntry($book_id: Int!) { me { username user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating review_raw review_has_spoilers edition { image { url } language { language } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
 		array( 'book_id' => $book_id )
 	);
 
@@ -806,6 +806,11 @@ function get_library_entry( $book_id ) {
 	$entry = isset( $data['me'][0]['user_books'][0] ) && is_array( $data['me'][0]['user_books'][0] )
 		? normalize_library_entry( $data['me'][0]['user_books'][0] )
 		: array();
+
+	// The name of the profile the key belongs to. It is public on Hardcover and is part of the address of a review.
+	if ( $entry ) {
+		$entry['username'] = isset( $data['me'][0]['username'] ) && is_string( $data['me'][0]['username'] ) ? (string) preg_replace( '/[^A-Za-z0-9._-]/', '', $data['me'][0]['username'] ) : '';
+	}
 
 	set_transient(
 		$cache_key,
