@@ -141,7 +141,7 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 
 .endpaper-reading-list__progress progress {
 	appearance: none;
-	background: $track-color;
+	background: $accent-faded-color;
 	border: 0;
 	border-radius: 999px;
 	flex: 0 1 9em;
