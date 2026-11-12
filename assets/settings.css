@@ -297,16 +297,17 @@
 	align-items: flex-start;
 	display: flex;
 	gap: 8px;
-	padding: 6px;
+	padding: 10px;
 }
 
+/* Card sits on a tinted panel, Plain on the bare page. */
 .endpaper-style-choice__preview--card {
-	background: #f6f7f7;
-	border-radius: 4px;
+	background: #e4e5e6;
+	border-radius: 6px;
 }
 
 .endpaper-style-choice__cover {
-	background: #c3c4c7;
+	background: #a7aaad;
 	border-radius: 2px;
 	flex: none;
 	height: 36px;
@@ -321,13 +322,13 @@
 }
 
 .endpaper-style-choice__lines > span {
-	background: #dcdcde;
+	background: #c3c4c7;
 	border-radius: 2px;
 	height: 5px;
 }
 
 .endpaper-style-choice__lines > span:first-child {
-	background: #a7aaad;
+	background: #8c8f94;
 	width: 80%;
 }
 
