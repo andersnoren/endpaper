@@ -84,7 +84,6 @@
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__percent {
-	font-variant-numeric: tabular-nums;
 	margin-inline-start: auto;
 	white-space: nowrap;
 }
@@ -92,11 +91,12 @@
 /*
  * The bar takes the whole width. The track is 1em tall and the fill sits
  * inside it, with a gap of 1/8em all around: a border that is see-through,
- * so the track shows behind it.
+ * so the track shows behind it. The track is a faded accent, which is the
+ * text color when no accent is set.
  */
 .endpaper-reading-goal__bar {
 	appearance: none;
-	background: $track-color;
+	background: color-mix(in srgb, #{$accent-color} 20%, transparent);
 	border: 0.125em solid transparent;
 	border-radius: 999px;
 	box-sizing: border-box;

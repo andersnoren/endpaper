@@ -466,6 +466,7 @@ try {
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
 	endpaper_check( 'a goal shows its title, count and percentage', false !== strpos( $endpaper_html, '34 of 50 books read' ) && false !== strpos( $endpaper_html, '68%' ) && false !== strpos( $endpaper_html, 'value="68"' ) );
 	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '<b>this year</b>' ) );
+	endpaper_check( 'the days left carry the end date and the ended text for the browser', 1 === preg_match( '/__status" data-end="\d{4}-\d{2}-\d{2}" data-ended="Ended [^"]+"/', $endpaper_html ) );
 	endpaper_check( 'the days left are shown', 1 === preg_match( '/[\d,.\x{00a0}]+ days left/u', $endpaper_html ) );
 	endpaper_check( 'the title is a level 2 heading, and can be set to another level or a paragraph', false !== strpos( $endpaper_html, '<h2 class="endpaper-reading-goal__title">' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"titleLevel":4} /-->' ), '<h4 class="endpaper-reading-goal__title">' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"titleLevel":0} /-->' ), '<p class="endpaper-reading-goal__title">' ) );
 	endpaper_check( 'the title and the days can be left out', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showTitle":false,"showDays":false} /-->' ), 'endpaper-reading-goal__title' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showDays":false} /-->' ), 'days left' ) );
@@ -645,9 +646,9 @@ try {
 	delete_all_covers();
 
 	echo "Translations\n";
-	foreach ( array( 'endpaper-book-editor-script', 'endpaper-reading-list-editor-script' ) as $endpaper_handle ) {
+	foreach ( array( 'endpaper-book-editor-script', 'endpaper-reading-list-editor-script', 'endpaper-reading-goal-editor-script', 'endpaper-reading-goal-view-script' ) as $endpaper_handle ) {
 		$endpaper_script = wp_scripts()->registered[ $endpaper_handle ] ?? null;
-		endpaper_check( $endpaper_handle . ' loads translations for the editor', $endpaper_script && 'endpaper' === $endpaper_script->textdomain );
+		endpaper_check( $endpaper_handle . ' loads translations', $endpaper_script && 'endpaper' === $endpaper_script->textdomain );
 	}
 } catch ( Throwable $endpaper_error ) {
 	$endpaper_message                = get_class( $endpaper_error ) . ': ' . $endpaper_error->getMessage() . ' in ' . $endpaper_error->getFile() . ':' . $endpaper_error->getLine();

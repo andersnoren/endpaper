@@ -419,6 +419,19 @@ function get_goal_amount_text( $goal ) {
 }
 
 /**
+ * Returns the text for a goal whose time has run out, such as "Ended November 30, 2026".
+ *
+ * @param array $goal A normalized goal.
+ * @return string The text.
+ */
+function get_goal_ended_text( $goal ) {
+	$date = format_date( $goal['end'] );
+
+	/* translators: %s: A date, such as November 30, 2015. */
+	return '' === $date ? __( 'Ended', 'endpaper' ) : sprintf( __( 'Ended %s', 'endpaper' ), $date );
+}
+
+/**
  * Returns how much of the time a goal runs for is left, as a text such as "48 days left".
  *
  * Days are counted in the site's time zone, from today to the last day of the goal.
@@ -450,10 +463,7 @@ function get_goal_days_text( $goal ) {
 		return __( 'Ends today', 'endpaper' );
 	}
 
-	$date = format_date( $goal['end'] );
-
-	/* translators: %s: A date, such as November 30, 2015. */
-	return '' === $date ? __( 'Ended', 'endpaper' ) : sprintf( __( 'Ended %s', 'endpaper' ), $date );
+	return get_goal_ended_text( $goal );
 }
 
 /**

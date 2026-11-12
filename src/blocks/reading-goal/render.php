@@ -15,6 +15,7 @@ use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_goal;
 use function AndersNoren\Endpaper\get_goal_amount_text;
 use function AndersNoren\Endpaper\get_goal_days_text;
+use function AndersNoren\Endpaper\get_goal_ended_text;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\get_token_trouble;
 use function AndersNoren\Endpaper\has_card_frame;
@@ -51,10 +52,13 @@ $endpaper_reached = $endpaper_goal['progress'] >= $endpaper_goal['target'];
 $endpaper_percent = (int) floor( $endpaper_goal['progress'] / $endpaper_goal['target'] * 100 + 0.0001 );
 
 // A goal that is reached says so, in place of the days left.
+$endpaper_counts_days = false;
+
 if ( $endpaper_reached ) {
 	$endpaper_status = __( 'Goal reached', 'endpaper' );
 } else {
-	$endpaper_status = ! empty( $attributes['showDays'] ) ? get_goal_days_text( $endpaper_goal ) : '';
+	$endpaper_status     = ! empty( $attributes['showDays'] ) ? get_goal_days_text( $endpaper_goal ) : '';
+	$endpaper_counts_days = '' !== $endpaper_status;
 }
 
 // The number can go past 100 when the goal is beaten. The bar stops at full.
@@ -83,7 +87,11 @@ $endpaper_card_style = get_card_style( $attributes );
 		<div class="endpaper-reading-goal__summary">
 			<p class="endpaper-reading-goal__amount"><?php echo esc_html( $endpaper_amount ); ?></p>
 			<?php if ( $endpaper_status ) : ?>
-				<p class="endpaper-reading-goal__status"><?php echo esc_html( $endpaper_status ); ?></p>
+				<?php
+				// The page may be kept and served for days, so the days left are worked out again in the browser. The text here is for until then, and for browsers without scripts.
+				$endpaper_status_data = $endpaper_counts_days ? ' data-end="' . esc_attr( $endpaper_goal['end'] ) . '" data-ended="' . esc_attr( get_goal_ended_text( $endpaper_goal ) ) . '"' : '';
+				?>
+				<p class="endpaper-reading-goal__status"<?php echo $endpaper_status_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>><?php echo esc_html( $endpaper_status ); ?></p>
 			<?php endif; ?>
 			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
 		</div>

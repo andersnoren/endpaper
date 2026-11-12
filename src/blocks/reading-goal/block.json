@@ -42,12 +42,18 @@
 	},
 	"supports": {
 		"html": false,
-		"align": [ "wide", "full" ],
+		"align": [
+			"wide",
+			"full"
+		],
 		"color": {
 			"gradients": true,
 			"link": true,
 			"heading": true,
-			"__experimentalSkipSerialization": [ "background", "gradients" ],
+			"__experimentalSkipSerialization": [
+				"background",
+				"gradients"
+			],
 			"__experimentalDefaultControls": {
 				"background": true,
 				"text": true,
@@ -57,7 +63,9 @@
 		"spacing": {
 			"margin": true,
 			"padding": true,
-			"__experimentalSkipSerialization": [ "padding" ]
+			"__experimentalSkipSerialization": [
+				"padding"
+			]
 		},
 		"typography": {
 			"fontSize": true,
@@ -103,5 +111,6 @@
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
-	"render": "file:./render.php"
+	"render": "file:./render.php",
+	"viewScript": "file:./view.js"
 }
