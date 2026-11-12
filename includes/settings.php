@@ -852,7 +852,6 @@ function render_settings_page() {
 						<li><code>endpaper_cover_widths</code> <?php esc_html_e( 'The widths covers are saved in, in pixels.', 'endpaper' ); ?></li>
 						<li><code>endpaper_cover_quality</code> <?php esc_html_e( 'The quality they are saved with, from 1 to 100. It is 80 to begin with.', 'endpaper' ); ?></li>
 						<li><code>endpaper_import_covers</code> <?php esc_html_e( 'Return false to load covers from Hardcover and save nothing.', 'endpaper' ); ?></li>
-						<li><code>endpaper_cover_hosts</code> <?php esc_html_e( 'The hosts covers may be downloaded from.', 'endpaper' ); ?></li>
 					</ul>
 					<p>
 						<?php

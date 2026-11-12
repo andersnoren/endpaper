@@ -124,7 +124,6 @@ Yes, with these filters:
 * `endpaper_cover_widths`: the widths covers are saved in, in pixels.
 * `endpaper_cover_quality`: the quality they are saved with, from 1 to 100. It is 80 to begin with.
 * `endpaper_import_covers`: return false to load covers from Hardcover and save nothing.
-* `endpaper_cover_hosts`: the hosts covers may be downloaded from.
 
 The format follows WordPress’s own `image_editor_output_format` filter.
 
