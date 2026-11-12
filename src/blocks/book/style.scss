@@ -453,7 +453,7 @@
 	justify-content: space-between;
 }
 
-.wp-block-endpaper-book .endpaper-book__credit {
+.wp-block-endpaper-book .endpaper-book__credit.endpaper-book__credit {
 	color: inherit;
 	display: block;
 	flex: none;
@@ -536,7 +536,7 @@
 	text-decoration: underline;
 }
 
-.wp-block-endpaper-book .endpaper-book__cover a {
+.wp-block-endpaper-book .endpaper-book__cover.endpaper-book__cover a {
 	border-radius: inherit;
 
 	/* Keeps the placeholder gray, not the color of links. */

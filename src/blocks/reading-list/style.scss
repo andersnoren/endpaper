@@ -215,7 +215,7 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 	text-decoration: underline;
 }
 
-.wp-block-endpaper-reading-list .endpaper-reading-list__cover a {
+.wp-block-endpaper-reading-list .endpaper-reading-list__cover.endpaper-reading-list__cover a {
 	border-radius: inherit;
 
 	/* Keeps the placeholder gray, not the color of links. */
@@ -233,7 +233,7 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
  * inside the frame if the list has one. It is 16px tall at the default size,
  * and scales with the font size.
  */
-.wp-block-endpaper-reading-list .endpaper-reading-list__credit {
+.wp-block-endpaper-reading-list .endpaper-reading-list__credit.endpaper-reading-list__credit {
 	color: inherit;
 	display: block;
 	transition: color 0.15s ease;
