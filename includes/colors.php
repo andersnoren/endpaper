@@ -151,9 +151,10 @@ function get_surface_color( $attributes ) {
  * Many themes have a color called "accent" that is too pale to see as a
  * progress bar or a star: Twenty Twenty-Four's is beige. So the color has to
  * stand out from the background, by the 3:1 that WCAG asks of graphics. The
- * candidates are the theme's "accent" color, then "accent-1" to "accent-6".
- * If none of them stands out, or the theme has no accent colors, the text
- * color is used. The plugin has no color of its own.
+ * candidates are the theme's "accent" color, then "accent-1" to "accent-6",
+ * and then "primary", which is what many themes call their main color. If
+ * none of them stands out, or the theme has none of them, the text color is
+ * used. The plugin has no color of its own.
  *
  * @param array $attributes Block attributes.
  * @return string A palette reference, or "currentcolor".
@@ -162,7 +163,7 @@ function get_default_accent_color( $attributes ) {
 	$palette = get_palette_colors();
 	$surface = get_surface_color( $attributes );
 
-	foreach ( array( 'accent', 'accent-1', 'accent-2', 'accent-3', 'accent-4', 'accent-5', 'accent-6' ) as $slug ) {
+	foreach ( array( 'accent', 'accent-1', 'accent-2', 'accent-3', 'accent-4', 'accent-5', 'accent-6', 'primary' ) as $slug ) {
 		if ( ! isset( $palette[ $slug ] ) ) {
 			continue;
 		}
