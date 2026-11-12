@@ -365,8 +365,8 @@ function get_saved_cover_image( $record ) {
 	foreach ( $files as $width => $file ) {
 		$srcset[] = $dir['url'] . '/' . $file['file'] . ' ' . absint( $width ) . 'w';
 
-		// The image for browsers that do not choose for themselves: the middle one.
-		if ( null === $default || $width <= 320 ) {
+		// The image for browsers that do not choose for themselves: the middle one, or the original that took its place.
+		if ( null === $default || $width < 1.3 * 320 ) {
 			$default = $file;
 		}
 	}
@@ -484,7 +484,14 @@ function save_cover_sizes( $source, $target ) {
 		$widths[] = min( $width, (int) $original['width'] );
 	}
 
-	$widths    = array_unique( $widths );
+	$widths = array_values( array_unique( $widths ) );
+	$count  = count( $widths );
+
+	// An original that is only a little wider than a size takes that size's place, so two files that are nearly alike are not both saved.
+	if ( $count > 1 && $widths[ $count - 1 ] === (int) $original['width'] && $widths[ $count - 1 ] < 1.3 * $widths[ $count - 2 ] ) {
+		array_splice( $widths, $count - 2, 1 );
+	}
+
 	$extension = wp_get_default_extension_for_mime_type( $format );
 	$files     = array();
 

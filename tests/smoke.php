@@ -386,8 +386,8 @@ try {
 		$endpaper_records = cover_records();
 		$endpaper_files   = isset( $endpaper_records[ $endpaper_cover_key ]['files'] ) ? $endpaper_records[ $endpaper_cover_key ]['files'] : array();
 
-		endpaper_check( 'the cover is saved on the site, in each size it is large enough for', array( 160, 320, 400 ) === array_keys( $endpaper_files ) && 3 === count( glob( $endpaper_cover_dir['path'] . '/' . $endpaper_cover_key . '-*' ) ) );
-		endpaper_check( 'the block shows the saved cover, with its sizes', false !== strpos( $endpaper_html, $endpaper_cover_dir['url'] . '/' . $endpaper_cover_key . '-320.' ) && false !== strpos( $endpaper_html, ' 160w, ' ) && false !== strpos( $endpaper_html, 'width="320" height="480"' ) && false === strpos( $endpaper_html, 'assets.hardcover.app' ) );
+		endpaper_check( 'the cover is saved on the site, in the sizes it is large enough for, without two that are nearly alike', array( 160, 400 ) === array_keys( $endpaper_files ) && 2 === count( glob( $endpaper_cover_dir['path'] . '/' . $endpaper_cover_key . '-*' ) ) );
+		endpaper_check( 'the block shows the saved cover, with its sizes', false !== strpos( $endpaper_html, $endpaper_cover_dir['url'] . '/' . $endpaper_cover_key . '-' ) && false !== strpos( $endpaper_html, ' 160w, ' ) && false !== strpos( $endpaper_html, ' 400w"' ) && false !== strpos( $endpaper_html, 'width="400" height="600"' ) && false === strpos( $endpaper_html, 'assets.hardcover.app' ) );
 		endpaper_check( 'the folder cannot be listed', file_exists( $endpaper_cover_dir['path'] . '/index.html' ) );
 
 		do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
