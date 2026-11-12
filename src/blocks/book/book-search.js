@@ -21,6 +21,12 @@ import getBookUrl from '../../utils/book-url';
 const SEARCH_DELAY = 400;
 
 /**
+ * How many books a search returns at most, which is how many placeholder rows
+ * to show, so the list does not change height when the results arrive.
+ */
+const SEARCH_RESULTS = 8;
+
+/**
  * Wraps each match of the search words in <mark>, without using HTML strings.
  *
  * @param {string} text Text to show.
@@ -267,7 +273,7 @@ export default function BookSearch( { onSelect } ) {
 					className="endpaper-book-search__results endpaper-book-search__results--loading"
 					aria-hidden="true"
 				>
-					{ [ 1, 2, 3, 4 ].map( ( row ) => (
+					{ Array.from( { length: SEARCH_RESULTS }, ( _, row ) => (
 						<li
 							key={ row }
 							className="endpaper-book-search__result"
@@ -289,7 +295,7 @@ export default function BookSearch( { onSelect } ) {
 			) }
 
 			{ 'done' === status && 0 === results.length && (
-				<p>
+				<p className="endpaper-book-search__empty">
 					{ __(
 						'No books found. Try the author’s name or an ISBN, or paste a link to the book’s Hardcover page.',
 						'endpaper'
