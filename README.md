@@ -2,7 +2,7 @@
 
 Book blocks for WordPress, powered by [Hardcover](https://hardcover.app).
 
-Endpaper lets you show books from Hardcover in your posts and pages. Embed a single book with its cover, author, rating and description, or show a list of the books you are reading from your own Hardcover library.
+Endpaper lets you show books from Hardcover in your posts and pages. Embed a single book with its cover, author, rating and description, show a list of the books you are reading from your own Hardcover library, or show how far along you are on a reading goal.
 
 In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
 
@@ -11,13 +11,14 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 ## The Book block
 
-- Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page. A link pasted on a line of its own in the editor becomes a Book block.
+- Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page. A link pasted on a line of its own in the editor becomes a Book block. When the search is empty, it lists the last five books you picked in this browser.
 - Shows the book as a card: the cover, title, authors, a description, and a row with the publication year, page count and Hardcover rating.
 - Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
 - Can show your own review in place of the description, with its headings, bold text, quotes and lists, and a link to the review on Hardcover. A review that Hardcover marks as having spoilers is closed until it is opened. The review can be limited in length, and is cut on a whole paragraph where it can.
 - Uses the cover of the edition in your Hardcover library when the book is public there. You can pick the cover of another edition in the block’s settings.
 - Layout settings: the cover can be small, medium or large, and sit on the left, on the right or above the text. Text alignment (left, center or right) is in the block toolbar and applies to everything in the card. When a narrow card puts the cover above the text, the cover lines up with the text.
 - The Card style gives the book a light background, rounded corners and padding. Under Settings, Endpaper, you can choose which style new Book blocks start with. Blocks that already have a style keep it.
+- The heading level of the title, the accent color and the corner radius of the cover can be changed in the block settings.
 - Can credit Hardcover in the card, with their logo linked to the book there. The logo is off until you switch it on.
 - The other parts can be switched on or off. The description can be limited in length, and ends on a whole sentence where it can.
 - Sizes follow the block’s font size, and colors follow the text color, so the card fits light and dark designs alike.
@@ -27,13 +28,33 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 - Shows books from your own Hardcover library: the ones you are currently reading, have read, or want to read.
 - Comes with ready-made Currently Reading, Recently Read and Want to Read variations in the block inserter.
-- Can be shown as a list or as a grid of covers, with up to six columns.
-- Shows the cover of your edition, the title, authors and your rating for each book, and your reading progress for books you are currently reading. Each part can be switched on or off.
+- Can be shown as a list or as a grid of covers, with up to six columns. By default a column is never narrower than 10em, so a narrow space gets fewer columns, down to one.
+- Shows up to 20 books. For each book it shows the cover of your edition, the title, authors, your rating and the date you finished it, and your reading progress for books you are currently reading. Each part can be switched on or off.
+- The title’s heading level, the accent color and the corner radius of the covers can be changed in the block settings. Can credit Hardcover with their logo, which is off until you switch it on.
 - Only shows books that are public on Hardcover, so a book you keep private there never appears on your site.
+
+## The Reading Goal block
+
+- Shows how far along you are on one of your reading goals on Hardcover. You choose the goal in the block settings. Only goals that are public on Hardcover can be shown, and not archived ones.
+- Shows the goal’s title, how much you have done of the target (books read, pages read or hours listened), and how many days are left. A goal that is reached says so instead. The percentage can be shown too.
+- Two styles: **Bar**, a progress bar, and **Gauge**, a half circle with the count in the middle.
+- The days left are worked out again in the visitor’s browser, so the number is right on pages that are served from a cache.
+- Can credit Hardcover with their logo, which is off until you switch it on. The title’s heading level and the accent color can be changed in the block settings.
 
 ## Patterns
 
 Two patterns are included, in the Endpaper category of the block inserter: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the books you last finished. Both are lists of three.
+
+## The settings screen
+
+Under Settings, Endpaper:
+
+- **Connection**: where you add your Hardcover API key, with a button that opens Hardcover’s form for a new key. It shows whether the key works, and which account it belongs to.
+- **Blocks**: the blocks and patterns the plugin adds.
+- **Appearance**: which style new Book blocks start with, Plain or Card.
+- **Cache**: a button that clears everything fetched from Hardcover, covers included, so it is fetched again.
+
+If Hardcover stops accepting the key, administrators get a notice in the admin, and Site Health reports it.
 
 ## For theme authors
 

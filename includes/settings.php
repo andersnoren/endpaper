@@ -1199,7 +1199,7 @@ function render_settings_page() {
 				the_faq_item(
 					__( 'What happens when I delete the plugin?', 'endpaper' ),
 					array(
-						__( 'The API key and everything the plugin has stored, the book covers included, are removed. Book and Reading List blocks left in your posts stop showing.', 'endpaper' ),
+						__( 'The API key and everything the plugin has stored, the book covers included, are removed. Book, Reading List and Reading Goal blocks left in your posts stop showing.', 'endpaper' ),
 					)
 				);
 				?>

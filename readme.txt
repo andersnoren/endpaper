@@ -8,17 +8,19 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Show books from Hardcover on your site: a single book, or the books you are reading. Unofficial, not maintained or endorsed by Hardcover.
+Show books from Hardcover on your site: a single book, your reading lists or a reading goal. Unofficial, not maintained or endorsed by Hardcover.
 
 == Description ==
 
-Endpaper adds two blocks that show books from [Hardcover](https://hardcover.app), the book tracking site.
+Endpaper adds three blocks that show books from [Hardcover](https://hardcover.app), the book tracking site.
 
 **Endpaper is an unofficial plugin.** It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Hardcover does not provide support for it: for help, use the plugin’s support forum here on WordPress.org.
 
 **The Book block** shows one book: the cover, title, authors, a short description, the publication year, the page count and the rating on Hardcover. Search by title, author or ISBN, or paste a link to the book’s page on Hardcover. A link pasted on a line of its own in the editor becomes a Book block. It can also show which of your own shelves the book is on, how far you have read, and your own review in place of the description, with a link to it on Hardcover. The cover is the one of your own edition when the book is in your library, and you can pick the cover of any other edition. You can make the cover small, medium or large, put it on the left, on the right or above the text, and align the text left, center or right. The Card style puts a light background, rounded corners and padding behind it. You choose which style new Book blocks start with under Settings, Endpaper.
 
-**The Reading List block** shows books from your own Hardcover library: the ones you are reading now, have read, or want to read. Show them as a list or as a grid of covers, with your reading progress, your ratings and the dates you finished.
+**The Reading List block** shows books from your own Hardcover library: the ones you are reading now, have read, or want to read. Show them as a list or as a grid of covers with up to six columns, with your reading progress, your ratings and the dates you finished. Ready-made Currently Reading, Recently Read and Want to Read versions are in the block inserter.
+
+**The Reading Goal block** shows how far along you are on one of your reading goals on Hardcover: the number of books read, pages read or hours listened, the days left, and a progress bar or a half-circle gauge. It can show the percentage too. Only goals that are public on Hardcover can be shown.
 
 Two patterns get you started: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the books you last finished. You find them in the block inserter, under Patterns, in the Endpaper category.
 
@@ -39,8 +41,8 @@ Endpaper gets all its book data from Hardcover, through the Hardcover API. The p
 
 * Your API key, with every request, so Hardcover knows whose account is asking.
 * What you type in the book search, while you search for a book in the editor.
-* The ID of a book, when a Book block is shown and the stored copy of the book is more than a week old.
-* A request for your own public reading list, shelf or reading progress, when a block that shows them is displayed and the stored copy is more than an hour old.
+* The ID of a book, when a Book block is shown and the stored copy of the book is more than a week old, or there is none yet.
+* A request for your own public reading list, shelf, reading progress or reading goals, when a block that shows them is displayed and the stored copy is more than an hour old, or there is none yet.
 * A request for your username, when you save a key or open the settings screen, to confirm whose key it is.
 * A request for the cover of a book, once for each cover a block shows. The cover is saved on your site, in a folder of the plugin’s own under uploads, and shown from there.
 
@@ -63,7 +65,7 @@ The service is provided by Hardcover: [terms of service](https://hardcover.app/p
 1. Install and activate Endpaper.
 2. Go to Settings, then Endpaper.
 3. Use the button on that screen to create an API key on Hardcover, with the right permissions already ticked, and paste it in.
-4. Add a Book or a Reading List block to a post or a page.
+4. Add a Book, Reading List or Reading Goal block to a post or a page.
 
 To keep the key out of the database, you can define it in `wp-config.php` instead:
 
@@ -101,6 +103,10 @@ Endpaper only shows what is public. Your shelf, rating and progress for a book a
 
 Endpaper saves what it fetches for a while, so a change can take some time to appear. To fetch a block’s data again now, use the update button in its toolbar. It fetches your own activity: your shelf, rating, progress and review, the reading lists and your goals. To fetch everything again, use the “Clear the cache” button on the settings screen.
 
+= Why is my reading goal missing? =
+
+Endpaper only shows goals that are public on Hardcover and not archived, and only goals counted in books, pages or hours. Choose the goal in the block settings. If the goal was archived, made private or deleted on Hardcover, the block shows nothing to your visitors, and people who can edit the page see a note.
+
 = Can I choose which cover a book has? =
 
 Yes. A book shows the cover of the edition in your library, if it is there, and otherwise Hardcover’s default cover for the book. To pick another edition’s cover, select the Book block and open “Cover” in the block settings.
@@ -132,11 +138,11 @@ The format follows WordPress’s own `image_editor_output_format` filter.
 
 = Can I change how the blocks look? =
 
-Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
+Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text, and a Reading List block can be a list or a grid. The Book block comes in two styles, Plain and Card, and you choose which one new Book blocks start with under Settings, Endpaper. The Reading Goal block comes as a bar or a gauge. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
 
 = What happens when I delete the plugin? =
 
-The API key and everything the plugin has stored, the book covers included, are removed. Book and Reading List blocks left in your posts stop showing.
+The API key and everything the plugin has stored, the book covers included, are removed. Book, Reading List and Reading Goal blocks left in your posts stop showing.
 
 = What happens when my API key expires? =
 
