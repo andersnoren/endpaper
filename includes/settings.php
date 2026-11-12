@@ -441,6 +441,61 @@ function handle_clear_cache() {
 add_action( 'admin_post_endpaper_clear_cache', __NAMESPACE__ . '\handle_clear_cache' );
 
 /**
+ * Returns what Endpaper suggests for the site's privacy policy.
+ *
+ * It depends on where covers come from. Normally they are shown from the
+ * site itself, and visitors' browsers never contact Hardcover. On a site
+ * that cannot save them, they are loaded from Hardcover, which is something
+ * a privacy policy should say.
+ *
+ * @return string HTML, in the shape the privacy policy guide expects.
+ */
+function get_privacy_policy_text() {
+	$covers_from_hardcover = are_remote_covers_allowed() && ( ! is_cover_import_enabled() || ! can_store_covers() );
+	$policy_url            = 'https://hardcover.app/pages/privacy-policy-2';
+
+	$content = '<p class="privacy-policy-tutorial">' . esc_html__( 'Endpaper shows books from Hardcover, a book tracking service. It collects nothing about your visitors, sets no cookies, and sends nothing about your visitors to Hardcover.', 'endpaper' ) . '</p>';
+
+	if ( $covers_from_hardcover ) {
+		$content .= '<p class="privacy-policy-tutorial">' . esc_html__( 'On this site, book covers are loaded from Hardcover’s servers, because they are not saved on the site itself. Your visitors’ browsers contact Hardcover to fetch them, so your privacy policy should say so. Site Health explains why covers are not saved.', 'endpaper' ) . '</p>';
+	} else {
+		$content .= '<p class="privacy-policy-tutorial">' . esc_html__( 'On this site, book covers are saved on the site itself, so your visitors’ browsers do not contact Hardcover. You may still want to mention that books link to Hardcover.', 'endpaper' ) . '</p>';
+	}
+
+	$content .= '<p><strong class="privacy-policy-tutorial">' . esc_html__( 'Suggested text:', 'endpaper' ) . '</strong> ';
+
+	if ( $covers_from_hardcover ) {
+		$content .= sprintf(
+			/* translators: %s: The address of Hardcover's privacy policy. */
+			esc_html__( 'This site shows books from Hardcover, a book tracking service. The covers of those books are loaded from Hardcover’s servers. When you view a page with a book on it, your browser requests the cover from Hardcover, which receives your IP address and details about your browser. Hardcover’s privacy policy is at %s.', 'endpaper' ),
+			esc_url( $policy_url )
+		);
+	} else {
+		$content .= sprintf(
+			/* translators: %s: The address of Hardcover's privacy policy. */
+			esc_html__( 'This site shows books from Hardcover, a book tracking service. Nothing about you is sent to Hardcover when you view these books: the book covers are stored on this site. Titles and covers may link to Hardcover. If you follow such a link, Hardcover’s privacy policy applies, which is at %s.', 'endpaper' ),
+			esc_url( $policy_url )
+		);
+	}
+
+	$content .= '</p>';
+
+	return $content;
+}
+
+/**
+ * Offers the suggested text in the privacy policy guide, under Settings, Privacy.
+ *
+ * @return void
+ */
+function add_privacy_policy_content() {
+	if ( function_exists( 'wp_add_privacy_policy_content' ) ) {
+		wp_add_privacy_policy_content( __( 'Endpaper', 'endpaper' ), wp_kses_post( get_privacy_policy_text() ) );
+	}
+}
+add_action( 'admin_init', __NAMESPACE__ . '\add_privacy_policy_content' );
+
+/**
  * Adds the settings screen to the Settings menu.
  *
  * @return void

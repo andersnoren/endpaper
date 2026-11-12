@@ -34,6 +34,7 @@ use function AndersNoren\Endpaper\get_book_end_time;
 use function AndersNoren\Endpaper\get_connection_status;
 use function AndersNoren\Endpaper\get_editions;
 use function AndersNoren\Endpaper\get_key_problem_message;
+use function AndersNoren\Endpaper\get_privacy_policy_text;
 use function AndersNoren\Endpaper\get_site_health_result;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_token;
@@ -431,6 +432,10 @@ try {
 	$endpaper_html = ob_get_clean();
 	endpaper_check( 'it renders for an administrator', false !== strpos( $endpaper_html, 'endpaper-token' ) && false !== strpos( $endpaper_html, 'read:library:public' ) );
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
+	endpaper_check( 'the suggested privacy text says that covers are loaded from Hardcover, when they are', false !== strpos( get_privacy_policy_text(), 'receives your IP address' ) );
+	remove_filter( 'endpaper_import_covers', '__return_false' );
+	endpaper_check( 'and that nothing is sent, when covers are saved on the site', ! can_store_covers() || false !== strpos( get_privacy_policy_text(), 'Nothing about you is sent to Hardcover' ) );
+	add_filter( 'endpaper_import_covers', '__return_false' );
 	endpaper_check( 'Site Health says when covers are not saved', 'Endpaper is set not to save book covers' === get_covers_site_health_result()['label'] );
 	endpaper_check( 'it explains where covers are kept, and what is sent to Hardcover', false !== strpos( $endpaper_html, 'uploads/endpaper/covers' ) && false !== strpos( $endpaper_html, 'endpaper_cover_widths' ) && false !== strpos( $endpaper_html, 'Do my visitors’ browsers contact Hardcover?' ) );
 	endpaper_check( 'it has a button to clear the cache', false !== strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && false === strpos( $endpaper_html, 'disabled' ) );
