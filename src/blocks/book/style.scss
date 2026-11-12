@@ -39,7 +39,7 @@
 /*
  * By default the book sits in the page without a frame. One that is given a
  * border, a background or a shadow gets room inside it, and rounded corners.
- * The Card style gives it a frame of its own, in the faint color of the text.
+ * The Card style gives it a faint tint of the text color as a background.
  */
 :where(.endpaper-book__card--framed) {
 	border-radius: 0.75em;
@@ -47,7 +47,7 @@
 }
 
 :where(.wp-block-endpaper-book.is-style-card .endpaper-book__card) {
-	border: 1px solid $border-color;
+	background: $card-color;
 	border-radius: 0.75em;
 	padding: 1.5em;
 }
