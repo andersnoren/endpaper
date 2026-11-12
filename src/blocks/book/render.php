@@ -141,7 +141,7 @@ if ( '' !== $endpaper_review_html ) {
 		$endpaper_review_parts[] = sprintf(
 			'<a class="endpaper-book__review-part" href="%1$s">%2$s</a>',
 			esc_url( $endpaper_link . '/reviews/@' . rawurlencode( $endpaper_entry['username'] ) ),
-			esc_html__( 'Read the review on Hardcover', 'endpaper' )
+			esc_html__( 'Read on Hardcover', 'endpaper' )
 		);
 	}
 
