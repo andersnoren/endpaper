@@ -127,7 +127,7 @@ function ResultList( { books, term, onPick } ) {
 					>
 						<Cover cover={ book.cover } />
 						<span className="endpaper-book-search__text">
-							<strong>{ highlight( book.title, term ) }</strong>
+							<span>{ highlight( book.title, term ) }</span>
 							<span className="endpaper-book-search__details">
 								{ highlight(
 									( book.authors || [] ).join( ', ' ),
