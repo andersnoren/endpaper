@@ -170,14 +170,21 @@
 	@include cover-placeholder;
 }
 
-/* The facts row sits at the bottom, level with the foot of the cover. */
+/*
+ * The facts row follows the text. In the Card style it sits at the bottom
+ * instead, level with the foot of the cover.
+ */
 .endpaper-book__content {
 	display: flex;
 	flex: 1 1 15em;
 	flex-direction: column;
 	gap: 1.5em;
-	justify-content: space-between;
+	justify-content: flex-start;
 	min-width: 0;
+}
+
+.wp-block-endpaper-book.is-style-card .endpaper-book__content {
+	justify-content: space-between;
 }
 
 .endpaper-book__main {
