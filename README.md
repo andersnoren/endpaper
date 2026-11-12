@@ -58,7 +58,9 @@ If Hardcover stops accepting the key, administrators get a notice in the admin, 
 
 ## For theme authors
 
-The blocks have very little styling of their own, and support the standard color, typography, spacing, border and shadow settings. A theme can style them in `theme.json` like any core block, under `styles.blocks` with `endpaper/book`, `endpaper/reading-list` and `endpaper/reading-goal`.
+Endpaper is made to be restyled. The blocks have very little styling of their own, take their fonts and colors from your theme, and are built on the standard color, typography, spacing, border and shadow settings, so most of the work can be done in `theme.json`, without a line of CSS or an override fighting the plugin. A theme can style them like any core block, under `styles.blocks` with `endpaper/book`, `endpaper/reading-list` and `endpaper/reading-goal`.
+
+For what `theme.json` can’t express, such as the opacity of muted text or the accent color, there are a few Endpaper settings and CSS variables, listed below.
 
 Both blocks have a margin above and below by default: 1.5em, and never less than 32px. A theme changes it the same way as any other style:
 
