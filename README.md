@@ -110,6 +110,8 @@ A few settings are specific to Endpaper. A theme sets their defaults under `sett
 
 The same values can be set as CSS variables, `--endpaper-muted-text`, `--endpaper-muted-element`, `--endpaper-hover`, `--endpaper-logo-hover`, `--endpaper-accent-faded` and `--endpaper-column-min`, on the block or anywhere above it.
 
+The big number in the middle of the Reading Goal gauge isn’t a heading, but it takes the font family, weight, style and letter spacing of the theme’s headings, from `styles.elements.heading.typography` in `theme.json` or the Styles screen. They arrive as the CSS variables `--endpaper-heading-font-family`, `--endpaper-heading-font-weight`, `--endpaper-heading-font-style` and `--endpaper-heading-letter-spacing`, set on the block.
+
 The space between the items in a Reading List grid has two more CSS variables, `--endpaper-row-gap` (default 1.5em) and `--endpaper-column-gap` (default 1.5em, or 4% of the width if that is smaller). They aren’t theme.json settings. If a block has a gap set in the editor, that value is used for both unless one of these is set.
 
 To set any of them for one block only, put the same `custom` settings under `settings.blocks`:

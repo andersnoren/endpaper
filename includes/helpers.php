@@ -868,3 +868,48 @@ function get_icon_path( $name ) {
 function get_default_book_style() {
 	return 'card' === get_option( ENDPAPER_DEFAULT_STYLE_OPTION, 'default' ) ? 'card' : 'default';
 }
+
+/**
+ * Returns the typography of the theme's headings, as CSS variables.
+ *
+ * Big text, such as the count in the middle of the gauge, is not a heading, but looks better in the
+ * font of the theme's headings. The values come from the global styles, so they follow
+ * styles.elements.heading in theme.json and in the Styles screen.
+ *
+ * @return string Inline style declarations, or an empty string.
+ */
+function get_heading_typography_style() {
+	$typography = wp_get_global_styles(
+		array( 'elements', 'heading', 'typography' ),
+		array( 'transforms' => array( 'resolve-variables' ) )
+	);
+
+	if ( ! is_array( $typography ) ) {
+		return '';
+	}
+
+	$properties = array(
+		'fontFamily'    => 'font-family',
+		'fontWeight'    => 'font-weight',
+		'fontStyle'     => 'font-style',
+		'letterSpacing' => 'letter-spacing',
+	);
+	$style      = '';
+
+	foreach ( $properties as $key => $property ) {
+		if ( ! isset( $typography[ $key ] ) || ! is_scalar( $typography[ $key ] ) ) {
+			continue;
+		}
+
+		$value = trim( wp_strip_all_tags( (string) $typography[ $key ] ) );
+
+		// Only plain values: no declarations, functions that load things, or leftover variables.
+		if ( '' === $value || preg_match( '/[;{}<>\\\\]|url\\(|expression\\(|var\\(/i', $value ) ) {
+			continue;
+		}
+
+		$style .= '--endpaper-heading-' . $property . ': ' . $value . ';';
+	}
+
+	return $style;
+}

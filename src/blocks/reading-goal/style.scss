@@ -203,9 +203,12 @@
 /* The bottom of the count is on the line the arc starts and ends on. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__gauge .endpaper-reading-goal__count {
 	bottom: 0;
+	font-family: var(--endpaper-heading-font-family, inherit);
 	font-size: min(26.5cqw, calc(86cqw / var(--endpaper-chars, 2)));
-	font-weight: 700;
+	font-style: var(--endpaper-heading-font-style, inherit);
+	font-weight: var(--endpaper-heading-font-weight, 700);
 	inset-inline: 0;
+	letter-spacing: var(--endpaper-heading-letter-spacing, inherit);
 	line-height: 1.2;
 	margin: 0;
 	padding: 0;

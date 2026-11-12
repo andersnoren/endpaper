@@ -770,6 +770,34 @@ add_filter( 'endpaper_cache_lifetime', $endpaper_two_days );
 $endpaper_long = $endpaper_lifetime( 'goals' );
 remove_filter( 'endpaper_cache_lifetime', $endpaper_two_days );
 
+$endpaper_value = static fn( $value ) => static fn() => $value;
+$endpaper_try   = static function ( $hook, $value, $function ) use ( $endpaper_value ) {
+	$callback = $endpaper_value( $value );
+	add_filter( $hook, $callback );
+	$result = $function();
+	remove_filter( $hook, $callback );
+	return $result;
+};
+$endpaper_ns = '\\AndersNoren\\Endpaper\\';
+
+endpaper_check(
+	'the request timeout, the number of search results and the wait after a failure can be filtered, within limits',
+	15 === ( $endpaper_ns . 'get_request_timeout' )()
+		&& 30 === $endpaper_try( 'endpaper_request_timeout', 30, $endpaper_ns . 'get_request_timeout' )
+		&& 60 === $endpaper_try( 'endpaper_request_timeout', 600, $endpaper_ns . 'get_request_timeout' )
+		&& 8 === ( $endpaper_ns . 'get_search_results_count' )()
+		&& 12 === $endpaper_try( 'endpaper_search_results', 12, $endpaper_ns . 'get_search_results_count' )
+		&& 20 === $endpaper_try( 'endpaper_search_results', 99, $endpaper_ns . 'get_search_results_count' )
+		&& 1 === $endpaper_try( 'endpaper_search_results', 0, $endpaper_ns . 'get_search_results_count' )
+);
+
+( $endpaper_ns . 'set_backoff' )( 'down' );
+$endpaper_default_wait = (int) get_option( '_transient_timeout_endpaper_api_backoff' ) - time();
+$endpaper_try( 'endpaper_backoff', 60, fn() => ( $endpaper_ns . 'set_backoff' )( 'down' ) );
+$endpaper_short_wait = (int) get_option( '_transient_timeout_endpaper_api_backoff' ) - time();
+delete_transient( 'endpaper_api_backoff' );
+endpaper_check( 'the wait after a failed request is five minutes unless filtered', $endpaper_default_wait > 295 && $endpaper_default_wait <= 300 && $endpaper_short_wait > 55 && $endpaper_short_wait <= 60 );
+
 endpaper_check( 'how long saved data counts as fresh can be filtered, and never goes under a minute', array( WEEK_IN_SECONDS, HOUR_IN_SECONDS ) === $endpaper_default && MINUTE_IN_SECONDS === $endpaper_floor && 2 * DAY_IN_SECONDS === $endpaper_long );
 endpaper_check( 'the Card style is not also listed in block.json, so the editor does not show it twice', ! $endpaper_card_dupe );
 

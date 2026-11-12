@@ -17,6 +17,7 @@ use function AndersNoren\Endpaper\get_goal_amount_parts;
 use function AndersNoren\Endpaper\get_goal_amount_text;
 use function AndersNoren\Endpaper\get_goal_days_text;
 use function AndersNoren\Endpaper\get_goal_ended_text;
+use function AndersNoren\Endpaper\get_heading_typography_style;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\get_token_trouble;
 use function AndersNoren\Endpaper\has_card_frame;
@@ -76,7 +77,7 @@ $endpaper_percent_label = sprintf( __( '%s%% of the goal', 'endpaper' ), number_
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
 		'class' => $endpaper_is_gauge ? 'endpaper-reading-goal--gauge' : '',
-		'style' => get_accent_color_style( $attributes, 'endpaper/reading-goal' ),
+		'style' => get_accent_color_style( $attributes, 'endpaper/reading-goal' ) . get_heading_typography_style(),
 	)
 );
 
