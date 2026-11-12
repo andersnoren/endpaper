@@ -59,7 +59,7 @@ Both blocks have a margin above and below by default: 1.5em, and never less than
 
 The Margin setting of a single block in the editor takes precedence over the theme.
 
-Two settings are specific to Endpaper. A theme sets their defaults under `settings.custom`:
+A few settings are specific to Endpaper. A theme sets their defaults under `settings.custom`:
 
 ```json
 {
@@ -67,7 +67,8 @@ Two settings are specific to Endpaper. A theme sets their defaults under `settin
 		"custom": {
 			"endpaper": {
 				"accent": "var(--wp--preset--color--primary)",
-				"coverRadius": "4px"
+				"coverRadius": "4px",
+				"mutedText": 0.75
 			}
 		}
 	}
@@ -76,8 +77,13 @@ Two settings are specific to Endpaper. A theme sets their defaults under `settin
 
 - `accent` is the accent color, used for the reading progress bar, the rating stars and the shelf label. Without it, the blocks pick one from the theme’s palette: the first of `accent`, `accent-1` to `accent-6` and `primary` that stands out from the background, with a contrast of at least 3:1. If none does, or the theme has no accent colors, they use the text color.
 - `coverRadius` is the corner radius of book covers. Without it, the radius is 4px.
+- `mutedText` is the opacity of secondary text, such as the date of a review. The default is 0.75.
+- `mutedElement` is the opacity of small marks, such as the dots between facts and the line beside a quote. The default is 0.33.
+- `hover` is the opacity links and logos fade to under the pointer. The default is 0.75.
 
-To set either for one block only, put the same `custom` settings under `settings.blocks`:
+The same values can be set as CSS variables, `--endpaper-muted-text`, `--endpaper-muted-element` and `--endpaper-hover`, on the block or anywhere above it.
+
+To set any of them for one block only, put the same `custom` settings under `settings.blocks`:
 
 ```json
 {
@@ -95,7 +101,7 @@ To set either for one block only, put the same `custom` settings under `settings
 }
 ```
 
-Both can also be changed for a single block in the editor, which takes precedence over the theme.
+The accent color and cover radius can also be changed for a single block in the editor, which takes precedence over the theme.
 
 ## Book covers
 

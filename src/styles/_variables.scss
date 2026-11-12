@@ -20,15 +20,24 @@ $accent-color: var(--endpaper-accent, var(--wp--custom--endpaper--accent, curren
 $border-color: color-mix(in srgb, currentcolor 10%, transparent);
 $card-color: color-mix(in srgb, currentcolor 6%, transparent);
 $track-color: color-mix(in srgb, currentcolor 20%, transparent);
-$dot-color: color-mix(in srgb, currentcolor 33%, transparent);
 
-/* Secondary text is the text color at reduced opacity. */
-$muted-opacity: 0.75;
-$muted-color: color-mix(in srgb, currentcolor #{$muted-opacity * 100%}, transparent);
+/*
+ * How faded things are, as opacities from 0 to 1. Each can be changed with a
+ * CSS variable, or in theme.json under settings.custom.endpaper (mutedText,
+ * mutedElement and hover).
+ *
+ * - Muted text is secondary text, such as the review date.
+ * - Muted elements are small marks, such as the dots between facts and the
+ *   line beside a quote.
+ * - Hover is what links and logos fade to under the pointer.
+ */
+$muted-opacity-text: var(--endpaper-muted-text, var(--wp--custom--endpaper--muted-text, 0.75));
+$muted-opacity-element: var(--endpaper-muted-element, var(--wp--custom--endpaper--muted-element, 0.33));
+$hover-opacity: var(--endpaper-hover, var(--wp--custom--endpaper--hover, 0.75));
 
-/* What a link or logo fades to when it is hovered. */
-$hover-opacity: 0.75;
-$hover-color: color-mix(in srgb, currentcolor #{$hover-opacity * 100%}, transparent);
+$muted-color-text: color-mix(in srgb, currentcolor calc(#{$muted-opacity-text} * 100%), transparent);
+$muted-color-element: color-mix(in srgb, currentcolor calc(#{$muted-opacity-element} * 100%), transparent);
+$hover-color: color-mix(in srgb, currentcolor calc(#{$hover-opacity} * 100%), transparent);
 
 /*
  * How light the text color is, from 0 (black) to 1 (white). It is worked out
@@ -54,12 +63,12 @@ $text-lightness: "(0.2126 * r + 0.7152 * g + 0.0722 * b) / 255";
  * Chrome when that color changes, as it does in the editor.
  */
 @mixin muted-text {
-	opacity: $muted-opacity;
+	opacity: $muted-opacity-text;
 
 	/* There is no text-fill-color without the prefix. */
 	/* stylelint-disable property-no-vendor-prefix */
 	@supports (-webkit-text-fill-color: rgb(from currentcolor r g b / 0.5)) {
-		-webkit-text-fill-color: #{"rgb(from currentcolor r g b / clamp(#{$muted-opacity}, min(0.6 / (1.001 - #{$text-lightness}), 0.6 / (#{$text-lightness} + 0.001)), 1))"};
+		-webkit-text-fill-color: #{"rgb(from currentcolor r g b / clamp(#{$muted-opacity-text}, min(0.6 / (1.001 - #{$text-lightness}), 0.6 / (#{$text-lightness} + 0.001)), 1))"};
 		opacity: 1;
 	}
 

@@ -9,7 +9,7 @@
  * know the cap unit get a value that suits most fonts.
  */
 @mixin dot-after {
-	background: $dot-color;
+	background: $muted-color-element;
 	border-radius: 50%;
 	content: "";
 	display: inline-block;
@@ -263,7 +263,7 @@
 }
 
 .wp-block-endpaper-book .endpaper-book__spoilers summary {
-	color: $muted-color;
+	color: $muted-color-text;
 	cursor: pointer;
 	font-size: 0.875em;
 	list-style-position: inside;
@@ -297,7 +297,7 @@
 }
 
 .wp-block-endpaper-book .endpaper-book__description--review blockquote {
-	border-inline-start: 2px solid $dot-color;
+	border-inline-start: 2px solid $muted-color-element;
 	font-style: italic;
 	padding-inline-start: 0.75em;
 }
