@@ -3,7 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { __, isRTL } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import {
 	AlignmentControl,
 	BlockControls,
@@ -77,7 +77,7 @@ const READING_TOGGLES = [
 		attribute: 'showReview',
 		label: __( 'Your review', 'endpaper' ),
 		help: __(
-			'Shown in place of the description, if you have written one.',
+			'Shown in place of the description.',
 			'endpaper'
 		),
 	},
@@ -380,10 +380,7 @@ export default function Edit( {
 				>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __(
-							'Link title and cover to Hardcover',
-							'endpaper'
-						) }
+						label={ __( 'Link to Hardcover', 'endpaper' ) }
 						checked={ !! attributes.linkToHardcover }
 						onChange={ ( linkToHardcover ) =>
 							setAttributes( { linkToHardcover } )
@@ -453,32 +450,6 @@ export default function Edit( {
 							</ToggleGroupControl>
 						</>
 					) }
-					<ToggleGroupControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						isBlock
-						label={ __( 'Text alignment', 'endpaper' ) }
-						value={
-							attributes.textAlign ||
-							( isRTL() ? 'right' : 'left' )
-						}
-						onChange={ ( textAlign ) =>
-							setAttributes( { textAlign } )
-						}
-					>
-						<ToggleGroupControlOption
-							value="left"
-							label={ __( 'Left', 'endpaper' ) }
-						/>
-						<ToggleGroupControlOption
-							value="center"
-							label={ __( 'Center', 'endpaper' ) }
-						/>
-						<ToggleGroupControlOption
-							value="right"
-							label={ __( 'Right', 'endpaper' ) }
-						/>
-					</ToggleGroupControl>
 				</PanelBody>
 
 				{ attributes.showCover && (
