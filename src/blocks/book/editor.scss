@@ -119,3 +119,11 @@
 	background: transparent;
 	box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wp-admin-theme-color, #3858e9);
 }
+
+/* A note at the top of a settings panel, set like a control’s help text. */
+.endpaper-panel-note {
+	color: #757575;
+	font-size: 12px;
+	line-height: 1.4;
+	margin: 0 0 16px;
+}

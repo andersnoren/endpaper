@@ -49,27 +49,12 @@ const DISPLAY_TOGGLES = [
 	{ attribute: 'showAuthors', label: __( 'Authors', 'endpaper' ) },
 	{ attribute: 'showMeta', label: __( 'Year and page count', 'endpaper' ) },
 	{ attribute: 'showRating', label: __( 'Hardcover rating', 'endpaper' ) },
-	{
-		attribute: 'showShelf',
-		label: __( 'Your shelf', 'endpaper' ),
-		help: __(
-			'Your shelf for the book on Hardcover, such as Read. Only if your activity on the book is public.',
-			'endpaper'
-		),
-	},
-	{
-		attribute: 'showUserRating',
-		label: __( 'Your rating', 'endpaper' ),
-		help: __(
-			'The stars you gave the book on Hardcover. Only if your activity on the book is public.',
-			'endpaper'
-		),
-	},
+	{ attribute: 'showShelf', label: __( 'Your shelf', 'endpaper' ) },
+	{ attribute: 'showUserRating', label: __( 'Your rating', 'endpaper' ) },
 	{
 		attribute: 'showProgress',
 		onlyOnShelf: CURRENTLY_READING,
 		label: __( 'Your reading progress', 'endpaper' ),
-		help: __( 'How far you are, as logged on Hardcover.', 'endpaper' ),
 	},
 	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
 ];
@@ -167,15 +152,20 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Display', 'endpaper' ) }>
+					<p className="endpaper-panel-note">
+						{ __(
+							'Your shelf, rating and progress show only if your activity on the book is public on Hardcover.',
+							'endpaper'
+						) }
+					</p>
 					{ DISPLAY_TOGGLES.filter(
 						( { onlyOnShelf } ) =>
 							! onlyOnShelf || onlyOnShelf === shelf
-					).map( ( { attribute, label, help } ) => (
+					).map( ( { attribute, label } ) => (
 						<ToggleControl
 							key={ attribute }
 							__nextHasNoMarginBottom
 							label={ label }
-							help={ help }
 							checked={ !! attributes[ attribute ] }
 							onChange={ ( value ) =>
 								setAttributes( { [ attribute ]: value } )
