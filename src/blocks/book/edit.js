@@ -53,7 +53,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'showShelf',
 		label: __( 'Your shelf', 'endpaper' ),
 		help: __(
-			'Your shelf for the book on Hardcover, such as Currently Reading. Only if the book is public there.',
+			'Your shelf for the book on Hardcover, such as Read. Only if the book is public there.',
 			'endpaper'
 		),
 	},
