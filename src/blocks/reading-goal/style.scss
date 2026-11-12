@@ -159,9 +159,9 @@
 	width: min(100%, 16em);
 }
 
-/* With a title above it, the gauge has 2em of room. */
+/* With a title above it, the gauge has 1.5em of room. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__title + .endpaper-reading-goal__gauge {
-	margin-top: 2em;
+	margin-top: 1.5em;
 }
 
 /* The round ends of the arc reach a little below the line it stands on. */
