@@ -2,13 +2,11 @@
 @use "../../styles/notice";
 @use "../../styles/stars";
 
-$gap: var(--endpaper-gap, 1.5em);
-
 /*
- * In a grid both gaps are 1.5em, but the one between columns is never more
- * than 4% of the width, so a narrow card does not lose much of it. Each has a
- * variable of its own, and the Block spacing setting, which sets
- * --endpaper-gap, sets both.
+ * The gap between books is 1.5em, in a list and in a grid. In a grid the one
+ * between columns is never more than 4% of the width, so a narrow card does
+ * not lose much of it. Each has a variable of its own, and the Block spacing
+ * setting, which sets --endpaper-gap, sets both.
  */
 $row-gap: var(--endpaper-row-gap, var(--endpaper-gap, 1.5em));
 $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
@@ -68,7 +66,7 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 	display: grid;
 
 	/* The gap between books comes from the Block spacing setting. */
-	gap: $gap;
+	row-gap: $row-gap;
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -271,7 +269,6 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 .wp-block-endpaper-reading-list.endpaper-reading-list--grid .endpaper-reading-list__items {
 	column-gap: $column-gap;
 	grid-template-columns: repeat(auto-fill, minmax(min(100%, max(#{$column-min}, (100% - (var(--endpaper-columns, 4) - 1) * #{$column-gap}) / var(--endpaper-columns, 4))), 1fr));
-	row-gap: $row-gap;
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__item {
