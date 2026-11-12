@@ -66,8 +66,23 @@ const DISPLAY_TOGGLES = [
 		onlyOnShelf: CURRENTLY_READING,
 		label: __( 'Your reading progress', 'endpaper' ),
 	},
-	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
 ];
+
+/**
+ * Returns what the text under the title is: nothing, the description or the owner's review.
+ *
+ * It is kept in two attributes, so a block saved before the review existed still reads the same.
+ *
+ * @param {Object} attributes Block attributes.
+ * @return {string} One of none, description and review.
+ */
+function getTextMode( attributes ) {
+	if ( ! attributes.showDescription ) {
+		return 'none';
+	}
+
+	return attributes.showReview ? 'review' : 'description';
+}
 
 /**
  * Editor component for the Book block.
@@ -319,26 +334,42 @@ export default function Edit( {
 						/>
 					) ) }
 
-					{ attributes.showDescription && (
-						<ToggleControl
-							__nextHasNoMarginBottom
-							label={ __( 'Show my review instead', 'endpaper' ) }
-							help={ __(
-								'Shows your review of the book in place of the description, if you have written one and it is public on Hardcover.',
-								'endpaper'
-							) }
-							checked={ !! attributes.showReview }
-							onChange={ ( value ) =>
-								setAttributes( { showReview: value } )
-							}
+					<ToggleGroupControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						isBlock
+						label={ __( 'Text', 'endpaper' ) }
+						help={ __(
+							'My review shows your review of the book, if you have written one and it is public on Hardcover. Otherwise the description is shown.',
+							'endpaper'
+						) }
+						value={ getTextMode( attributes ) }
+						onChange={ ( mode ) =>
+							setAttributes( {
+								showDescription: 'none' !== mode,
+								showReview: 'review' === mode,
+							} )
+						}
+					>
+						<ToggleGroupControlOption
+							value="none"
+							label={ __( 'None', 'endpaper' ) }
 						/>
-					) }
+						<ToggleGroupControlOption
+							value="description"
+							label={ __( 'Description', 'endpaper' ) }
+						/>
+						<ToggleGroupControlOption
+							value="review"
+							label={ __( 'My review', 'endpaper' ) }
+						/>
+					</ToggleGroupControl>
 
 					{ attributes.showDescription && (
 						<RangeControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={ __( 'Description length', 'endpaper' ) }
+							label={ __( 'Text length', 'endpaper' ) }
 							help={ __(
 								'The most characters to show, ending on a whole sentence. 0 shows everything.',
 								'endpaper'
