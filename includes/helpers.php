@@ -112,15 +112,22 @@ function get_cover_radius_style( $attributes ) {
 /**
  * Returns the inline style that sets the gap between the items of a block.
  *
- * Reads the Block spacing setting. WordPress only applies that setting itself
- * for blocks that use its layout system, so it is passed to the stylesheet as
- * a custom property on the block wrapper instead.
+ * Reads the Block spacing setting of the block, or else the theme's block gap
+ * for the Reading List block. WordPress only applies that setting itself for
+ * blocks that use its layout system, so it is passed to the stylesheet as a
+ * custom property on the block wrapper instead.
  *
  * @param array $attributes Block attributes.
  * @return string An inline style declaration, or an empty string.
  */
 function get_block_gap_style( $attributes ) {
-	$gap   = isset( $attributes['style']['spacing']['blockGap'] ) ? $attributes['style']['spacing']['blockGap'] : null;
+	$gap = isset( $attributes['style']['spacing']['blockGap'] ) ? $attributes['style']['spacing']['blockGap'] : null;
+
+	// Without a gap on the block, the theme's gap for the block is used, from theme.json or the Styles screen.
+	if ( null === $gap || '' === $gap ) {
+		$gap = wp_get_global_styles( array( 'blocks', 'endpaper/reading-list', 'spacing', 'blockGap' ) );
+	}
+
 	$value = sanitize_css_length( $gap, 'spacing' );
 
 	return '' === $value ? '' : '--endpaper-gap: ' . $value . ';';

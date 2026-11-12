@@ -43,7 +43,7 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 
 = For developers =
 
-* **Style it in `theme.json`.** Set the accent color, the corner radius of covers and how faded secondary text is, for all blocks or for one block, or use the CSS variables.
+* **Style it in `theme.json`.** Set the accent color, the corner radius of covers and how faded secondary text is, for all blocks or for one block, along with the gap of a reading list and the typography of the reading goal number.
 * **Filters for covers.** Change the sizes and quality covers are saved in, or switch saving off.
 
 In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.

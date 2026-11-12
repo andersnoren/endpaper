@@ -67,7 +67,7 @@ If Hardcover stops accepting the key, administrators get a notice in the admin, 
 
 Endpaper is made to be restyled. The blocks have very little styling of their own, take their fonts and colors from your theme, and are built on the standard color, typography, spacing, border and shadow settings, so most of the work can be done in `theme.json`, without a line of CSS or an override fighting the plugin. A theme can style them like any core block, under `styles.blocks` with `endpaper/book`, `endpaper/reading-list` and `endpaper/reading-goal`.
 
-For what `theme.json` can’t express, such as the opacity of muted text or the accent color, there are a few Endpaper settings and CSS variables, listed below.
+For what `theme.json` can’t express, such as the opacity of muted text or the accent color, there are a few Endpaper settings, listed below.
 
 Both blocks have a margin above and below by default: 1.5em, and never less than 32px. A theme changes it the same way as any other style:
 
@@ -115,12 +115,6 @@ A few settings are specific to Endpaper. A theme sets their defaults under `sett
 - `accentFaded` is how strong the accent color is as the background of the shelf label. The default is 0.15.
 - `columnMin` is the narrowest a column in the Reading List grid gets. The default is 10em. A narrow card gets fewer columns, down to one.
 
-The same values can be set as CSS variables, `--endpaper-muted-text`, `--endpaper-muted-element`, `--endpaper-hover`, `--endpaper-logo-hover`, `--endpaper-accent-faded` and `--endpaper-column-min`, on the block or anywhere above it.
-
-The big number in the middle of the Reading Goal gauge isn’t a heading, but it takes the font family, weight, style and letter spacing of the theme’s headings, from `styles.elements.heading.typography` in `theme.json` or the Styles screen. To give the number its own typography, set `elements.heading.typography` under `styles.blocks` for `endpaper/reading-goal`, which takes precedence. They arrive as the CSS variables `--endpaper-heading-font-family`, `--endpaper-heading-font-weight`, `--endpaper-heading-font-style` and `--endpaper-heading-letter-spacing`, set on the block.
-
-The space between the items in a Reading List grid has two more CSS variables, `--endpaper-row-gap` (default 1.5em) and `--endpaper-column-gap` (default 1.5em, or 4% of the width if that is smaller). They aren’t theme.json settings. If a block has a gap set in the editor, that value is used for both unless one of these is set.
-
 To set any of them for one block only, put the same `custom` settings under `settings.blocks`:
 
 ```json
@@ -140,6 +134,10 @@ To set any of them for one block only, put the same `custom` settings under `set
 ```
 
 The accent color and cover radius can also be changed for a single block in the editor, which takes precedence over the theme.
+
+The big number in the middle of the Reading Goal gauge isn’t a heading, but it takes the font family, weight, style and letter spacing of the theme’s headings, from `styles.elements.heading.typography` in `theme.json` or the Styles screen. To give the number its own typography, set `elements.heading.typography` under `styles.blocks` for `endpaper/reading-goal`, which takes precedence.
+
+The space between the items of a Reading List is the block’s gap. A theme sets it with `spacing.blockGap` under `styles.blocks` for `endpaper/reading-list`, and the Block spacing setting of a single block takes precedence.
 
 ## Book covers
 

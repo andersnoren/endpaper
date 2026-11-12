@@ -522,6 +522,26 @@ try {
 	endpaper_check( 'the cover of the edition in the library is used', 1 === substr_count( $endpaper_html, 'edition-list.jpg' ) );
 	endpaper_check( 'an edition without a cover falls back to the cover of the book', 1 === substr_count( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 	endpaper_check( 'a spacing of zero gets a unit', false !== strpos( $endpaper_html, '--endpaper-gap: 0px' ) );
+
+	$endpaper_gap_theme = static function ( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version' => 3,
+				'styles'  => array(
+					'blocks' => array(
+						'endpaper/reading-list' => array( 'spacing' => array( 'blockGap' => '3rem' ) ),
+					),
+				),
+			)
+		);
+	};
+	add_filter( 'wp_theme_json_data_theme', $endpaper_gap_theme );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	$endpaper_themed  = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid"} /-->' );
+	$endpaper_own_gap = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid","style":{"spacing":{"blockGap":"10px"}}} /-->' );
+	remove_filter( 'wp_theme_json_data_theme', $endpaper_gap_theme );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	endpaper_check( 'a theme can set the gap of the list, and a gap on the block takes precedence', false !== strpos( $endpaper_themed, '--endpaper-gap: 3rem' ) && false !== strpos( $endpaper_own_gap, '--endpaper-gap: 10px' ) && false === strpos( $endpaper_own_gap, '--endpaper-gap: 3rem' ) );
 	endpaper_check( 'the Hardcover logo is left out unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'endpaper-reading-list__attribution' ) );
 
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"showCredit":true} /-->' );
