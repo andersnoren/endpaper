@@ -19,6 +19,7 @@ use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\get_token_trouble;
 use function AndersNoren\Endpaper\has_card_frame;
+use function AndersNoren\Endpaper\the_cover_image;
 use function AndersNoren\Endpaper\the_editor_notice;
 use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
@@ -31,6 +32,9 @@ $endpaper_count   = isset( $attributes['count'] ) ? absint( $attributes['count']
 $endpaper_layout  = isset( $attributes['layout'] ) && 'grid' === $attributes['layout'] ? 'grid' : 'list';
 $endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 0 );
 $endpaper_entries = get_reading_list( $endpaper_status, $endpaper_count );
+
+// How wide a cover is shown, roughly, so the browser can pick the right file: a thumbnail in a list, up to four across in a grid.
+$endpaper_cover_sizes = 'grid' === $endpaper_layout ? '(max-width: 600px) 45vw, (max-width: 1200px) 25vw, 300px' : '72px';
 
 // Visitors see nothing if the list fails or is empty. People who can edit see why.
 if ( is_wp_error( $endpaper_entries ) ) {
@@ -77,11 +81,7 @@ $endpaper_card_style = get_card_style( $attributes );
 							<?php if ( $endpaper_link ) : ?>
 								<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
 							<?php endif; ?>
-							<?php if ( $endpaper_book['cover'] ) : ?>
-								<img src="<?php echo esc_url( $endpaper_book['cover'] ); ?>" alt="" loading="lazy" decoding="async" />
-							<?php else : ?>
-								<span class="endpaper-cover-placeholder"></span>
-							<?php endif; ?>
+							<?php the_cover_image( $endpaper_book['cover'], $endpaper_cover_sizes ); ?>
 							<?php if ( $endpaper_link ) : ?>
 								</a>
 							<?php endif; ?>

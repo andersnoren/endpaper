@@ -74,7 +74,7 @@ function cache_key( $name ) {
 }
 
 /**
- * Clears everything Endpaper has fetched from Hardcover, so that it is fetched again.
+ * Clears everything Endpaper has fetched from Hardcover, covers included, so that it is fetched again.
  *
  * The API key stays, and so does the note of whether Hardcover accepts it.
  *
@@ -85,6 +85,9 @@ function clear_cache() {
 
 	update_option( 'endpaper_cache_generation', absint( get_option( 'endpaper_cache_generation', 0 ) ) + 1 );
 	delete_transient( 'endpaper_api_backoff' );
+
+	// The saved covers go too. They are saved again when a block next shows them.
+	delete_all_covers();
 
 	// With an external object cache the old entries are not in the database. They are out of reach now, and expire by themselves.
 	if ( wp_using_ext_object_cache() ) {
@@ -217,6 +220,9 @@ function api_request( $query, $variables = array(), $token = null ) {
 	if ( $is_saved && false !== get_transient( 'endpaper_key_rejected' ) ) {
 		delete_transient( 'endpaper_key_rejected' );
 	}
+
+	// This request has waited for Hardcover already, so it may save a new cover or two as well. See may_import_cover_now().
+	did_fetch_from_hardcover( true );
 
 	return isset( $body['data'] ) && is_array( $body['data'] ) ? $body['data'] : array();
 }

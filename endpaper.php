@@ -24,6 +24,7 @@ define( 'ENDPAPER_API_URL', 'https://api.hardcover.app/v1/graphql' );
 
 require_once ENDPAPER_DIR . 'includes/api.php';
 require_once ENDPAPER_DIR . 'includes/helpers.php';
+require_once ENDPAPER_DIR . 'includes/covers.php';
 require_once ENDPAPER_DIR . 'includes/colors.php';
 require_once ENDPAPER_DIR . 'includes/rest.php';
 require_once ENDPAPER_DIR . 'includes/theme-json.php';
@@ -107,3 +108,4 @@ function set_activation_redirect( $network_wide ) {
 	set_transient( 'endpaper_activation_redirect', 1, 30 );
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\set_activation_redirect' );
+register_deactivation_hook( __FILE__, __NAMESPACE__ . '\unschedule_cover_jobs' );

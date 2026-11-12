@@ -286,6 +286,11 @@ function add_site_health_test( $tests ) {
 		'test'  => __NAMESPACE__ . '\get_site_health_result',
 	);
 
+	$tests['direct']['endpaper_covers'] = array(
+		'label' => __( 'Endpaper book covers', 'endpaper' ),
+		'test'  => __NAMESPACE__ . '\get_covers_site_health_result',
+	);
+
 	return $tests;
 }
 add_filter( 'site_status_tests', __NAMESPACE__ . '\add_site_health_test' );
@@ -321,6 +326,44 @@ function get_site_health_result() {
 
 	if ( 'good' !== $result['status'] && ! is_token_in_config() ) {
 		$result['actions'] = '<p><a href="' . esc_url( get_settings_url() ) . '">' . esc_html__( 'Go to the Endpaper settings', 'endpaper' ) . '</a></p>';
+	}
+
+	return $result;
+}
+
+/**
+ * Reports in Site Health whether book covers can be saved on the site.
+ *
+ * When they cannot, they are loaded from Hardcover by each visitor's
+ * browser, which the site's owner should know about.
+ *
+ * @return array The result, in the shape Site Health expects.
+ */
+function get_covers_site_health_result() {
+	$dir    = get_cover_dir();
+	$result = array(
+		'label'       => __( 'Endpaper saves book covers on your site', 'endpaper' ),
+		'status'      => 'good',
+		'badge'       => array(
+			'label' => __( 'Endpaper', 'endpaper' ),
+			'color' => 'blue',
+		),
+		'description' => '<p>' . esc_html__( 'Book covers are downloaded from Hardcover once and shown from your own site, so your visitors’ browsers do not contact Hardcover.', 'endpaper' ) . '</p>',
+		'actions'     => '',
+		'test'        => 'endpaper_covers',
+	);
+
+	if ( ! is_cover_import_enabled() ) {
+		$result['label']       = __( 'Endpaper is set not to save book covers', 'endpaper' );
+		$result['description'] = '<p>' . esc_html__( 'Saving book covers has been switched off in code. Covers are loaded from Hardcover by your visitors’ browsers, so Hardcover sees their IP address and browser details.', 'endpaper' ) . '</p>';
+	} elseif ( ! can_store_covers() ) {
+		$result['label']       = __( 'Endpaper cannot save book covers', 'endpaper' );
+		$result['status']      = 'recommended';
+		$result['description'] = '<p>' . sprintf(
+			/* translators: %s: The path of a folder. */
+			esc_html__( 'The folder %s cannot be created or written to. Until it can, covers are loaded from Hardcover by your visitors’ browsers, so Hardcover sees their IP address and browser details.', 'endpaper' ),
+			'<code>' . esc_html( '' !== $dir['path'] ? $dir['path'] : 'wp-content/uploads/endpaper/covers' ) . '</code>'
+		) . '</p>';
 	}
 
 	return $result;
@@ -528,6 +571,12 @@ function render_settings_page() {
 	// A key that Hardcover has turned down has to be replaced, so how to create one is shown.
 	$key_rejected = 'rejected' === get_token_trouble();
 
+	$cover_stats = get_cover_stats();
+	$cover_dir   = get_cover_dir();
+
+	// The covers' folder as it is best recognized: from the site's own folder on.
+	$cover_path = '' !== $cover_dir['path'] ? str_replace( wp_normalize_path( ABSPATH ), '', wp_normalize_path( $cover_dir['path'] ) ) : 'wp-content/uploads/endpaper/covers';
+
 	// Only read, to say what the button on this screen did. Nothing is changed based on it.
 	$cache_result = isset( $_GET['endpaper_cache'] ) ? sanitize_key( wp_unslash( $_GET['endpaper_cache'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	?>
@@ -539,7 +588,7 @@ function render_settings_page() {
 		<p class="endpaper-settings__disclosure"><?php esc_html_e( 'Endpaper is an unofficial plugin. It is not maintained or endorsed by Hardcover.', 'endpaper' ); ?></p>
 
 		<?php if ( 'cleared' === $cache_result ) : ?>
-			<div class="notice notice-success inline is-dismissible"><p><?php esc_html_e( 'The cache was cleared. Everything is fetched from Hardcover again the next time it is shown.', 'endpaper' ); ?></p></div>
+			<div class="notice notice-success inline is-dismissible"><p><?php esc_html_e( 'The cache was cleared. Everything, book covers included, is fetched from Hardcover again the next time it is shown.', 'endpaper' ); ?></p></div>
 		<?php elseif ( 'kept' === $cache_result ) : ?>
 			<div class="notice notice-warning inline is-dismissible"><p><?php esc_html_e( 'The cache was not cleared, because there is no working API key.', 'endpaper' ); ?></p></div>
 		<?php endif; ?>
@@ -641,7 +690,26 @@ function render_settings_page() {
 				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">
 					<h2 id="endpaper-cache-title"><?php esc_html_e( 'Cache', 'endpaper' ); ?></h2>
 
-					<p><?php esc_html_e( 'Endpaper saves what it fetches from Hardcover, so your pages stay fast. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. Clear the cache to fetch everything again now, for example after changing something on Hardcover.', 'endpaper' ); ?></p>
+					<p><?php esc_html_e( 'Endpaper saves what it fetches from Hardcover, book covers included, so your pages stay fast. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. Clear the cache to fetch everything again now, for example after changing something on Hardcover.', 'endpaper' ); ?></p>
+
+					<p class="endpaper-cache-status">
+						<?php
+						if ( ! is_cover_import_enabled() ) {
+							esc_html_e( 'Book covers are not saved on this site. They are loaded from Hardcover.', 'endpaper' );
+						} elseif ( ! can_store_covers() ) {
+							esc_html_e( 'Book covers cannot be saved, because their folder cannot be written to. Until that is fixed, they are loaded from Hardcover. Site Health has the details.', 'endpaper' );
+						} elseif ( $cover_stats['covers'] > 0 ) {
+							printf(
+								/* translators: 1: A number of book covers, 2: A file size, such as 3 MB. */
+								esc_html( _n( '%1$s book cover is saved on this site, taking up %2$s.', '%1$s book covers are saved on this site, taking up %2$s.', $cover_stats['covers'], 'endpaper' ) ),
+								esc_html( number_format_i18n( $cover_stats['covers'] ) ),
+								esc_html( size_format( $cover_stats['bytes'], $cover_stats['bytes'] >= MB_IN_BYTES ? 1 : 0 ) )
+							);
+						} else {
+							esc_html_e( 'No book covers are saved on this site yet.', 'endpaper' );
+						}
+						?>
+					</p>
 
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<input type="hidden" name="action" value="endpaper_clear_cache" />
@@ -744,6 +812,100 @@ function render_settings_page() {
 				);
 				?>
 
+				<h3><?php esc_html_e( 'Book covers', 'endpaper' ); ?></h3>
+
+				<details class="endpaper-disclosure">
+					<summary><?php esc_html_e( 'Where are book covers stored?', 'endpaper' ); ?></summary>
+					<p>
+						<?php
+						printf(
+							/* translators: %s: The path of a folder. */
+							esc_html__( 'In a folder of Endpaper’s own, %s. Each cover is downloaded from Hardcover once and shown from your site after that. Covers are not added to your media library.', 'endpaper' ),
+							'<code>' . esc_html( $cover_path ) . '</code>'
+						);
+						?>
+					</p>
+					<p><?php esc_html_e( 'A cover is removed when no block has shown it for a month. All covers are removed when you clear the cache, and when you delete the plugin.', 'endpaper' ); ?></p>
+				</details>
+
+				<?php
+				the_faq_item(
+					__( 'Which sizes and format are covers saved in?', 'endpaper' ),
+					array(
+						__( 'Three sizes: 160, 320 and 640 pixels wide, and never larger than the cover Hardcover has. Each visitor’s browser picks the smallest one that looks sharp. The file from Hardcover is not kept.', 'endpaper' ),
+						__( 'Covers are saved as WebP where your server can write it, and as JPEG where it cannot. If your site is set up to save its images in another format, such as AVIF, covers follow that.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'Why is a cover a gray box?', 'endpaper' ),
+					array(
+						__( 'The cover is being saved. That happens in the background, usually within a minute, so that your visitors do not wait for it. The box is also shown for a book that has no cover on Hardcover, and when Hardcover could not be reached. In that case Endpaper tries again after an hour.', 'endpaper' ),
+					)
+				);
+				?>
+
+				<details class="endpaper-disclosure">
+					<summary><?php esc_html_e( 'Can developers change how covers are saved?', 'endpaper' ); ?></summary>
+					<p><?php esc_html_e( 'Yes, with these filters:', 'endpaper' ); ?></p>
+					<ul class="ul-disc">
+						<li><code>endpaper_cover_widths</code> <?php esc_html_e( 'The widths covers are saved in, in pixels.', 'endpaper' ); ?></li>
+						<li><code>endpaper_cover_quality</code> <?php esc_html_e( 'The quality they are saved with, from 1 to 100. It is 80 to begin with.', 'endpaper' ); ?></li>
+						<li><code>endpaper_import_covers</code> <?php esc_html_e( 'Return false to load covers from Hardcover and save nothing.', 'endpaper' ); ?></li>
+						<li><code>endpaper_cover_hosts</code> <?php esc_html_e( 'The hosts covers may be downloaded from.', 'endpaper' ); ?></li>
+					</ul>
+					<p>
+						<?php
+						printf(
+							/* translators: %s: The name of a WordPress filter. */
+							esc_html__( 'The format follows WordPress’s own %s filter.', 'endpaper' ),
+							'<code>image_editor_output_format</code>'
+						);
+						?>
+					</p>
+				</details>
+
+				<h3><?php esc_html_e( 'Privacy', 'endpaper' ); ?></h3>
+
+				<?php
+				the_faq_item(
+					__( 'What does Endpaper send to Hardcover?', 'endpaper' ),
+					array(
+						__( 'Your API key, with each request. What you type when you search for a book in the editor. And requests for the books, covers, reading lists, shelves and progress that your blocks show.', 'endpaper' ),
+						__( 'Your site’s server makes these requests. Nothing about your visitors is sent in them.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'Do my visitors’ browsers contact Hardcover?', 'endpaper' ),
+					array(
+						__( 'No. Covers are shown from your own site, and nothing else is loaded from Hardcover. A visitor only reaches Hardcover by following a link to it.', 'endpaper' ),
+						__( 'There is one exception. If your site cannot save covers, they are loaded from Hardcover instead, and Hardcover then sees each visitor’s IP address and browser details, though not which page they are reading. Site Health tells you if that is the case.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'Does anything load from Hardcover in the editor?', 'endpaper' ),
+					array(
+						__( 'Yes. When you choose a cover for a Book block, the covers to choose from are loaded from Hardcover by your own browser. That only happens in the editor, for the person editing.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'Does Endpaper use cookies or track visitors?', 'endpaper' ),
+					array(
+						__( 'No. It sets no cookies, and stores nothing about your visitors.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'What does Endpaper store on my site?', 'endpaper' ),
+					array(
+						__( 'Your API key, a copy of what it has fetched from Hardcover, and the book covers. All of it is removed when you delete the plugin.', 'endpaper' ),
+					)
+				);
+				?>
+
 				<h3><?php esc_html_e( 'About the plugin', 'endpaper' ); ?></h3>
 
 				<details class="endpaper-disclosure">
@@ -769,7 +931,7 @@ function render_settings_page() {
 				the_faq_item(
 					__( 'What happens when I delete the plugin?', 'endpaper' ),
 					array(
-						__( 'The API key and everything the plugin has stored are removed. Book and Reading List blocks left in your posts stop showing.', 'endpaper' ),
+						__( 'The API key and everything the plugin has stored, the book covers included, are removed. Book and Reading List blocks left in your posts stop showing.', 'endpaper' ),
 					)
 				);
 				?>

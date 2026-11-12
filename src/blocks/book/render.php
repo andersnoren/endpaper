@@ -24,6 +24,7 @@ use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\get_token_trouble;
+use function AndersNoren\Endpaper\the_cover_image;
 use function AndersNoren\Endpaper\the_editor_notice;
 use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
@@ -135,11 +136,7 @@ $endpaper_card_style = get_card_style( $attributes );
 				<?php if ( $endpaper_link ) : ?>
 					<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
 				<?php endif; ?>
-				<?php if ( $endpaper_cover ) : ?>
-					<img src="<?php echo esc_url( $endpaper_cover ); ?>" alt="" loading="lazy" decoding="async" />
-				<?php else : ?>
-					<span class="endpaper-cover-placeholder"></span>
-				<?php endif; ?>
+				<?php the_cover_image( $endpaper_cover, '(max-width: 600px) 30vw, 192px' ); ?>
 				<?php if ( $endpaper_link ) : ?>
 					</a>
 				<?php endif; ?>

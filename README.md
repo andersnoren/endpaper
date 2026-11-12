@@ -91,6 +91,23 @@ To set either for one block only, put the same `custom` settings under `settings
 
 Both can also be changed for a single block in the editor, which takes precedence over the theme.
 
+## Book covers
+
+Covers are downloaded from Hardcover once and shown from the site itself, so visitors’ browsers don’t contact Hardcover. They are saved in `wp-content/uploads/endpaper/covers`, not in the media library, in three widths (160, 320 and 640px, never larger than the original), as WebP where the server can write it and JPEG where it can’t. A cover that isn’t saved yet shows as a placeholder: it is saved in the background, usually within a minute. Covers no block has shown for a month are removed, and all of them when the cache is cleared or the plugin is deleted.
+
+If the site can’t save files, covers are loaded from Hardcover instead, and Site Health says so.
+
+Developers can change this with filters:
+
+| Filter | What it does |
+| --- | --- |
+| `endpaper_cover_widths` | The widths covers are saved in, in pixels. Default `[ 160, 320, 640 ]`. |
+| `endpaper_cover_quality` | The quality they are saved with, from 1 to 100. Default `80`. |
+| `endpaper_import_covers` | Return `false` to load covers from Hardcover and save nothing. |
+| `endpaper_cover_hosts` | The hosts covers may be downloaded from. Default `[ 'assets.hardcover.app' ]`. |
+
+The format follows WordPress’s own `image_editor_output_format` filter, so a site that saves its images as AVIF gets AVIF covers.
+
 ## Requirements
 
 - WordPress 6.6 or later

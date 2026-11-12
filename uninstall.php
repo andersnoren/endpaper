@@ -1,6 +1,6 @@
 <?php
 /**
- * Runs when the plugin is deleted: removes the API key and everything cached.
+ * Runs when the plugin is deleted: removes the API key, everything cached and the saved covers.
  *
  * @package Endpaper
  */
@@ -17,6 +17,24 @@ function endpaper_remove_site_data() {
 
 	delete_option( 'endpaper_hardcover_token' );
 	delete_option( 'endpaper_cache_generation' );
+	delete_option( 'endpaper_covers' );
+	delete_option( 'endpaper_cover_queue' );
+
+	wp_clear_scheduled_hook( 'endpaper_prune_covers' );
+	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
+
+	// The saved covers, and the folder they are in.
+	$uploads = wp_upload_dir( null, false );
+
+	if ( empty( $uploads['error'] ) && ! empty( $uploads['basedir'] ) && is_dir( $uploads['basedir'] . '/endpaper' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		global $wp_filesystem;
+
+		if ( WP_Filesystem() && $wp_filesystem ) {
+			$wp_filesystem->delete( $uploads['basedir'] . '/endpaper', true );
+		}
+	}
 
 	foreach ( array( '_transient_endpaper_', '_transient_timeout_endpaper_' ) as $prefix ) {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients cannot be deleted by prefix any other way.

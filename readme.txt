@@ -40,12 +40,15 @@ Endpaper gets all its book data from Hardcover, through the Hardcover API. The p
 * The ID of a book, when a Book block is shown and the stored copy of the book is more than a week old.
 * A request for your own public reading list, shelf or reading progress, when a block that shows them is displayed and the stored copy is more than an hour old.
 * A request for your username, when you save a key or open the settings screen, to confirm whose key it is.
+* A request for the cover of a book, once for each cover a block shows. The cover is saved on your site, in a folder of the plugin’s own under uploads, and shown from there.
 
 These requests are made by your site’s server. No information about your visitors is sent in them.
 
 **What your visitors’ browsers load from Hardcover**
 
-Book covers are loaded directly from Hardcover’s servers. When a visitor views a page with a cover on it, their browser asks Hardcover for the image, and Hardcover receives the visitor’s IP address and browser details, as with any image on the web.
+Nothing, normally. Book covers are saved on your site and shown from there.
+
+There are two exceptions. If your site cannot save files, or a developer has switched saving off, covers are loaded directly from Hardcover’s servers instead. A visitor’s browser then asks Hardcover for each image, and Hardcover receives the visitor’s IP address and browser details, though not the address of the page. Site Health tells you when this is the case. And in the editor, when you choose a cover for a Book block, the covers to choose from are loaded from Hardcover by the browser of the person editing.
 
 **Links to Hardcover**
 
@@ -100,13 +103,38 @@ Endpaper saves what it fetches for a while, so a change can take some time to ap
 
 Yes. A book shows the cover of the edition in your library, if it is there, and otherwise Hardcover’s default cover for the book. To pick another edition’s cover, select the Book block and open “Cover” in the block settings.
 
+= Where are book covers stored? =
+
+In a folder of the plugin’s own, `wp-content/uploads/endpaper/covers`. Each cover is downloaded from Hardcover once and shown from your site after that. Covers are not added to your media library. A cover is removed when no block has shown it for a month, and all of them when you clear the cache or delete the plugin.
+
+Covers are saved 160, 320 and 640 pixels wide, never larger than the cover Hardcover has, as WebP where your server can write it and as JPEG where it cannot. If your site is set up to save its images in another format, such as AVIF, covers follow that.
+
+= Why is a cover a gray box? =
+
+The cover is being saved. That happens in the background, usually within a minute, so that your visitors do not wait for it. The box is also shown for a book that has no cover on Hardcover, and when Hardcover could not be reached, in which case the plugin tries again after an hour.
+
+= Do my visitors’ browsers contact Hardcover? =
+
+No. Covers are shown from your own site, and nothing else is loaded from Hardcover. The plugin sets no cookies and stores nothing about your visitors. The one exception is a site that cannot save covers: see “External services” above.
+
+= Can developers change how covers are saved? =
+
+Yes, with these filters:
+
+* `endpaper_cover_widths`: the widths covers are saved in, in pixels.
+* `endpaper_cover_quality`: the quality they are saved with, from 1 to 100. It is 80 to begin with.
+* `endpaper_import_covers`: return false to load covers from Hardcover and save nothing.
+* `endpaper_cover_hosts`: the hosts covers may be downloaded from.
+
+The format follows WordPress’s own `image_editor_output_format` filter.
+
 = Can I change how the blocks look? =
 
 Yes. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
 
 = What happens when I delete the plugin? =
 
-The API key and everything the plugin has stored are removed. Book and Reading List blocks left in your posts stop showing.
+The API key and everything the plugin has stored, the book covers included, are removed. Book and Reading List blocks left in your posts stop showing.
 
 = What happens when my API key expires? =
 

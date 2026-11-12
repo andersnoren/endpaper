@@ -147,6 +147,15 @@
 	width: 1%;
 }
 
+/* What is saved at the moment, under the explanation of the cache. */
+.endpaper-cache-status {
+	color: #646970;
+}
+
+.endpaper-disclosure code {
+	font-size: 12px;
+}
+
 /* The list of blocks: each name next to what the block shows. */
 .endpaper-blocks {
 	border-top: 1px solid #dcdcde;

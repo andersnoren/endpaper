@@ -18,6 +18,18 @@ use function AndersNoren\Endpaper\format_date;
 use function AndersNoren\Endpaper\api_request;
 use function AndersNoren\Endpaper\cache_key;
 use function AndersNoren\Endpaper\clear_cache;
+use function AndersNoren\Endpaper\can_store_covers;
+use function AndersNoren\Endpaper\cover_records;
+use function AndersNoren\Endpaper\delete_all_covers;
+use function AndersNoren\Endpaper\get_cover;
+use function AndersNoren\Endpaper\get_cover_dir;
+use function AndersNoren\Endpaper\get_cover_key;
+use function AndersNoren\Endpaper\get_cover_stats;
+use function AndersNoren\Endpaper\get_covers_site_health_result;
+use function AndersNoren\Endpaper\import_cover;
+use function AndersNoren\Endpaper\prune_covers;
+use function AndersNoren\Endpaper\queue_cover;
+use function AndersNoren\Endpaper\save_queued_covers;
 use function AndersNoren\Endpaper\get_book_end_time;
 use function AndersNoren\Endpaper\get_connection_status;
 use function AndersNoren\Endpaper\get_editions;
@@ -63,6 +75,29 @@ function endpaper_check( $label, $condition ) {
 add_filter(
 	'pre_http_request',
 	static function ( $pre, $args, $url ) {
+		// A cover: a small image made here, written to where the download was to go.
+		if ( false !== strpos( $url, 'assets.hardcover.app' ) ) {
+			if ( false !== strpos( $url, 'missing' ) || empty( $args['filename'] ) || ! function_exists( 'imagejpeg' ) ) {
+				return new WP_Error( 'endpaper_smoke', 'No such cover.' );
+			}
+
+			$image = imagecreatetruecolor( 400, 600 );
+			imagefill( $image, 0, 0, imagecolorallocate( $image, 178, 58, 48 ) );
+			imagejpeg( $image, $args['filename'], 90 );
+
+			$GLOBALS['endpaper_cover_downloads'] = isset( $GLOBALS['endpaper_cover_downloads'] ) ? $GLOBALS['endpaper_cover_downloads'] + 1 : 1;
+
+			return array(
+				'response' => array(
+					'code'    => 200,
+					'message' => 'OK',
+				),
+				'body'     => '',
+				'headers'  => array(),
+				'cookies'  => array(),
+			);
+		}
+
 		if ( false === strpos( $url, 'api.hardcover.app' ) ) {
 			return $pre;
 		}
@@ -223,6 +258,10 @@ try {
 	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_endpaper\_%' OR option_name LIKE '\_transient\_timeout\_endpaper\_%'" );
 	wp_cache_flush();
 
+	// Covers are loaded from Hardcover until the part about saving them, so the checks before it can tell them apart by their addresses.
+	delete_all_covers();
+	add_filter( 'endpaper_import_covers', '__return_false' );
+
 	echo "Without a key\n";
 	endpaper_check( 'no key is reported', '' === get_token() );
 	endpaper_check( 'a list request fails cleanly', is_wp_error( get_reading_list( 3, 5 ) ) );
@@ -322,7 +361,57 @@ try {
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"showCredit":true} /-->' );
 	endpaper_check( 'the list credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );
 
+	echo "Saving covers\n";
+	wp_set_current_user( 0 );
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+	endpaper_check( 'a cover that is not saved is loaded from Hardcover, without a referrer', false !== strpos( $endpaper_html, 'src="https://assets.hardcover.app/edition-entry.jpg"' ) && false !== strpos( $endpaper_html, 'referrerpolicy="no-referrer"' ) );
+
+	remove_filter( 'endpaper_import_covers', '__return_false' );
+
+	if ( ! can_store_covers() || ! wp_image_editor_supports( array( 'mime_type' => 'image/jpeg' ) ) ) {
+		echo "  skip  this server cannot save images, so the rest of this part is left out\n";
+	} else {
+		$endpaper_cover_dir = get_cover_dir();
+		$endpaper_cover_url = 'https://assets.hardcover.app/edition-entry.jpg';
+		$endpaper_cover_key = get_cover_key( $endpaper_cover_url );
+
+		$GLOBALS['endpaper_cover_downloads'] = 0;
+
+		$endpaper_html    = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+		$endpaper_records = cover_records();
+		$endpaper_files   = isset( $endpaper_records[ $endpaper_cover_key ]['files'] ) ? $endpaper_records[ $endpaper_cover_key ]['files'] : array();
+
+		endpaper_check( 'the cover is saved on the site, in each size it is large enough for', array( 160, 320, 400 ) === array_keys( $endpaper_files ) && 3 === count( glob( $endpaper_cover_dir['path'] . '/' . $endpaper_cover_key . '-*' ) ) );
+		endpaper_check( 'the block shows the saved cover, with its sizes', false !== strpos( $endpaper_html, $endpaper_cover_dir['url'] . '/' . $endpaper_cover_key . '-320.' ) && false !== strpos( $endpaper_html, ' 160w, ' ) && false !== strpos( $endpaper_html, 'width="320" height="480"' ) && false === strpos( $endpaper_html, 'assets.hardcover.app' ) );
+		endpaper_check( 'the folder cannot be listed', file_exists( $endpaper_cover_dir['path'] . '/index.html' ) );
+
+		do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+		endpaper_check( 'a saved cover is not downloaded again', 1 === $GLOBALS['endpaper_cover_downloads'] );
+
+		endpaper_check( 'a cover that cannot be downloaded gets a placeholder, and is not tried again at once', null === get_cover( 'https://assets.hardcover.app/missing.jpg' ) && null === get_cover( 'https://assets.hardcover.app/missing.jpg' ) && ! empty( cover_records()[ get_cover_key( 'https://assets.hardcover.app/missing.jpg' ) ]['failed'] ) );
+		endpaper_check( 'only Hardcover’s image server is downloaded from', false === import_cover( 'https://example.com/cover.jpg' ) && false === import_cover( 'http://assets.hardcover.app/cover.jpg' ) );
+
+		queue_cover( 'https://assets.hardcover.app/edition-queued.jpg' );
+		queue_cover();
+		endpaper_check( 'a cover can wait to be saved in the background', 1 === count( (array) get_option( 'endpaper_cover_queue' ) ) && false !== wp_next_scheduled( 'endpaper_save_queued_covers' ) );
+		save_queued_covers();
+		endpaper_check( 'the background job saves it', ! empty( cover_records()[ get_cover_key( 'https://assets.hardcover.app/edition-queued.jpg' ) ]['files'] ) && false === get_option( 'endpaper_cover_queue' ) );
+
+		$endpaper_records                                = cover_records();
+		$endpaper_records[ $endpaper_cover_key ]['used'] = time() - 2 * MONTH_IN_SECONDS;
+		cover_records( $endpaper_records );
+		prune_covers();
+		endpaper_check( 'a cover no block has shown for a month is removed', ! isset( cover_records()[ $endpaper_cover_key ] ) && 0 === count( glob( $endpaper_cover_dir['path'] . '/' . $endpaper_cover_key . '-*' ) ) && 1 === get_cover_stats()['covers'] );
+
+		clear_cache();
+		endpaper_check( 'clearing the cache removes the saved covers', 0 === get_cover_stats()['covers'] && 0 === count( glob( $endpaper_cover_dir['path'] . '/*-*' ) ) );
+	}
+
+	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
+	add_filter( 'endpaper_import_covers', '__return_false' );
+
 	echo "Clearing the cache\n";
+	do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
 	$endpaper_generation = (int) get_option( 'endpaper_cache_generation', 0 );
 	endpaper_check( 'the book is in the cache', false !== get_transient( cache_key( 'endpaper_book_42' ) ) );
 	clear_cache();
@@ -337,6 +426,8 @@ try {
 	$endpaper_html = ob_get_clean();
 	endpaper_check( 'it renders for an administrator', false !== strpos( $endpaper_html, 'endpaper-token' ) && false !== strpos( $endpaper_html, 'read:library:public' ) );
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
+	endpaper_check( 'Site Health says when covers are not saved', 'Endpaper is set not to save book covers' === get_covers_site_health_result()['label'] );
+	endpaper_check( 'it explains where covers are kept, and what is sent to Hardcover', false !== strpos( $endpaper_html, 'uploads/endpaper/covers' ) && false !== strpos( $endpaper_html, 'endpaper_cover_widths' ) && false !== strpos( $endpaper_html, 'Do my visitors’ browsers contact Hardcover?' ) );
 	endpaper_check( 'it has a button to clear the cache', false !== strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && false === strpos( $endpaper_html, 'disabled' ) );
 	endpaper_check( 'it says the plugin is unofficial, and where to get help', false !== strpos( $endpaper_html, 'Endpaper is an unofficial plugin' ) && false !== strpos( $endpaper_html, 'not maintained or endorsed by Hardcover' ) && false !== strpos( $endpaper_html, 'wordpress.org/support/plugin/endpaper/' ) );
 	endpaper_check( 'it credits the author and Hardcover, and links to GitHub and the reviews', false !== strpos( $endpaper_html, 'https://andersnoren.se' ) && false !== strpos( $endpaper_html, 'made possible by <a href="https://hardcover.app">Hardcover</a>' ) && false !== strpos( $endpaper_html, 'github.com/andersnoren/endpaper/issues' ) && false !== strpos( $endpaper_html, 'wordpress.org/support/plugin/endpaper/reviews/#new-post' ) );
@@ -372,6 +463,9 @@ try {
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"align":"wide"} /-->' );
 	endpaper_check( 'a list that cannot be shown says why, at the normal width', false !== strpos( $endpaper_html, 'endpaper-notice' ) && false === strpos( $endpaper_html, 'alignwide' ) );
+
+	remove_filter( 'endpaper_import_covers', '__return_false' );
+	delete_all_covers();
 
 	echo "Translations\n";
 	foreach ( array( 'endpaper-book-editor-script', 'endpaper-reading-list-editor-script' ) as $endpaper_handle ) {
