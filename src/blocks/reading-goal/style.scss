@@ -91,6 +91,11 @@
 	white-space: nowrap;
 }
 
+/* The percentage is bold once the goal is reached. */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__percent--reached {
+	font-weight: 700;
+}
+
 /* The bar takes the whole width. */
 .endpaper-reading-goal__bar {
 	appearance: none;

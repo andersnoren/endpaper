@@ -47,7 +47,8 @@ $endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attribu
 $endpaper_title   = '' !== $endpaper_goal['title'] ? $endpaper_goal['title'] : __( 'Reading goal', 'endpaper' );
 $endpaper_amount  = get_goal_amount_html( $endpaper_goal );
 $endpaper_reached = $endpaper_goal['progress'] >= $endpaper_goal['target'];
-$endpaper_percent = (int) round( $endpaper_goal['progress'] / $endpaper_goal['target'] * 100 );
+// The percentage is rounded down, so it never says 100 before the goal is reached.
+$endpaper_percent = (int) floor( $endpaper_goal['progress'] / $endpaper_goal['target'] * 100 + 0.0001 );
 
 // A goal that is reached says so, in place of the days left.
 if ( $endpaper_reached ) {
@@ -84,7 +85,7 @@ $endpaper_card_style = get_card_style( $attributes );
 			<?php if ( $endpaper_status ) : ?>
 				<p class="endpaper-reading-goal__status"><?php echo esc_html( $endpaper_status ); ?></p>
 			<?php endif; ?>
-			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
+			<p class="endpaper-reading-goal__percent<?php echo $endpaper_reached ? ' endpaper-reading-goal__percent--reached' : ''; ?>"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
 		</div>
 
 		<progress class="endpaper-reading-goal__bar" max="100" value="<?php echo esc_attr( $endpaper_bar ); ?>" aria-label="<?php echo esc_attr( $endpaper_percent_label ); ?>"></progress>
