@@ -230,16 +230,21 @@ $endpaper_card_style = get_card_style( $attributes );
 					</div>
 				<?php endif; ?>
 
-				<?php if ( $endpaper_description && $endpaper_spoilers ) : ?>
-					<?php // A review with spoilers stays closed until the visitor opens it. This works without JavaScript. ?>
-					<details class="endpaper-book__spoilers">
-						<summary><?php esc_html_e( 'This review contains spoilers', 'endpaper' ); ?></summary>
-						<p class="endpaper-book__description endpaper-book__description--review"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+				<?php if ( $endpaper_description ) : ?>
+					<?php if ( $endpaper_spoilers ) : ?>
+						<?php // A review with spoilers stays closed until the visitor opens it. This works without JavaScript. ?>
+						<details class="endpaper-book__spoilers">
+							<summary><?php esc_html_e( 'This review contains spoilers', 'endpaper' ); ?></summary>
+					<?php endif; ?>
+
+					<div class="endpaper-book__text">
+						<p class="endpaper-book__description<?php echo $endpaper_is_review ? ' endpaper-book__description--review' : ''; ?>"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
 						<?php echo $endpaper_review_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when it is built. ?>
-					</details>
-				<?php elseif ( $endpaper_description ) : ?>
-					<p class="endpaper-book__description<?php echo $endpaper_is_review ? ' endpaper-book__description--review' : ''; ?>"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
-					<?php echo $endpaper_review_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when it is built. ?>
+					</div>
+
+					<?php if ( $endpaper_spoilers ) : ?>
+						</details>
+					<?php endif; ?>
 				<?php endif; ?>
 
 			</div>

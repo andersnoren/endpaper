@@ -238,10 +238,21 @@
 	margin-block-end: 0.5em;
 }
 
-/* The link to the review sits under it, a little smaller than the text. */
+/* The text and the link to the review under it are kept together. */
+.endpaper-book__text {
+	display: flex;
+	flex-direction: column;
+	row-gap: 0.75em;
+}
+
+/* The link is a little smaller than the text, and muted like the rest. */
 .wp-block-endpaper-book .endpaper-book__review-link {
 	font-size: 0.875em;
-	margin-block-start: 0.5em;
+}
+
+.wp-block-endpaper-book .endpaper-book__review-link a {
+
+	@include muted-text;
 }
 
 .endpaper-book__header {
