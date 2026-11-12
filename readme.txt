@@ -21,7 +21,7 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 * **Embed any book.** Search Hardcover by title, author or ISBN, or paste a link to the book’s page on a line of its own, and it becomes a Book block. You get the cover, title, authors, a description, the year, the page count and the Hardcover rating.
 * **Add your own take.** Show your rating, which of your shelves the book is on and how far you have read. Or let your own review take the place of the description, with a link to it on Hardcover. Reviews keep their headings, quotes and lists, and a review with spoilers stays closed until a visitor opens it.
 * **Choose the right cover.** A book shows the cover of your own edition when it is in your library, and you can pick the cover of any other edition.
-* **Make it fit the page.** Let a book sit quietly in your text, or lift it onto a soft card with rounded corners. Put the cover where it reads best, beside the text or above it, in the size you like, and set the look new blocks start with once, under Settings, Endpaper.
+* **Make it fit the page.** Let a book sit quietly in your text, or lift it onto a soft card with rounded corners. Put the cover where it reads best, beside the text or above it, in the size you like. Then make it yours in the editor: the colors and the typography are all yours to change.
 
 = Show what you are reading =
 
@@ -153,7 +153,7 @@ The format follows WordPress’s own `image_editor_output_format` filter.
 
 = Can I change how the blocks look? =
 
-Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text, and a Reading List block can be a list or a grid. The Book block comes in two styles, Plain and Card, and you choose which one new Book blocks start with under Settings, Endpaper. The Reading Goal block comes as a bar or a gauge. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
+Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text, and a Reading List block can be a list or a grid. The Book block comes in two styles, Plain and Card. The Reading Goal block comes as a bar or a gauge. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
 
 = What happens when I delete the plugin? =
 
