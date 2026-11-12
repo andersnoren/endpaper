@@ -12,7 +12,7 @@
 	"styles": [
 		{
 			"name": "default",
-			"label": "Default",
+			"label": "Plain",
 			"isDefault": true
 		},
 		{
