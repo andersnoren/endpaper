@@ -3,6 +3,24 @@
 @use "../../styles/stars";
 
 /*
+ * A small dot, to put after an item that is followed by another. It is
+ * centered on the height of a capital letter, not on the lowercase ones, since
+ * the rows it is used in are mostly numbers and dates. Browsers that do not
+ * know the cap unit get a value that suits most fonts.
+ */
+@mixin dot-after {
+	background: $dot-color;
+	border-radius: 50%;
+	content: "";
+	display: inline-block;
+	height: 0.36em;
+	margin-inline-start: 0.57em;
+	vertical-align: 0.18em;
+	vertical-align: calc(0.5cap - 0.18em);
+	width: 0.36em;
+}
+
+/*
  * Book block.
  *
  * Every size is in em, relative to the block's font size. The block itself
@@ -267,14 +285,27 @@
 	padding-inline-start: 0.75em;
 }
 
-/* The link is a little smaller than the text, and muted like the rest. */
-.wp-block-endpaper-book .endpaper-book__review-link {
+/*
+ * Under a review go the day it was written and a link to it, a little smaller
+ * than the text and muted. Each part is muted on its own, so the link keeps
+ * the color of links.
+ */
+.wp-block-endpaper-book .endpaper-book__review-meta {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
 	font-size: 0.875em;
+	gap: 0.25em 0.57em;
 }
 
-.wp-block-endpaper-book .endpaper-book__review-link a {
+.wp-block-endpaper-book .endpaper-book__review-part {
 
 	@include muted-text;
+}
+
+.wp-block-endpaper-book .endpaper-book__review-part:not(:last-child)::after {
+
+	@include dot-after;
 }
 
 .endpaper-book__header {
@@ -419,21 +450,10 @@
 	line-height: 1.2;
 }
 
-/*
- * A dot after every fact but the last. The row is mostly numbers, so the dot
- * is centered on the height of a capital letter, not on the lowercase ones.
- * Browsers that do not know the cap unit get a value that suits most fonts.
- */
+/* A dot after every fact but the last. */
 .endpaper-book__fact:not(:last-child)::after {
-	background: $dot-color;
-	border-radius: 50%;
-	content: "";
-	display: inline-block;
-	height: 0.36em;
-	margin-inline-start: 0.57em;
-	vertical-align: 0.18em;
-	vertical-align: calc(0.5cap - 0.18em);
-	width: 0.36em;
+
+	@include dot-after;
 }
 
 /* The star after Hardcover's rating, with a little room before it. */

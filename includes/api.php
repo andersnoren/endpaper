@@ -154,7 +154,7 @@ add_action( 'endpaper_refresh', __NAMESPACE__ . '\run_refresh', 10, 2 );
  * @return string The name of the saved copy.
  */
 function get_entry_cache_key( $book_id ) {
-	return cache_key( 'endpaper_entry_v6_' . substr( md5( get_token() ), 0, 10 ) . '_' . absint( $book_id ) );
+	return cache_key( 'endpaper_entry_v7_' . substr( md5( get_token() ), 0, 10 ) . '_' . absint( $book_id ) );
 }
 
 /**
@@ -841,6 +841,8 @@ function normalize_library_entry( $raw ) {
 		// The owner's own review, as plain text. Hardcover keeps no line breaks in it. The spoiler flag is the owner's own and is not always set.
 		'review'    => isset( $raw['review_raw'] ) && is_string( $raw['review_raw'] ) ? trim( wp_strip_all_tags( $raw['review_raw'] ) ) : '',
 		'spoilers'  => ! empty( $raw['review_has_spoilers'] ),
+		// The day the review was written, as Hardcover has it. Reviews imported from elsewhere can have a date that is not right.
+		'reviewed'  => isset( $raw['reviewed_at'] ) && is_string( $raw['reviewed_at'] ) && preg_match( '/^\d{4}-\d{2}-\d{2}/', $raw['reviewed_at'], $review_date ) ? $review_date[0] : '',
 		// The same review in Markdown, which keeps its headings, quotes, lists and bold text. It is cut to a length that no review reaches.
 		'markdown'  => isset( $raw['review_markdown'] ) && is_string( $raw['review_markdown'] ) ? trim( mb_substr( $raw['review_markdown'], 0, 20000 ) ) : '',
 		// The cover of the edition the entry is for, which can differ from the cover Hardcover shows for the book.
@@ -905,7 +907,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	$data = api_request(
-		'query EndpaperLibraryEntry($book_id: Int!) { me { username user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating review_raw review_markdown review_has_spoilers edition { image { url } language { language } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		'query EndpaperLibraryEntry($book_id: Int!) { me { username user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating review_raw review_markdown review_has_spoilers reviewed_at edition { image { url } language { language } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
 		array( 'book_id' => $book_id )
 	);
 

@@ -12,6 +12,7 @@
  * @var WP_Block $block      Block instance.
  */
 
+use function AndersNoren\Endpaper\format_date;
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_book;
@@ -120,15 +121,33 @@ if ( ! empty( $attributes['showReview'] ) && ( ! empty( $endpaper_entry['markdow
 	);
 }
 
-// A review links to its page on Hardcover, if the book is linked there too. The address is built from the book and the name of the profile.
-$endpaper_review_link = '';
+// Under a review go the day it was written, and a link to its page on Hardcover if the book is linked there too. The address is built from the book and the name of the profile.
+$endpaper_review_link  = '';
+$endpaper_review_parts = array();
 
-if ( '' !== $endpaper_review_html && $endpaper_link && ! empty( $endpaper_entry['username'] ) ) {
-	$endpaper_review_link = sprintf(
-		'<p class="endpaper-book__review-link"><a href="%1$s">%2$s</a></p>',
-		esc_url( $endpaper_link . '/reviews/@' . rawurlencode( $endpaper_entry['username'] ) ),
-		esc_html__( 'Read the review on Hardcover', 'endpaper' )
-	);
+if ( '' !== $endpaper_review_html ) {
+	$endpaper_reviewed = ! empty( $endpaper_entry['reviewed'] ) ? format_date( $endpaper_entry['reviewed'] ) : '';
+
+	if ( $endpaper_reviewed ) {
+		$endpaper_review_parts[] = sprintf(
+			'<time class="endpaper-book__review-part" datetime="%1$s">%2$s</time>',
+			esc_attr( $endpaper_entry['reviewed'] ),
+			/* translators: %s: A date. */
+			esc_html( sprintf( __( 'Reviewed %s', 'endpaper' ), $endpaper_reviewed ) )
+		);
+	}
+
+	if ( $endpaper_link && ! empty( $endpaper_entry['username'] ) ) {
+		$endpaper_review_parts[] = sprintf(
+			'<a class="endpaper-book__review-part" href="%1$s">%2$s</a>',
+			esc_url( $endpaper_link . '/reviews/@' . rawurlencode( $endpaper_entry['username'] ) ),
+			esc_html__( 'Read the review on Hardcover', 'endpaper' )
+		);
+	}
+
+	if ( $endpaper_review_parts ) {
+		$endpaper_review_link = '<p class="endpaper-book__review-meta">' . implode( '', $endpaper_review_parts ) . '</p>';
+	}
 }
 
 // The facts shown in the row at the bottom of the card.
