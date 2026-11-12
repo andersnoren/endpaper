@@ -1,5 +1,10 @@
 # Endpaper
 
+[![CI](https://github.com/andersnoren/endpaper/actions/workflows/ci.yml/badge.svg)](https://github.com/andersnoren/endpaper/actions/workflows/ci.yml)
+[![License: GPL v2 or later](https://img.shields.io/badge/license-GPL--2.0--or--later-blue)](LICENSE)
+[![WordPress 6.6+](https://img.shields.io/badge/WordPress-6.6%2B-3858e9?logo=wordpress&logoColor=white)](https://wordpress.org/download/)
+[![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777bb4?logo=php&logoColor=white)](https://www.php.net/)
+
 ![Endpaper: book blocks for WordPress, powered by Hardcover](.wordpress-org/banner-1544x500.png)
 
 Book blocks for WordPress, powered by [Hardcover](https://hardcover.app).
