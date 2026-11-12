@@ -214,7 +214,7 @@ $gap: var(--endpaper-gap, 1.5em);
 	/* Keeps the placeholder gray, not the color of links. */
 	color: inherit;
 	display: block;
-	transition: opacity 0.15s ease;
+	transition: opacity 0.3s ease;
 }
 
 .endpaper-reading-list__cover a:hover {
