@@ -172,8 +172,14 @@
 	stroke: color-mix(in srgb, #{$accent-color} 20%, transparent);
 }
 
-.endpaper-reading-goal__arc-fill {
+/*
+ * The fill is 2px narrower on each side than the track, as the fill of the
+ * bar is, and its round ends are centered on the ends of the track's, so
+ * there is 2px of the track all around it.
+ */
+.endpaper-reading-goal__arc .endpaper-reading-goal__arc-fill {
 	stroke: $accent-color;
+	stroke-width: 8;
 }
 
 /* The bottom of the count is on the line the arc starts and ends on. */
