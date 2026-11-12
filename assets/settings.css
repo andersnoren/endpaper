@@ -49,7 +49,7 @@
 	font-size: 11px;
 	font-weight: 600;
 	letter-spacing: 0.02em;
-	margin: 20px 0 8px;
+	margin: 28px 0 8px;
 	text-transform: uppercase;
 }
 
@@ -100,6 +100,11 @@
 
 .endpaper-disclosure:last-child {
 	margin-bottom: -8px;
+}
+
+/* The last question of a group closes the group with a line. */
+.endpaper-disclosure:has(+ h3) {
+	border-bottom: 1px solid #dcdcde;
 }
 
 .endpaper-disclosure > summary {

@@ -652,6 +652,74 @@ function render_settings_page() {
 						?>
 					</p>
 				</details>
+
+				<?php
+				the_faq_item(
+					__( 'What happens when my key expires?', 'endpaper' ),
+					array(
+						__( 'Hardcover keys can have an end date. When Hardcover stops accepting the key, the blocks keep showing what they last fetched, for up to a month. You will see a notice here in the admin, and Site Health reports it too.', 'endpaper' ),
+						__( 'Save a new key and everything picks up again.', 'endpaper' ),
+					)
+				);
+				?>
+
+				<h3><?php esc_html_e( 'Showing books', 'endpaper' ); ?></h3>
+
+				<?php
+				the_faq_item(
+					__( 'Why is a book, my shelf or my rating missing?', 'endpaper' ),
+					array(
+						__( 'Endpaper only shows what is public. Your shelf, rating and progress for a book appear when your activity on that book is public on Hardcover, and the Reading List leaves out books where it is not.', 'endpaper' ),
+						__( 'After changing it on Hardcover, clear the cache to see the change right away.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'I changed something on Hardcover. Why has my site not updated?', 'endpaper' ),
+					array(
+						__( 'Endpaper saves what it fetches. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. To fetch everything again now, clear the cache on this screen.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'Can I choose which cover a book has?', 'endpaper' ),
+					array(
+						__( 'Yes. A book shows the cover of the edition in your library, if it is there, and otherwise Hardcover’s cover for the book. To pick another edition’s cover, select the Book block and open “Cover” in the block settings.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'Can I change how the blocks look?', 'endpaper' ),
+					array(
+						__( 'Yes. The blocks take their fonts and colors from your theme, and both support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in theme.json.', 'endpaper' ),
+					)
+				);
+				?>
+
+				<h3><?php esc_html_e( 'About the plugin', 'endpaper' ); ?></h3>
+
+				<?php
+				the_faq_item(
+					__( 'Is this an official Hardcover plugin?', 'endpaper' ),
+					array(
+						__( 'No. Endpaper is made independently, using Hardcover’s public API. Hardcover does not make or support it. Questions about the plugin belong in its own support forum.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'Will the blocks slow my site down?', 'endpaper' ),
+					array(
+						__( 'No. Hardcover is not asked on every page view, because what Endpaper fetches is saved on your site. If Hardcover cannot be reached, the blocks show the last copy they have.', 'endpaper' ),
+					)
+				);
+
+				the_faq_item(
+					__( 'What happens when I delete the plugin?', 'endpaper' ),
+					array(
+						__( 'The API key and everything the plugin has stored are removed. Book and Reading List blocks left in your posts stop showing.', 'endpaper' ),
+					)
+				);
+				?>
 			</section>
 
 			<section class="endpaper-card" aria-labelledby="endpaper-help-title">
@@ -665,6 +733,23 @@ function render_settings_page() {
 		</div>
 	</div>
 	<?php
+}
+
+/**
+ * Outputs a question on the settings screen, with an answer that opens when it is clicked.
+ *
+ * @param string   $question   The question.
+ * @param string[] $paragraphs The answer, one paragraph at a time.
+ * @return void
+ */
+function the_faq_item( $question, $paragraphs ) {
+	echo '<details class="endpaper-disclosure"><summary>' . esc_html( $question ) . '</summary>';
+
+	foreach ( $paragraphs as $paragraph ) {
+		echo '<p>' . esc_html( $paragraph ) . '</p>';
+	}
+
+	echo '</details>';
 }
 
 /**
