@@ -13,7 +13,7 @@ use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_goal;
-use function AndersNoren\Endpaper\get_goal_amount_text;
+use function AndersNoren\Endpaper\get_goal_amount_html;
 use function AndersNoren\Endpaper\get_goal_days_text;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\get_token_trouble;
@@ -45,9 +45,16 @@ if ( ! $endpaper_goal ) {
 
 $endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 0 );
 $endpaper_title   = '' !== $endpaper_goal['title'] ? $endpaper_goal['title'] : __( 'Reading goal', 'endpaper' );
-$endpaper_amount  = get_goal_amount_text( $endpaper_goal );
-$endpaper_days    = ! empty( $attributes['showDays'] ) ? get_goal_days_text( $endpaper_goal ) : '';
+$endpaper_amount  = get_goal_amount_html( $endpaper_goal );
+$endpaper_reached = $endpaper_goal['progress'] >= $endpaper_goal['target'];
 $endpaper_percent = (int) round( $endpaper_goal['progress'] / $endpaper_goal['target'] * 100 );
+
+// A goal that is reached says so, in place of the days left.
+if ( $endpaper_reached ) {
+	$endpaper_status = __( 'Goal reached', 'endpaper' );
+} else {
+	$endpaper_status = ! empty( $attributes['showDays'] ) ? get_goal_days_text( $endpaper_goal ) : '';
+}
 
 // The number can go past 100 when the goal is beaten. The bar stops at full.
 $endpaper_bar = min( 100, $endpaper_percent );
@@ -72,17 +79,15 @@ $endpaper_card_style = get_card_style( $attributes );
 			</<?php echo tag_escape( $endpaper_tag ); ?>>
 		<?php endif; ?>
 
-		<p class="endpaper-reading-goal__summary">
-			<strong class="endpaper-reading-goal__amount"><?php echo esc_html( $endpaper_amount ); ?></strong>
-			<?php if ( $endpaper_days ) : ?>
-				<span class="endpaper-reading-goal__days"><?php echo esc_html( $endpaper_days ); ?></span>
+		<div class="endpaper-reading-goal__summary">
+			<p class="endpaper-reading-goal__amount"><?php echo $endpaper_amount; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in get_goal_amount_html(). ?></p>
+			<?php if ( $endpaper_status ) : ?>
+				<p class="endpaper-reading-goal__status"><?php echo esc_html( $endpaper_status ); ?></p>
 			<?php endif; ?>
-		</p>
+			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
+		</div>
 
-		<p class="endpaper-reading-goal__progress">
-			<progress max="100" value="<?php echo esc_attr( $endpaper_bar ); ?>" aria-label="<?php echo esc_attr( $endpaper_percent_label ); ?>"></progress>
-			<span><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></span>
-		</p>
+		<progress class="endpaper-reading-goal__bar" max="100" value="<?php echo esc_attr( $endpaper_bar ); ?>" aria-label="<?php echo esc_attr( $endpaper_percent_label ); ?>"></progress>
 
 		<?php // Hardcover's logo is a credit, so it is only shown if that is switched on. ?>
 		<?php if ( ! empty( $attributes['showCredit'] ) ) : ?>

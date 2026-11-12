@@ -464,13 +464,13 @@ try {
 	endpaper_check( 'a goal is found by its ID', 2 === get_goal( 2 )['id'] && null === get_goal( 3 ) && null === get_goal( 0 ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
-	endpaper_check( 'a goal shows its title, count and percentage', false !== strpos( $endpaper_html, '34 of 50 books' ) && false !== strpos( $endpaper_html, '68%' ) && false !== strpos( $endpaper_html, 'value="68"' ) );
+	endpaper_check( 'a goal shows its title, count and percentage', false !== strpos( $endpaper_html, '<strong class="endpaper-reading-goal__done">34</strong> of 50 books' ) && false !== strpos( $endpaper_html, '68%' ) && false !== strpos( $endpaper_html, 'value="68"' ) );
 	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '<b>this year</b>' ) );
 	endpaper_check( 'the days left are shown', 1 === preg_match( '/[\d,.\x{00a0}]+ days left/u', $endpaper_html ) );
 	endpaper_check( 'the title and the days can be left out', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showTitle":false,"showDays":false} /-->' ), 'endpaper-reading-goal__title' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showDays":false} /-->' ), 'days left' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2} /-->' );
-	endpaper_check( 'a goal that is beaten shows the real percentage, with a full bar', false !== strpos( $endpaper_html, '10,508 of 10,000 pages' ) && false !== strpos( $endpaper_html, '105%' ) && false !== strpos( $endpaper_html, 'value="100"' ) );
+	endpaper_check( 'a goal that is beaten shows the real percentage, with a full bar', false !== strpos( $endpaper_html, '<strong class="endpaper-reading-goal__done">10,508</strong> of 10,000 pages' ) && false !== strpos( $endpaper_html, 'Goal reached' ) && false === strpos( $endpaper_html, 'days left' ) && false !== strpos( $endpaper_html, '105%' ) && false !== strpos( $endpaper_html, 'value="100"' ) );
 
 	endpaper_check( 'days are counted to the end date', 'Ends today' === get_goal_days_text( array( 'end' => current_datetime()->format( 'Y-m-d' ) ) ) && '1 day left' === get_goal_days_text( array( 'end' => current_datetime()->modify( '+1 day' )->format( 'Y-m-d' ) ) ) );
 	endpaper_check( 'a goal that has ended says so', 0 === strpos( get_goal_days_text( array( 'end' => '2020-01-01' ) ), 'Ended' ) );

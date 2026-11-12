@@ -40,7 +40,7 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	gap: 0.75em;
+	gap: 0.5em;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__title {
@@ -51,9 +51,12 @@
 	overflow-wrap: anywhere;
 }
 
-/* A title that is a heading takes its weight from the theme's headings. */
+/*
+ * A title that is a heading takes its weight from the theme's headings. A
+ * plain one is not bold, so the numbers stand out.
+ */
 .wp-block-endpaper-reading-goal p.endpaper-reading-goal__title {
-	font-weight: 700;
+	font-weight: 400;
 }
 
 /*
@@ -66,7 +69,10 @@
 	content: none;
 }
 
-/* "34 of 50 books" and the days left, on one line when there is room. */
+/*
+ * How far along the goal is, and what is left of the time, on one line when
+ * there is room. The percentage stands at the far end.
+ */
 .endpaper-reading-goal__summary {
 	align-items: baseline;
 	display: flex;
@@ -74,55 +80,50 @@
 	gap: 0.25em 0.8125em;
 }
 
-.endpaper-reading-goal__amount {
+/* The number done is the largest thing in the block. */
+.endpaper-reading-goal__done {
+	font-size: 2em;
 	font-weight: 700;
+	line-height: 1;
 }
 
-.endpaper-reading-goal__days {
-
-	@include muted-text;
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__percent {
+	font-variant-numeric: tabular-nums;
+	margin-inline-start: auto;
+	white-space: nowrap;
 }
 
-/* The bar takes the whole width, with the percentage after it. */
-.endpaper-reading-goal__progress {
-	align-items: center;
-	display: flex;
-	gap: 0.8125em;
-}
-
-.endpaper-reading-goal__progress progress {
+/* The bar takes the whole width. */
+.endpaper-reading-goal__bar {
 	appearance: none;
 	background: $track-color;
 	border: 0;
 	border-radius: 999px;
-	flex: 1 1 0;
+	display: block;
 	font-size: inherit;
-	height: 0.5em;
-	min-width: 0;
+	height: 0.625em;
+	margin-top: 0.25em;
 	overflow: hidden;
+	width: 100%;
 }
 
-.endpaper-reading-goal__progress progress::-webkit-progress-bar {
+.endpaper-reading-goal__bar::-webkit-progress-bar {
 	background: transparent;
 }
 
-.endpaper-reading-goal__progress progress::-webkit-progress-value {
+.endpaper-reading-goal__bar::-webkit-progress-value {
 	background: $accent-color;
 	border-radius: 999px;
 }
 
-.endpaper-reading-goal__progress progress::-moz-progress-bar {
+.endpaper-reading-goal__bar::-moz-progress-bar {
 	background: $accent-color;
 	border-radius: 999px;
 }
 
-/* "68%" stays on one line next to the bar, also in a narrow column. */
-.endpaper-reading-goal__progress span {
-	flex: none;
-	font-size: $small-font-size;
-	white-space: nowrap;
-
-	@include muted-text;
+/* Room between the bar and the credit, which the reset would remove. */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__attribution {
+	margin-top: 0.5em;
 }
 
 /*
