@@ -48,9 +48,6 @@
 	letter-spacing: -0.01em;
 	line-height: 1.2;
 
-	/* Room below the title: 1em from the card gap, and the rest here. */
-	margin-bottom: 0.3333em;
-
 	/* A word too long for the line breaks, so it never sticks out of the card. */
 	overflow-wrap: anywhere;
 }
