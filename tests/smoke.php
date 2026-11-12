@@ -214,6 +214,7 @@ add_filter(
 										'status_id'           => 2,
 										'rating'              => 3.5,
 										'review_raw'          => 'A quiet, sharp book. The ending stayed with me.',
+										'review_markdown'     => empty( $GLOBALS['endpaper_review_plain'] ) ? "## Heading\n\nA quiet, sharp book. The **ending** stayed with me.\n\n> Quote.\n\n1. One\n2. Two" : '',
 										'review_has_spoilers' => ! empty( $GLOBALS['endpaper_review_spoilers'] ),
 										'edition'             => array(
 											'image'    => array( 'url' => 'https://assets.hardcover.app/edition-entry.jpg' ),
@@ -413,15 +414,26 @@ try {
 	endpaper_check( 'the review links to its page on Hardcover', false !== strpos( $endpaper_html_review, '/reviews/@smoke-reader"' ) && false !== strpos( $endpaper_html_review, 'Read the review on Hardcover' ) );
 	endpaper_check( 'the review link is left out without the link to Hardcover, and without a review', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"linkToHardcover":false} /-->' ), '/reviews/@' ) && false === strpos( $endpaper_html, '/reviews/@' ) );
 	endpaper_check( 'the review can be shown without the description', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"showDescription":false} /-->' ), 'A quiet, sharp book' ) );
-	endpaper_check( 'the review is cut to its own length', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"reviewLength":20} /-->' ), 'The ending stayed' ) );
+	endpaper_check( 'the review keeps its headings, bold text, quotes and lists', false !== strpos( $endpaper_html_review, '<strong>ending</strong>' ) && false !== strpos( $endpaper_html_review, '<blockquote>' ) && false !== strpos( $endpaper_html_review, '<ol><li>One</li>' ) && false !== strpos( $endpaper_html_review, '<p><strong>Heading</strong></p>' ) );
+	$endpaper_html_short = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"reviewLength":20} /-->' );
+	endpaper_check( 'the review is cut to its own length, on a whole block', false !== strpos( $endpaper_html_short, 'Heading' ) && false === strpos( $endpaper_html_short, 'A quiet' ) && false === strpos( $endpaper_html_short, '<blockquote>' ) );
+	endpaper_check( 'a review is cut inside a block when it is long enough, without leaving bold text open', false === strpos( AndersNoren\Endpaper\markdown_to_html( AndersNoren\Endpaper\trim_markdown( 'First **bold words here** and more words that go on and on.', 20 ) ), '**' ) );
+	endpaper_check( 'markup in a review is escaped, and links must be web addresses', false === strpos( AndersNoren\Endpaper\markdown_to_html( '<script>alert(1)</script> [x](javascript:alert(1)) <img src=x onerror=alert(1)>' ), '<script' ) && false === strpos( AndersNoren\Endpaper\markdown_to_html( '[x](javascript:alert(1))' ), 'javascript:' ) && false !== strpos( AndersNoren\Endpaper\markdown_to_html( '[Hardcover](https://hardcover.app/)' ), '<a href="https://hardcover.app/"' ) );
+
+	$GLOBALS['endpaper_review_plain'] = true;
+	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
+	$endpaper_html_plain_review = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
+	endpaper_check( 'without Markdown, the review is shown as plain text', false !== strpos( $endpaper_html_plain_review, 'A quiet, sharp book. The ending stayed with me.' ) && false === strpos( $endpaper_html_plain_review, '<blockquote>' ) );
+	$GLOBALS['endpaper_review_plain'] = false;
+	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
 
 	$GLOBALS['endpaper_review_spoilers'] = true;
-	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v5_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
+	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
 	$endpaper_html_spoilers = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
 	endpaper_check( 'a review with spoilers is closed behind a summary', false !== strpos( $endpaper_html_spoilers, '<details class="endpaper-book__spoilers">' ) && false !== strpos( $endpaper_html_spoilers, 'This review contains spoilers' ) );
 	endpaper_check( 'the description is not put behind a summary when the review is off', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), '<details' ) );
 	$GLOBALS['endpaper_review_spoilers'] = false;
-	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v5_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
+	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
 
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCredit":true} /-->' );
 	endpaper_check( 'it credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );

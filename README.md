@@ -14,6 +14,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page. A link pasted on a line of its own in the editor becomes a Book block.
 - Shows the book as a card: the cover, title, authors, a description, and a row with the publication year, page count and Hardcover rating.
 - Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
+- Can show your own review in place of the description, with its headings, bold text, quotes and lists, and a link to the review on Hardcover. A review that Hardcover marks as having spoilers is closed until it is opened. The review can be limited in length, and is cut on a whole paragraph where it can.
 - Uses the cover of the edition in your Hardcover library when the book is public there. You can pick the cover of another edition in the block’s settings.
 - Layout settings: the cover can be small, medium or large, and sit on the left, on the right or above the text. Text alignment (left, center or right) is in the block toolbar and applies to everything in the card. When a narrow card puts the cover above the text, the cover lines up with the text.
 - Can credit Hardcover in the card, with their logo linked to the book there. The logo is off until you switch it on.

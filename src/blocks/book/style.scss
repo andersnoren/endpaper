@@ -245,6 +245,27 @@
 	row-gap: 0.75em;
 }
 
+/*
+ * A review keeps the blocks it was written in: paragraphs, quotes and lists.
+ * They are spaced like the rest of the block, not by the theme's margins.
+ */
+.wp-block-endpaper-book .endpaper-book__description--review > * {
+	margin: 0;
+}
+
+.wp-block-endpaper-book .endpaper-book__description--review > * + * {
+	margin-block-start: 0.75em;
+}
+
+.wp-block-endpaper-book .endpaper-book__description--review :is(ul, ol) {
+	padding-inline-start: 1.5em;
+}
+
+.wp-block-endpaper-book .endpaper-book__description--review blockquote {
+	border-inline-start: 2px solid $dot-color;
+	padding-inline-start: 1em;
+}
+
 /* The link is a little smaller than the text, and muted like the rest. */
 .wp-block-endpaper-book .endpaper-book__review-link {
 	font-size: 0.875em;

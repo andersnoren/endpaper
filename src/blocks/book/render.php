@@ -24,12 +24,14 @@ use function AndersNoren\Endpaper\get_library_entry;
 use function AndersNoren\Endpaper\get_shelf_labels;
 use function AndersNoren\Endpaper\get_star_icon;
 use function AndersNoren\Endpaper\get_title_tag;
+use function AndersNoren\Endpaper\markdown_to_html;
 use function AndersNoren\Endpaper\get_token_trouble;
 use function AndersNoren\Endpaper\the_cover_image;
 use function AndersNoren\Endpaper\the_editor_notice;
 use function AndersNoren\Endpaper\the_hardcover_credit;
 use function AndersNoren\Endpaper\the_progress_bar;
 use function AndersNoren\Endpaper\the_star_rating;
+use function AndersNoren\Endpaper\trim_markdown;
 use function AndersNoren\Endpaper\trim_to_sentence;
 
 defined( 'ABSPATH' ) || exit;
@@ -94,17 +96,23 @@ if ( $endpaper_show_progress ) {
 }
 
 $endpaper_description = '';
-$endpaper_is_review   = false;
+$endpaper_review_html = '';
 $endpaper_spoilers    = false;
 
 // The owner's own review comes first, if it is switched on and there is one. Otherwise the description is shown, if that is switched on.
-if ( ! empty( $attributes['showReview'] ) && ! empty( $endpaper_entry['review'] ) ) {
-	$endpaper_description = trim_to_sentence(
-		$endpaper_entry['review'],
-		isset( $attributes['reviewLength'] ) ? absint( $attributes['reviewLength'] ) : 300
-	);
-	$endpaper_is_review   = true;
-	$endpaper_spoilers    = ! empty( $endpaper_entry['spoilers'] );
+if ( ! empty( $attributes['showReview'] ) && ( ! empty( $endpaper_entry['markdown'] ) || ! empty( $endpaper_entry['review'] ) ) ) {
+	$endpaper_review_length = isset( $attributes['reviewLength'] ) ? absint( $attributes['reviewLength'] ) : 300;
+
+	// The review keeps its formatting if Hardcover has it in Markdown. Otherwise it is the plain text, in one block.
+	if ( ! empty( $endpaper_entry['markdown'] ) ) {
+		$endpaper_review_html = markdown_to_html( trim_markdown( $endpaper_entry['markdown'], $endpaper_review_length ) );
+	}
+
+	if ( '' === $endpaper_review_html && ! empty( $endpaper_entry['review'] ) ) {
+		$endpaper_review_html = '<p>' . format_text( trim_to_sentence( $endpaper_entry['review'], $endpaper_review_length ) ) . '</p>';
+	}
+
+	$endpaper_spoilers = '' !== $endpaper_review_html && ! empty( $endpaper_entry['spoilers'] );
 } elseif ( ! empty( $attributes['showDescription'] ) ) {
 	$endpaper_description = trim_to_sentence(
 		$endpaper_book['description'],
@@ -115,7 +123,7 @@ if ( ! empty( $attributes['showReview'] ) && ! empty( $endpaper_entry['review'] 
 // A review links to its page on Hardcover, if the book is linked there too. The address is built from the book and the name of the profile.
 $endpaper_review_link = '';
 
-if ( $endpaper_is_review && $endpaper_link && ! empty( $endpaper_entry['username'] ) ) {
+if ( '' !== $endpaper_review_html && $endpaper_link && ! empty( $endpaper_entry['username'] ) ) {
 	$endpaper_review_link = sprintf(
 		'<p class="endpaper-book__review-link"><a href="%1$s">%2$s</a></p>',
 		esc_url( $endpaper_link . '/reviews/@' . rawurlencode( $endpaper_entry['username'] ) ),
@@ -230,7 +238,7 @@ $endpaper_card_style = get_card_style( $attributes );
 					</div>
 				<?php endif; ?>
 
-				<?php if ( $endpaper_description ) : ?>
+				<?php if ( $endpaper_description || $endpaper_review_html ) : ?>
 					<?php if ( $endpaper_spoilers ) : ?>
 						<?php // A review with spoilers stays closed until the visitor opens it. This works without JavaScript. ?>
 						<details class="endpaper-book__spoilers">
@@ -238,7 +246,11 @@ $endpaper_card_style = get_card_style( $attributes );
 					<?php endif; ?>
 
 					<div class="endpaper-book__text">
-						<p class="endpaper-book__description<?php echo $endpaper_is_review ? ' endpaper-book__description--review' : ''; ?>"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+						<?php if ( $endpaper_review_html ) : ?>
+							<div class="endpaper-book__description endpaper-book__description--review"><?php echo $endpaper_review_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered in markdown_to_html(), and escaped in format_text(). ?></div>
+						<?php else : ?>
+							<p class="endpaper-book__description"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+						<?php endif; ?>
 						<?php echo $endpaper_review_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when it is built. ?>
 					</div>
 

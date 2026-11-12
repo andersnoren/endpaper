@@ -213,6 +213,297 @@ function trim_to_sentence( $text, $max_length ) {
 }
 
 /**
+ * Turns the text of one line of Markdown into HTML that is safe to show.
+ *
+ * Handles links, bold, italic and code. Everything else in the text is
+ * escaped, so nothing a reviewer typed can become markup of its own.
+ *
+ * @param string $text Markdown on one or more lines of a block.
+ * @return string HTML.
+ */
+function markdown_inline_to_html( $text ) {
+	$text  = (string) $text;
+	$links = array();
+
+	// Links are set aside first, so that nothing in an address is taken for bold or italic, or given curly quotes.
+	$text = preg_replace_callback(
+		'/\[([^\]]+)\]\(([^)\s]+)\)/',
+		static function ( $matches ) use ( &$links ) {
+			$url = esc_url( $matches[2], array( 'http', 'https' ) );
+
+			if ( '' === $url ) {
+				return $matches[1];
+			}
+
+			$links[] = '<a href="' . $url . '" rel="nofollow noopener">' . format_text( $matches[1] ) . '</a>';
+
+			return "\x01" . ( count( $links ) - 1 ) . "\x02";
+		},
+		$text
+	);
+
+	$text = format_text( $text );
+
+	$text = preg_replace( '/\*\*(.+?)\*\*|__(.+?)__/s', '<strong>$1$2</strong>', $text );
+	$text = preg_replace( '/(?<![\w*])\*(?![\s*])(.+?)(?<![\s*])\*(?![\w*])|(?<![\w_])_(?![\s_])(.+?)(?<![\s_])_(?![\w_])/s', '<em>$1$2</em>', $text );
+	$text = preg_replace( '/`([^`]+)`/', '<code>$1</code>', $text );
+
+	return (string) preg_replace_callback(
+		'/\x01(\d+)\x02/',
+		static function ( $matches ) use ( $links ) {
+			return isset( $links[ (int) $matches[1] ] ) ? $links[ (int) $matches[1] ] : '';
+		},
+		$text
+	);
+}
+
+/**
+ * Tells whether a line of Markdown is an item in a list.
+ *
+ * @param string $line A line of Markdown.
+ * @return string The marker that starts it, or an empty string if it is not a list item.
+ */
+function markdown_list_marker( $line ) {
+	return preg_match( '/^\s*([-*+]|\d+[.)])\s+/', $line, $matches ) ? $matches[1] : '';
+}
+
+/**
+ * Turns the lines of one block of Markdown into HTML.
+ *
+ * A block is what lies between two blank lines. Headings, quotes, lists and
+ * paragraphs are known, which is what Hardcover's editor makes.
+ *
+ * @param string[] $lines The lines of the block.
+ * @return string HTML.
+ */
+function markdown_block_to_html( $lines ) {
+	if ( ! $lines ) {
+		return '';
+	}
+
+	// A heading is shown as bold text, so the headings of a review do not become part of the outline of the page.
+	if ( preg_match( '/^#{1,6}\s+(.+)$/', $lines[0], $matches ) ) {
+		return '<p><strong>' . markdown_inline_to_html( $matches[1] ) . '</strong></p>' . markdown_block_to_html( array_slice( $lines, 1 ) );
+	}
+
+	if ( preg_match( '/^\s*([-*_])(\s*\1){2,}\s*$/', $lines[0] ) ) {
+		return markdown_block_to_html( array_slice( $lines, 1 ) );
+	}
+
+	if ( preg_match( '/^\s*>/', $lines[0] ) ) {
+		$inner = array_map(
+			static function ( $line ) {
+				return preg_replace( '/^\s*>\s?/', '', $line );
+			},
+			$lines
+		);
+
+		return '<blockquote><p>' . str_replace( "\n", '<br>', markdown_inline_to_html( implode( "\n", $inner ) ) ) . '</p></blockquote>';
+	}
+
+	$marker = markdown_list_marker( $lines[0] );
+
+	if ( '' !== $marker ) {
+		$items = array();
+
+		foreach ( $lines as $line ) {
+			if ( '' !== markdown_list_marker( $line ) ) {
+				$items[] = preg_replace( '/^\s*([-*+]|\d+[.)])\s+/', '', $line );
+			} elseif ( $items ) {
+				$items[ count( $items ) - 1 ] .= ' ' . trim( $line );
+			}
+		}
+
+		$tag = ctype_digit( rtrim( $marker, '.)' ) ) ? 'ol' : 'ul';
+
+		return '<' . $tag . '>' . implode(
+			'',
+			array_map(
+				static function ( $item ) {
+					return '<li>' . markdown_inline_to_html( $item ) . '</li>';
+				},
+				$items
+			)
+		) . '</' . $tag . '>';
+	}
+
+	return '<p>' . str_replace( "\n", '<br>', markdown_inline_to_html( implode( "\n", $lines ) ) ) . '</p>';
+}
+
+/**
+ * Turns a review written in Markdown into HTML that is safe to show.
+ *
+ * Only paragraphs, line breaks, bold, italic, code, links, quotes and lists
+ * are let through, whatever the text contains.
+ *
+ * @param string $markdown The review, as Hardcover keeps it.
+ * @return string HTML, or an empty string if there is no text.
+ */
+function markdown_to_html( $markdown ) {
+	$markdown = trim( str_replace( array( "\r\n", "\r" ), "\n", (string) $markdown ) );
+	$html     = '';
+
+	if ( '' === $markdown ) {
+		return '';
+	}
+
+	foreach ( (array) preg_split( '/\n{2,}/', $markdown ) as $block ) {
+		$html .= markdown_block_to_html( explode( "\n", trim( (string) $block, "\n" ) ) );
+	}
+
+	return wp_kses(
+		$html,
+		array(
+			'p'          => array(),
+			'br'         => array(),
+			'strong'     => array(),
+			'em'         => array(),
+			'code'       => array(),
+			'blockquote' => array(),
+			'ul'         => array(),
+			'ol'         => array(),
+			'li'         => array(),
+			'a'          => array(
+				'href' => array(),
+				'rel'  => array(),
+			),
+		)
+	);
+}
+
+/**
+ * Returns how many characters of text a piece of Markdown shows.
+ *
+ * @param string $markdown Markdown.
+ * @return int The number of characters, without markup.
+ */
+function markdown_text_length( $markdown ) {
+	return mb_strlen( trim( html_entity_decode( wp_strip_all_tags( markdown_to_html( $markdown ) ), ENT_QUOTES, 'UTF-8' ) ) );
+}
+
+/**
+ * Cuts a block of Markdown that is too long, without leaving a marker open.
+ *
+ * @param string $block  One block of Markdown.
+ * @param int    $length The most characters of text to keep.
+ * @return string The block, cut.
+ */
+function cut_markdown_block( $block, $length ) {
+	$lines = explode( "\n", $block );
+
+	// A heading is kept as it is.
+	if ( preg_match( '/^#{1,6}\s/', $lines[0] ) ) {
+		return $block;
+	}
+
+	// A list keeps the items that fit, and cuts the first one if not even that fits.
+	if ( '' !== markdown_list_marker( $lines[0] ) ) {
+		$kept = array();
+		$used = 0;
+
+		foreach ( $lines as $line ) {
+			$size = markdown_text_length( $line );
+
+			if ( $used + $size > $length ) {
+				break;
+			}
+
+			$kept[] = $line;
+			$used  += $size;
+		}
+
+		if ( $kept ) {
+			return implode( "\n", $kept );
+		}
+
+		$first = preg_replace( '/^(\s*(?:[-*+]|\d+[.)])\s+)(.*)$/', '$2', $lines[0] );
+		$mark  = (string) preg_replace( '/^(\s*(?:[-*+]|\d+[.)])\s+).*$/', '$1', $lines[0] );
+
+		return $mark . close_markdown_marks( trim_to_sentence( $first, $length ) );
+	}
+
+	// A quote is cut as text and put in a quote again.
+	if ( preg_match( '/^\s*>/', $lines[0] ) ) {
+		$text = '';
+
+		foreach ( $lines as $line ) {
+			$text .= ' ' . preg_replace( '/^\s*>\s?/', '', $line );
+		}
+
+		return '> ' . close_markdown_marks( trim_to_sentence( trim( $text ), $length ) );
+	}
+
+	return close_markdown_marks( trim_to_sentence( $block, $length ) );
+}
+
+/**
+ * Removes a bold, italic, code or link marker that a cut left open at the end.
+ *
+ * @param string $markdown Markdown that may have been cut.
+ * @return string Markdown without an open marker.
+ */
+function close_markdown_marks( $markdown ) {
+	// A link cut in the middle is dropped.
+	$markdown = (string) preg_replace( '/\[[^\]]*$|\[[^\]]*\]\([^)]*$/', '', $markdown );
+
+	foreach ( array( '**', '__', '*', '`' ) as $mark ) {
+		$text = '**' === $mark || '__' === $mark ? $markdown : str_replace( array( '**', '__' ), '', $markdown );
+
+		if ( 1 === substr_count( $text, $mark ) % 2 ) {
+			$position = strrpos( $markdown, $mark );
+
+			if ( false !== $position ) {
+				$markdown = substr( $markdown, 0, $position ) . substr( $markdown, $position + strlen( $mark ) );
+			}
+		}
+	}
+
+	return trim( $markdown );
+}
+
+/**
+ * Cuts a review written in Markdown to a length, on a whole block where it can.
+ *
+ * Blocks are kept whole as long as they fit. The block where the limit falls
+ * is cut on a sentence, and is left out if hardly any room is left.
+ *
+ * @param string $markdown The review.
+ * @param int    $length   The most characters of text to show. 0 shows everything.
+ * @return string Markdown.
+ */
+function trim_markdown( $markdown, $length ) {
+	$markdown = trim( str_replace( array( "\r\n", "\r" ), "\n", (string) $markdown ) );
+	$length   = absint( $length );
+
+	if ( ! $length || markdown_text_length( $markdown ) <= $length ) {
+		return $markdown;
+	}
+
+	$kept = array();
+	$used = 0;
+
+	foreach ( (array) preg_split( '/\n{2,}/', $markdown ) as $block ) {
+		$size = markdown_text_length( $block );
+
+		if ( $used + $size <= $length ) {
+			$kept[] = $block;
+			$used  += $size;
+			continue;
+		}
+
+		$room = $length - $used;
+
+		if ( ! $kept || $room >= 40 ) {
+			$kept[] = cut_markdown_block( $block, max( 1, $room ) );
+		}
+
+		break;
+	}
+
+	return implode( "\n\n", $kept );
+}
+
+/**
  * Returns the inline styles for a block's card: its border, padding, background and shadow.
  *
  * These come from the standard block settings, but they belong on the card
