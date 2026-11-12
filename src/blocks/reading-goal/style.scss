@@ -134,6 +134,96 @@
 	border-radius: 999px;
 }
 
+/*
+ * The gauge style: a semicircle with the count big inside it, then what the
+ * count is of, then the percentage and the days left. The gauge is as wide as
+ * the room allows, up to 16em, and everything in it scales with its width
+ * (cqw is 1% of that). The count is as big as the arc has room for, and
+ * smaller the more characters it has. That is a guess from the number of
+ * characters, as the font is not known here, so view.js measures the real
+ * width and fits it again.
+ */
+.wp-block-endpaper-reading-goal.is-style-gauge .endpaper-reading-goal__card {
+	align-items: center;
+	text-align: center;
+}
+
+.endpaper-reading-goal__gauge {
+	aspect-ratio: 256 / 134;
+	container-type: inline-size;
+	margin-block: 1em -0.375em;
+	position: relative;
+	width: min(100%, 16em);
+}
+
+.endpaper-reading-goal__arc {
+	display: block;
+	height: auto;
+	width: 100%;
+}
+
+.endpaper-reading-goal__arc path {
+	fill: none;
+	stroke-linecap: round;
+	stroke-width: 12;
+}
+
+.endpaper-reading-goal__arc-track {
+	stroke: color-mix(in srgb, #{$accent-color} 20%, transparent);
+}
+
+.endpaper-reading-goal__arc-fill {
+	stroke: $accent-color;
+}
+
+/* The bottom of the count is on the line the arc starts and ends on. */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__count {
+	bottom: 4.48%;
+	font-size: min(26.5cqw, calc(86cqw / var(--endpaper-chars, 2)));
+	font-weight: 700;
+	inset-inline: 0;
+	line-height: 1.2;
+	position: absolute;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.endpaper-reading-goal__number {
+	display: inline-block;
+}
+
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__label {
+	font-weight: 700;
+}
+
+.endpaper-reading-goal__meta {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25em 0.5em;
+	justify-content: center;
+	margin-block-start: -0.5em;
+}
+
+/* The days left in the default style sit apart, here they are centered. */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__meta .endpaper-reading-goal__status {
+	padding-inline-start: 0;
+	text-align: center;
+}
+
+/* A dot between the percentage and the days left, if both are there. */
+.endpaper-reading-goal__percent + .endpaper-reading-goal__status::before {
+	background: currentcolor;
+	border-radius: 50%;
+	content: "";
+	display: inline-block;
+	height: 0.3125em;
+	margin-inline-end: 0.5em;
+	opacity: 0.35;
+	vertical-align: middle;
+	width: 0.3125em;
+}
+
 /* Room between the bar and the credit, which the reset would remove. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__attribution {
 	margin-top: 0.5em;

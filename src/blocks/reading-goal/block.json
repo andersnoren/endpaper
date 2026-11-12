@@ -15,6 +15,17 @@
 		"endpaper"
 	],
 	"textdomain": "endpaper",
+	"styles": [
+		{
+			"name": "default",
+			"label": "Bar",
+			"isDefault": true
+		},
+		{
+			"name": "gauge",
+			"label": "Gauge"
+		}
+	],
 	"attributes": {
 		"goalId": {
 			"type": "integer",
@@ -34,6 +45,10 @@
 		"showDays": {
 			"type": "boolean",
 			"default": true
+		},
+		"showPercent": {
+			"type": "boolean",
+			"default": false
 		},
 		"showCredit": {
 			"type": "boolean",

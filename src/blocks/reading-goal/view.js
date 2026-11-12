@@ -38,3 +38,47 @@ document
 			element.textContent = element.dataset.ended;
 		}
 	} );
+
+/**
+ * Fits the count in a gauge to the room inside the arc.
+ *
+ * The stylesheet makes a guess from the number of characters, as it cannot
+ * know how wide the digits of the theme's font are. Here the count is
+ * measured at the biggest size it may have, and made smaller if it is wider
+ * than the arc has room for. That is 60% of the gauge, 26.5% at most in height.
+ *
+ * @param {Element} gauge The gauge.
+ */
+const fitCount = ( gauge ) => {
+	const count = gauge.querySelector( '.endpaper-reading-goal__count' );
+	const number = gauge.querySelector( '.endpaper-reading-goal__number' );
+	const width = gauge.clientWidth;
+
+	if ( ! count || ! number || ! width ) {
+		return;
+	}
+
+	const biggest = width * 0.265;
+
+	count.style.fontSize = `${ biggest }px`;
+
+	const needed = number.getBoundingClientRect().width;
+	const room = width * 0.6;
+
+	count.style.fontSize = `${ biggest * Math.min( 1, room / needed ) }px`;
+};
+
+document
+	.querySelectorAll( '.endpaper-reading-goal__gauge' )
+	.forEach( ( gauge ) => {
+		fitCount( gauge );
+
+		// The font may load after the script has run, and the gauge may be resized.
+		document.fonts?.ready.then( () => fitCount( gauge ) );
+
+		if ( window.ResizeObserver ) {
+			new window.ResizeObserver( () => fitCount( gauge ) ).observe(
+				gauge
+			);
+		}
+	} );

@@ -191,6 +191,14 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 					/>
 					<ToggleControl
 						__nextHasNoMarginBottom
+						label={ __( 'Percentage', 'endpaper' ) }
+						checked={ !! attributes.showPercent }
+						onChange={ ( showPercent ) =>
+							setAttributes( { showPercent } )
+						}
+					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
 						label={ __( 'Hardcover logo', 'endpaper' ) }
 						help={ __(
 							'Credits Hardcover with their logo, under the goal.',

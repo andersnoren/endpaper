@@ -394,28 +394,44 @@ function format_goal_number( $value ) {
 }
 
 /**
- * Returns how far along a goal is, as a text such as "34 of 50 books read".
+ * Returns the count and the rest of the text for how far along a goal is.
+ *
+ * "34" and "of 50 books read", so the count can be shown on its own, big.
+ *
+ * @param array $goal A normalized goal.
+ * @return array The count and the label.
+ */
+function get_goal_amount_parts( $goal ) {
+	$target = format_goal_number( $goal['target'] );
+	$number = (int) round( $goal['target'] );
+
+	if ( 'page' === $goal['metric'] ) {
+		/* translators: %s: The goal, in pages. This follows the number of pages read, as in "34 of 50 pages read". */
+		$text = _n( 'of %s page read', 'of %s pages read', $number, 'endpaper' );
+	} elseif ( 'hour' === $goal['metric'] ) {
+		/* translators: %s: The goal, in hours. This follows the number of hours listened, as in "34 of 50 hours listened". */
+		$text = _n( 'of %s hour listened', 'of %s hours listened', $number, 'endpaper' );
+	} else {
+		/* translators: %s: The goal, in books. This follows the number of books read, as in "34 of 50 books read". */
+		$text = _n( 'of %s book read', 'of %s books read', $number, 'endpaper' );
+	}
+
+	return array(
+		'count' => format_goal_number( $goal['progress'] ),
+		'label' => sprintf( $text, $target ),
+	);
+}
+
+/**
+ * Returns the text for how far along a goal is, such as "34 of 50 books read".
  *
  * @param array $goal A normalized goal.
  * @return string The text.
  */
 function get_goal_amount_text( $goal ) {
-	$progress = format_goal_number( $goal['progress'] );
-	$target   = format_goal_number( $goal['target'] );
-	$count    = (int) round( $goal['target'] );
+	$parts = get_goal_amount_parts( $goal );
 
-	if ( 'page' === $goal['metric'] ) {
-		/* translators: 1: Pages read so far, 2: The goal, in pages. */
-		$text = _n( '%1$s of %2$s page read', '%1$s of %2$s pages read', $count, 'endpaper' );
-	} elseif ( 'hour' === $goal['metric'] ) {
-		/* translators: 1: Hours listened so far, 2: The goal, in hours. */
-		$text = _n( '%1$s of %2$s hour listened', '%1$s of %2$s hours listened', $count, 'endpaper' );
-	} else {
-		/* translators: 1: Books read so far, 2: The goal, in books. */
-		$text = _n( '%1$s of %2$s book read', '%1$s of %2$s books read', $count, 'endpaper' );
-	}
-
-	return sprintf( $text, $progress, $target );
+	return $parts['count'] . ' ' . $parts['label'];
 }
 
 /**
