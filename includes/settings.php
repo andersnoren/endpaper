@@ -811,7 +811,7 @@ function render_settings_page() {
 
 			<?php if ( ! $key_trouble ) : ?>
 				<section class="endpaper-card" aria-labelledby="endpaper-blocks-title">
-					<h2 id="endpaper-blocks-title"><?php esc_html_e( 'Blocks', 'endpaper' ); ?></h2>
+					<h2 id="endpaper-blocks-title"><?php esc_html_e( 'Blocks in Endpaper', 'endpaper' ); ?></h2>
 
 					<p><?php esc_html_e( 'Add these blocks to any post, page or template. Type the shortcut on an empty line in the editor, search for the block by name, or copy it here and paste it in.', 'endpaper' ); ?></p>
 
