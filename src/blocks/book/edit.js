@@ -219,6 +219,18 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 							setAttributes( { linkToHardcover } )
 						}
 					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Hardcover logo', 'endpaper' ) }
+						help={ __(
+							'Shows Hardcover’s logo in the card, linked to the book on Hardcover. A way to credit them for the data.',
+							'endpaper'
+						) }
+						checked={ !! attributes.showCredit }
+						onChange={ ( showCredit ) =>
+							setAttributes( { showCredit } )
+						}
+					/>
 				</PanelBody>
 
 				{ attributes.showCover && (

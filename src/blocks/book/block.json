@@ -62,6 +62,10 @@
 			"type": "integer",
 			"default": 160
 		},
+		"showCredit": {
+			"type": "boolean",
+			"default": false
+		},
 		"linkToHardcover": {
 			"type": "boolean",
 			"default": true

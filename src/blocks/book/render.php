@@ -2,9 +2,8 @@
 /**
  * Server-side rendering of the Book block.
  *
- * The block is a card with the book in it, and a line crediting Hardcover
- * underneath. The border, padding, background and shadow settings apply to
- * the card, not to the block as a whole.
+ * The block is a card with the book in it. The border, padding, background
+ * and shadow settings apply to the card, not to the block as a whole.
  *
  * @package Endpaper
  *
@@ -50,10 +49,11 @@ if ( is_wp_error( $endpaper_book ) ) {
 
 $endpaper_tag = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 2 );
 
-// The credit line under the card is always shown, and is the only link to Hardcover. It goes to the book's page there.
-$endpaper_url = $endpaper_book['url'] ? $endpaper_book['url'] : 'https://hardcover.app/';
+// Hardcover's logo is a credit, so it is only shown if that is switched on. It links to the book's page there.
+$endpaper_show_credit = ! empty( $attributes['showCredit'] );
+$endpaper_url         = $endpaper_book['url'] ? $endpaper_book['url'] : 'https://hardcover.app/';
 
-// The title and the cover link to the book on Hardcover, if that is switched on. The credit line always links.
+// The title and the cover link to the book on Hardcover, if that is switched on.
 $endpaper_link = ! empty( $attributes['linkToHardcover'] ) && $endpaper_book['url'] ? $endpaper_book['url'] : '';
 
 // The shelf, the progress and the cover of the owner's edition come from the site owner's own library. They are extras, so a failed lookup never hides the book.
@@ -191,6 +191,7 @@ $endpaper_card_style = get_card_style( $attributes );
 
 			</div>
 
+			<?php if ( $endpaper_facts || $endpaper_show_rating || $endpaper_show_credit ) : ?>
 			<div class="endpaper-book__footer">
 				<?php if ( $endpaper_facts || $endpaper_show_rating ) : ?>
 					<p class="endpaper-book__meta">
@@ -229,8 +230,11 @@ $endpaper_card_style = get_card_style( $attributes );
 					</p>
 				<?php endif; ?>
 
-				<?php the_hardcover_credit( $endpaper_url, 'endpaper-book__credit' ); ?>
+				<?php if ( $endpaper_show_credit ) : ?>
+					<?php the_hardcover_credit( $endpaper_url, 'endpaper-book__credit' ); ?>
+				<?php endif; ?>
 			</div>
+			<?php endif; ?>
 		</div>
 
 	</div>

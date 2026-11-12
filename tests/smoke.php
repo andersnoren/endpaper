@@ -272,7 +272,13 @@ try {
 	$endpaper_html_plain = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showUserRating":false} /-->' );
 	endpaper_check( 'the owner’s rating can be switched off', false === strpos( $endpaper_html_plain, 'endpaper-book__my-rating' ) );
 	endpaper_check( 'it uses the cover of the edition in the library', false !== strpos( $endpaper_html, 'edition-entry.jpg' ) && false === strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
-	endpaper_check( 'it credits Hardcover', false !== strpos( $endpaper_html, 'endpaper-logo' ) && false !== strpos( $endpaper_html, 'Powered by Hardcover' ) );
+	endpaper_check( 'it leaves out the Hardcover logo unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'Powered by Hardcover' ) );
+
+	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCredit":true} /-->' );
+	endpaper_check( 'it credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );
+
+	$endpaper_html_bare = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showMeta":false,"showRating":false} /-->' );
+	endpaper_check( 'the footer is left out when it would be empty', false === strpos( $endpaper_html_bare, 'endpaper-book__footer' ) );
 	endpaper_check( 'the key is not in the output', false === strpos( $endpaper_html, 'smoke-test-key' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCover":false,"showMeta":false,"showRating":false,"showDescription":false,"linkToHardcover":false,"titleLevel":0} /-->' );
@@ -311,6 +317,10 @@ try {
 	endpaper_check( 'the cover of the edition in the library is used', 1 === substr_count( $endpaper_html, 'edition-list.jpg' ) );
 	endpaper_check( 'an edition without a cover falls back to the cover of the book', 1 === substr_count( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 	endpaper_check( 'a spacing of zero gets a unit', false !== strpos( $endpaper_html, '--endpaper-gap: 0px' ) );
+	endpaper_check( 'the Hardcover logo is left out unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'endpaper-reading-list__attribution' ) );
+
+	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"showCredit":true} /-->' );
+	endpaper_check( 'the list credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );
 
 	echo "Clearing the cache\n";
 	$endpaper_generation = (int) get_option( 'endpaper_cache_generation', 0 );

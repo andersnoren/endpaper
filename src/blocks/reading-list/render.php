@@ -138,8 +138,11 @@ $endpaper_card_style = get_card_style( $attributes );
 			<?php endforeach; ?>
 
 		</ul>
-		<p class="endpaper-reading-list__attribution">
-			<?php the_hardcover_credit( '', 'endpaper-reading-list__credit' ); ?>
-		</p>
+		<?php // Hardcover's logo is a credit, so it is only shown if that is switched on. ?>
+		<?php if ( ! empty( $attributes['showCredit'] ) ) : ?>
+			<p class="endpaper-reading-list__attribution">
+				<?php the_hardcover_credit( '', 'endpaper-reading-list__credit' ); ?>
+			</p>
+		<?php endif; ?>
 	</div>
 </div>

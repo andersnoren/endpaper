@@ -49,7 +49,7 @@ Book covers are loaded directly from Hardcover’s servers. When a visitor views
 
 **Links to Hardcover**
 
-Each block shows the Hardcover logo, linked to Hardcover. The title and cover of a book can link to its page on Hardcover as well.
+The title and cover of a book link to its page on Hardcover. You can switch that off for each block. Each block can also show the Hardcover logo, linked to Hardcover, as a credit. The logo is off until you switch it on.
 
 The service is provided by Hardcover: [terms of service](https://hardcover.app/pages/terms-of-service), [privacy policy](https://hardcover.app/pages/privacy-policy-2).
 

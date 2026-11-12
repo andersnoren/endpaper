@@ -53,6 +53,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"showCredit": {
+			"type": "boolean",
+			"default": false
+		},
 		"linkToHardcover": {
 			"type": "boolean",
 			"default": true
