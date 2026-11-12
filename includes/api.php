@@ -654,6 +654,7 @@ function search_books( $term ) {
 			'title'   => isset( $document['title'] ) ? sanitize_text_field( $document['title'] ) : '',
 			'authors' => array_values( array_map( 'sanitize_text_field', $authors ) ),
 			'year'    => isset( $document['release_year'] ) ? absint( $document['release_year'] ) : 0,
+			'pages'   => isset( $document['pages'] ) ? absint( $document['pages'] ) : 0,
 			'cover'   => isset( $document['image']['url'] ) ? esc_url_raw( $document['image']['url'] ) : '',
 		);
 	}

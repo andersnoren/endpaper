@@ -12,7 +12,7 @@ const MAX_BOOKS = 5;
 /**
  * Gets the recently picked books, the latest first.
  *
- * @return {Array} Books with an id, title, authors, year and cover.
+ * @return {Array} Books with an id, title, authors, year, pages and cover.
  */
 export function getRecentBooks() {
 	try {
@@ -43,6 +43,7 @@ export function addRecentBook( book ) {
 			title: book.title,
 			authors: book.authors || [],
 			year: book.year || 0,
+			pages: book.pages || 0,
 			cover: book.cover || '',
 		},
 		...getRecentBooks().filter( ( { id } ) => id !== book.id ),

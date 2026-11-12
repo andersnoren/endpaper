@@ -80,6 +80,34 @@ function Cover( { cover } ) {
 }
 
 /**
+ * The year and the page count of a result, for the line under the title.
+ *
+ * @param {Object} book A search result.
+ * @return {string[]} The facts the book has.
+ */
+function getFacts( book ) {
+	const facts = [];
+
+	if ( book.year ) {
+		facts.push( String( book.year ) );
+	}
+
+	if ( book.pages ) {
+		facts.push(
+			sprintf(
+				/* translators: %s: number of pages. */
+				_n( '%s page', '%s pages', book.pages, 'endpaper' ),
+				book.pages.toLocaleString(
+					document.documentElement.lang || undefined
+				)
+			)
+		);
+	}
+
+	return facts;
+}
+
+/**
  * A list of books to pick from.
  *
  * @param {Object}                 props        Component props.
@@ -105,10 +133,10 @@ function ResultList( { books, term, onPick } ) {
 									( book.authors || [] ).join( ', ' ),
 									term
 								) }
-								{ book.year
-									? ( book.authors || [] ).length > 0 && ' · '
-									: '' }
-								{ book.year ? book.year : '' }
+								{ getFacts( book ).length > 0 &&
+									( book.authors || [] ).length > 0 &&
+									' · ' }
+								{ getFacts( book ).join( ' · ' ) }
 							</span>
 						</span>
 					</Button>
