@@ -32,6 +32,7 @@ import ServerSideRender from '@wordpress/server-side-render';
  * Internal dependencies
  */
 import BookSearch from './book-search';
+import CardPlaceholder from './card-placeholder';
 import EditionPicker from './edition-picker';
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
@@ -479,6 +480,9 @@ export default function Edit( {
 				<ServerSideRender
 					block={ metadata.name }
 					attributes={ getPreviewAttributes( attributes ) }
+					LoadingResponsePlaceholder={ () => (
+						<CardPlaceholder attributes={ attributes } />
+					) }
 				/>
 			</div>
 		</>
