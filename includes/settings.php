@@ -837,18 +837,20 @@ function render_settings_page() {
 						<?php endforeach; ?>
 					</ul>
 
-					<h3><?php esc_html_e( 'Patterns', 'endpaper' ); ?></h3>
+					<details class="endpaper-disclosure">
+						<summary><?php esc_html_e( 'Ready-made patterns', 'endpaper' ); ?></summary>
 
-					<p><?php esc_html_e( 'Ready-made starting points. Find them in the block inserter, under Patterns, in the Endpaper category.', 'endpaper' ); ?></p>
+						<p><?php esc_html_e( 'Find them in the block inserter, under Patterns, in the Endpaper category.', 'endpaper' ); ?></p>
 
-					<ul class="endpaper-patterns">
-						<?php foreach ( get_settings_patterns() as $endpaper_pattern ) : ?>
-							<li>
-								<strong><?php echo esc_html( $endpaper_pattern['title'] ); ?></strong>
-								<span><?php echo esc_html( $endpaper_pattern['description'] ); ?></span>
-							</li>
-						<?php endforeach; ?>
-					</ul>
+						<ul class="endpaper-patterns">
+							<?php foreach ( get_settings_patterns() as $endpaper_pattern ) : ?>
+								<li>
+									<strong><?php echo esc_html( $endpaper_pattern['title'] ); ?></strong>
+									<span><?php echo esc_html( $endpaper_pattern['description'] ); ?></span>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					</details>
 				</section>
 
 				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">
