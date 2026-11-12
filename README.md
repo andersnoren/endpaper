@@ -157,6 +157,9 @@ The format follows WordPress’s own `image_editor_output_format` filter, so a s
 | Filter | What it does |
 | --- | --- |
 | `endpaper_cache_lifetime` | How long saved data from Hardcover counts as fresh, in seconds, never less than a minute. Receives the default and the kind: `book`, `edition` (a week each), `entry` (shelf, rating and progress), `list` or `goals` (an hour each). After that, visitors still get the saved copy while a new one is fetched in the background. |
+| `endpaper_request_timeout` | How long a request to Hardcover may take before it is given up, in seconds. Default `15`, from 1 to 60. |
+| `endpaper_search_results` | How many books a search in the editor shows. Default `8`, from 1 to 20. |
+| `endpaper_backoff` | How long to wait after a failed request before asking Hardcover again, in seconds. Default `300`, at least 30. |
 
 The filters for book covers are listed under [Book covers](#book-covers).
 

@@ -342,7 +342,7 @@ function api_request( $query, $variables = array(), $token = null ) {
 	$response = wp_remote_post(
 		ENDPAPER_API_URL,
 		array(
-			'timeout'    => 15,
+			'timeout'    => get_request_timeout(),
 			'user-agent' => 'Endpaper/' . ENDPAPER_VERSION . ' (WordPress plugin)',
 			'headers'    => array(
 				'Authorization' => 'Bearer ' . $token,
@@ -461,6 +461,51 @@ function normalize_book( $raw ) {
 }
 
 /**
+ * Returns how many seconds a request to Hardcover may take.
+ *
+ * @return int Seconds, from 1 to 60.
+ */
+function get_request_timeout() {
+	/**
+	 * Filters how long a request to Hardcover may take before it is given up, in seconds.
+	 *
+	 * @param int $seconds Default 15.
+	 */
+	return max( 1, min( 60, absint( apply_filters( 'endpaper_request_timeout', 15 ) ) ) );
+}
+
+/**
+ * Returns how many books a search in the editor shows.
+ *
+ * @return int Number of books, from 1 to 20.
+ */
+function get_search_results_count() {
+	/**
+	 * Filters how many books a search in the editor shows.
+	 *
+	 * @param int $count Default 8.
+	 */
+	return max( 1, min( 20, absint( apply_filters( 'endpaper_search_results', 8 ) ) ) );
+}
+
+/**
+ * Notes that a request failed, so that Hardcover is left alone for a while.
+ *
+ * @param string $message Why the request failed.
+ * @return void
+ */
+function set_backoff( $message ) {
+	/**
+	 * Filters how long to wait after a failed request before asking Hardcover again, in seconds.
+	 *
+	 * @param int $seconds Default 300 (five minutes).
+	 */
+	$seconds = max( 30, absint( apply_filters( 'endpaper_backoff', 5 * MINUTE_IN_SECONDS ) ) );
+
+	set_transient( 'endpaper_api_backoff', $message, $seconds );
+}
+
+/**
  * Returns how long a saved copy counts as fresh, in seconds.
  *
  * After that, visitors still get the saved copy, and a new one is fetched in the background.
@@ -564,7 +609,7 @@ function get_book( $book_id ) {
 	);
 
 	if ( is_wp_error( $data ) ) {
-		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+		set_backoff( $data->get_error_message() );
 
 		return $stale ? $stale : $data;
 	}
@@ -692,7 +737,7 @@ function get_edition( $edition_id ) {
 	);
 
 	if ( is_wp_error( $data ) ) {
-		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+		set_backoff( $data->get_error_message() );
 
 		return null !== $stale ? $stale : $data;
 	}
@@ -768,7 +813,8 @@ function search_books( $term ) {
 	}
 
 	// The same search, typed again within the hour, is answered from the cache.
-	$cache_key = cache_key( 'endpaper_search_' . md5( strtolower( $term ) ) );
+	$per_page  = get_search_results_count();
+	$cache_key = cache_key( 'endpaper_search_' . $per_page . '_' . md5( strtolower( $term ) ) );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -790,8 +836,11 @@ function search_books( $term ) {
 	}
 
 	$data = api_request(
-		'query EndpaperSearch($query: String!) { search(query: $query, query_type: "Book", per_page: 8, page: 1) { results } }',
-		array( 'query' => $term )
+		'query EndpaperSearch($query: String!, $per_page: Int!) { search(query: $query, query_type: "Book", per_page: $per_page, page: 1) { results } }',
+		array(
+			'query'    => $term,
+			'per_page' => $per_page,
+		)
 	);
 
 	if ( is_wp_error( $data ) ) {
@@ -967,7 +1016,7 @@ function get_library_entry( $book_id ) {
 	);
 
 	if ( is_wp_error( $data ) ) {
-		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+		set_backoff( $data->get_error_message() );
 
 		return null !== $stale ? $stale : $data;
 	}
@@ -1046,7 +1095,7 @@ function get_reading_list( $status_id, $limit ) {
 	);
 
 	if ( is_wp_error( $data ) ) {
-		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+		set_backoff( $data->get_error_message() );
 
 		return null !== $stale ? $stale : $data;
 	}
@@ -1138,7 +1187,7 @@ function get_goals() {
 	$data = api_request( 'query EndpaperGoals { me { goals(order_by: {end_date: desc}) { id description goal metric progress start_date end_date privacy_setting_id archived } } }' );
 
 	if ( is_wp_error( $data ) ) {
-		set_transient( 'endpaper_api_backoff', $data->get_error_message(), 5 * MINUTE_IN_SECONDS );
+		set_backoff( $data->get_error_message() );
 
 		return null !== $stale ? $stale : $data;
 	}
