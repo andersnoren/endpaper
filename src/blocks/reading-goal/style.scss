@@ -1,0 +1,144 @@
+@use "../../styles/variables" as *;
+@use "../../styles/notice";
+
+/*
+ * Reading Goal block.
+ *
+ * Every size is in em, relative to the block's font size. The block itself
+ * defaults to 1rem, so it follows the text size the reader has set in their
+ * browser, but never goes below 16px, since some themes set 1rem to 10px.
+ * The Size setting or the theme can change it.
+ * Colors follow the text color, so the block works on any background.
+ */
+
+/* Defaults with no specificity, so the editor's settings and theme.json win. */
+:where(.wp-block-endpaper-reading-goal) {
+	font-size: max(1rem, 16px);
+	line-height: 1.4;
+}
+
+/*
+ * By default the goal sits in the page without a frame. One that is given a
+ * border, a background or a shadow gets room inside it, and rounded corners.
+ */
+:where(.endpaper-reading-goal__card--framed) {
+	border-radius: 0.75em;
+	padding: 1.5em;
+}
+
+.wp-block-endpaper-reading-goal {
+	box-sizing: border-box;
+}
+
+/* Spacing inside the block is set with gaps, not with the theme's margins. */
+.wp-block-endpaper-reading-goal p,
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__title {
+	margin: 0;
+}
+
+.endpaper-reading-goal__card {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75em;
+}
+
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__title {
+	font-size: 1.25em;
+	line-height: 1.2;
+
+	/* A word too long for the line breaks, so it never sticks out of the card. */
+	overflow-wrap: anywhere;
+}
+
+/* A title that is a heading takes its weight from the theme's headings. */
+.wp-block-endpaper-reading-goal p.endpaper-reading-goal__title {
+	font-weight: 700;
+}
+
+/*
+ * Some themes decorate every heading, as Twenty Nineteen does with a short
+ * line above each one. That suits section headings in an article, not a
+ * title inside a card, so it is switched off here.
+ */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__title::before,
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__title::after {
+	content: none;
+}
+
+/* "34 of 50 books" and the days left, on one line when there is room. */
+.endpaper-reading-goal__summary {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25em 0.8125em;
+}
+
+.endpaper-reading-goal__amount {
+	font-weight: 700;
+}
+
+.endpaper-reading-goal__days {
+
+	@include muted-text;
+}
+
+/* The bar takes the whole width, with the percentage after it. */
+.endpaper-reading-goal__progress {
+	align-items: center;
+	display: flex;
+	gap: 0.8125em;
+}
+
+.endpaper-reading-goal__progress progress {
+	appearance: none;
+	background: $track-color;
+	border: 0;
+	border-radius: 999px;
+	flex: 1 1 0;
+	font-size: inherit;
+	height: 0.5em;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.endpaper-reading-goal__progress progress::-webkit-progress-bar {
+	background: transparent;
+}
+
+.endpaper-reading-goal__progress progress::-webkit-progress-value {
+	background: $accent-color;
+	border-radius: 999px;
+}
+
+.endpaper-reading-goal__progress progress::-moz-progress-bar {
+	background: $accent-color;
+	border-radius: 999px;
+}
+
+/* "68%" stays on one line next to the bar, also in a narrow column. */
+.endpaper-reading-goal__progress span {
+	flex: none;
+	font-size: $small-font-size;
+	white-space: nowrap;
+
+	@include muted-text;
+}
+
+/*
+ * The credit to Hardcover: their logo under the goal, lined up with it, and
+ * inside the frame if the goal has one. It is 16px tall at the default size,
+ * and scales with the font size.
+ */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__credit {
+	color: inherit;
+	display: block;
+	width: fit-content;
+}
+
+.endpaper-reading-goal__credit .endpaper-logo {
+	display: block;
+	fill: currentcolor;
+	height: 1em;
+	width: auto;
+}

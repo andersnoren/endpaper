@@ -42,6 +42,16 @@ function register_rest_routes() {
 
 	register_rest_route(
 		'endpaper/v1',
+		'/goals',
+		array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => __NAMESPACE__ . '\rest_goals',
+			'permission_callback' => __NAMESPACE__ . '\rest_permission',
+		)
+	);
+
+	register_rest_route(
+		'endpaper/v1',
 		'/library-entry/(?P<book_id>\d+)',
 		array(
 			'methods'             => WP_REST_Server::READABLE,
@@ -99,6 +109,21 @@ function rest_search( $request ) {
 	}
 
 	return rest_ensure_response( search_books( $term ) );
+}
+
+/**
+ * Handles a request for the public reading goals, for the block's goal picker.
+ *
+ * @return WP_REST_Response|WP_Error The goals, or an error.
+ */
+function rest_goals() {
+	$goals = get_goals();
+
+	if ( is_wp_error( $goals ) ) {
+		return $goals;
+	}
+
+	return rest_ensure_response( $goals );
 }
 
 /**

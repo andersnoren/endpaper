@@ -584,6 +584,13 @@ function get_settings_blocks() {
 			'description' => __( 'The books you are currently reading, want to read or have read, as a list or a grid.', 'endpaper' ),
 			'shortcut'    => '/reading list',
 		),
+		array(
+			'name'        => 'endpaper/reading-goal',
+			'icon'        => 'reading-goal',
+			'title'       => __( 'Reading Goal', 'endpaper' ),
+			'description' => __( 'How far along you are on one of your reading goals, in books, pages or hours.', 'endpaper' ),
+			'shortcut'    => '/reading goal',
+		),
 	);
 }
 

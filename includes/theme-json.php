@@ -39,6 +39,7 @@ function add_default_block_styles( $theme_json ) {
 				'blocks' => array(
 					'endpaper/book'         => $styles,
 					'endpaper/reading-list' => $styles,
+					'endpaper/reading-goal' => $styles,
 				),
 			),
 		)

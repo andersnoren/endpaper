@@ -382,6 +382,81 @@ function format_date( $date ) {
 }
 
 /**
+ * Formats a number from a reading goal: whole, or with one decimal for part of an hour.
+ *
+ * @param float $value The number.
+ * @return string The number, with separators for the site's language.
+ */
+function format_goal_number( $value ) {
+	$decimals = abs( $value - round( $value ) ) < 0.05 ? 0 : 1;
+
+	return number_format_i18n( $value, $decimals );
+}
+
+/**
+ * Returns how far along a goal is, as a text such as "34 of 50 books".
+ *
+ * @param array $goal A normalized goal.
+ * @return string The text.
+ */
+function get_goal_amount_text( $goal ) {
+	$progress = format_goal_number( $goal['progress'] );
+	$target   = format_goal_number( $goal['target'] );
+	$count    = (int) round( $goal['target'] );
+
+	if ( 'page' === $goal['metric'] ) {
+		/* translators: 1: Pages read so far, 2: The goal, in pages. */
+		$text = _n( '%1$s of %2$s page', '%1$s of %2$s pages', $count, 'endpaper' );
+	} elseif ( 'hour' === $goal['metric'] ) {
+		/* translators: 1: Hours listened so far, 2: The goal, in hours. */
+		$text = _n( '%1$s of %2$s hour', '%1$s of %2$s hours', $count, 'endpaper' );
+	} else {
+		/* translators: 1: Books read so far, 2: The goal, in books. */
+		$text = _n( '%1$s of %2$s book', '%1$s of %2$s books', $count, 'endpaper' );
+	}
+
+	return sprintf( $text, $progress, $target );
+}
+
+/**
+ * Returns how much of the time a goal runs for is left, as a text such as "48 days left".
+ *
+ * Days are counted in the site's time zone, from today to the last day of the goal.
+ *
+ * @param array $goal A normalized goal.
+ * @return string The text, or an empty string if the goal has no valid end date.
+ */
+function get_goal_days_text( $goal ) {
+	if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $goal['end'] ) ) {
+		return '';
+	}
+
+	$timezone = wp_timezone();
+	$end      = date_create_immutable( $goal['end'] . ' 00:00:00', $timezone );
+
+	if ( ! $end ) {
+		return '';
+	}
+
+	$today = current_datetime()->setTime( 0, 0 );
+	$days  = (int) $today->diff( $end )->format( '%r%a' );
+
+	if ( $days > 0 ) {
+		/* translators: %s: Number of days. */
+		return sprintf( _n( '%s day left', '%s days left', $days, 'endpaper' ), number_format_i18n( $days ) );
+	}
+
+	if ( 0 === $days ) {
+		return __( 'Ends today', 'endpaper' );
+	}
+
+	$date = format_date( $goal['end'] );
+
+	/* translators: %s: A date, such as November 30, 2015. */
+	return '' === $date ? __( 'Ended', 'endpaper' ) : sprintf( __( 'Ended %s', 'endpaper' ), $date );
+}
+
+/**
  * Returns the Hardcover logo, as inline SVG: the mark, followed by the name.
  *
  * It takes the color of the text around it. The logo is Hardcover's

@@ -22,6 +22,9 @@ use function AndersNoren\Endpaper\can_store_covers;
 use function AndersNoren\Endpaper\cover_records;
 use function AndersNoren\Endpaper\delete_all_covers;
 use function AndersNoren\Endpaper\get_cover;
+use function AndersNoren\Endpaper\get_goal;
+use function AndersNoren\Endpaper\get_goal_days_text;
+use function AndersNoren\Endpaper\get_goals;
 use function AndersNoren\Endpaper\get_cover_dir;
 use function AndersNoren\Endpaper\get_cover_key;
 use function AndersNoren\Endpaper\get_cover_stats;
@@ -215,6 +218,42 @@ add_filter(
 										),
 										'user_book_reads' => array( array( 'progress' => 68.4 ) ),
 									),
+								),
+							),
+						),
+					),
+				)
+			);
+		}
+
+		if ( false !== strpos( $query, 'EndpaperGoals' ) ) {
+			$goal = static function ( $id, $title, $target, $metric, $progress, $privacy = 1, $archived = false ) {
+				return array(
+					'id'                 => $id,
+					'description'        => $title,
+					'goal'               => $target,
+					'metric'             => $metric,
+					'progress'           => $progress,
+					'start_date'         => '2026-01-01',
+					'end_date'           => '2099-12-31',
+					'privacy_setting_id' => $privacy,
+					'archived'           => $archived,
+				);
+			};
+
+			// Two public goals, one that is beaten, and three that must not show: private, archived, and in a unit that is not known.
+			return $respond(
+				200,
+				array(
+					'data' => array(
+						'me' => array(
+							array(
+								'goals' => array(
+									$goal( 1, 'Books <b>this year</b>', 50, 'book', 34 ),
+									$goal( 2, 'Pages', 10000, 'page', 10508 ),
+									$goal( 3, 'Private', 10, 'book', 3, 3 ),
+									$goal( 4, 'Archived', 10, 'book', 3, 1, true ),
+									$goal( 5, 'Odd', 10, 'chapter', 3 ),
 								),
 							),
 						),
@@ -417,6 +456,30 @@ try {
 
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"showCredit":true} /-->' );
 	endpaper_check( 'the list credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );
+
+	echo "The Reading Goal block\n";
+
+	$endpaper_goals = get_goals();
+	endpaper_check( 'only public goals in a known unit are listed', ! is_wp_error( $endpaper_goals ) && array( 1, 2 ) === wp_list_pluck( $endpaper_goals, 'id' ) );
+	endpaper_check( 'a goal is found by its ID', 2 === get_goal( 2 )['id'] && null === get_goal( 3 ) && null === get_goal( 0 ) );
+
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
+	endpaper_check( 'a goal shows its title, count and percentage', false !== strpos( $endpaper_html, '34 of 50 books' ) && false !== strpos( $endpaper_html, '68%' ) && false !== strpos( $endpaper_html, 'value="68"' ) );
+	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '<b>this year</b>' ) );
+	endpaper_check( 'the days left are shown', 1 === preg_match( '/[\d,.\x{00a0}]+ days left/u', $endpaper_html ) );
+	endpaper_check( 'the title and the days can be left out', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showTitle":false,"showDays":false} /-->' ), 'endpaper-reading-goal__title' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showDays":false} /-->' ), 'days left' ) );
+
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2} /-->' );
+	endpaper_check( 'a goal that is beaten shows the real percentage, with a full bar', false !== strpos( $endpaper_html, '10,508 of 10,000 pages' ) && false !== strpos( $endpaper_html, '105%' ) && false !== strpos( $endpaper_html, 'value="100"' ) );
+
+	endpaper_check( 'days are counted to the end date', 'Ends today' === get_goal_days_text( array( 'end' => current_datetime()->format( 'Y-m-d' ) ) ) && '1 day left' === get_goal_days_text( array( 'end' => current_datetime()->modify( '+1 day' )->format( 'Y-m-d' ) ) ) );
+	endpaper_check( 'a goal that has ended says so', 0 === strpos( get_goal_days_text( array( 'end' => '2020-01-01' ) ), 'Ended' ) );
+
+	$endpaper_editor_id = get_current_user_id();
+	wp_set_current_user( 0 );
+	endpaper_check( 'a private goal shows nothing to visitors', '' === trim( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":3} /-->' ) ) );
+	endpaper_check( 'with two goals and none picked, visitors see nothing', '' === trim( do_blocks( '<!-- wp:endpaper/reading-goal /-->' ) ) );
+	wp_set_current_user( $endpaper_editor_id );
 
 	echo "Saving covers\n";
 	wp_set_current_user( 0 );

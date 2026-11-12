@@ -35,7 +35,7 @@ Two patterns are included, in the Endpaper category of the block inserter: **Cur
 
 ## For theme authors
 
-The blocks have very little styling of their own, and support the standard color, typography, spacing, border and shadow settings. A theme can style them in `theme.json` like any core block, under `styles.blocks` with `endpaper/book` and `endpaper/reading-list`.
+The blocks have very little styling of their own, and support the standard color, typography, spacing, border and shadow settings. A theme can style them in `theme.json` like any core block, under `styles.blocks` with `endpaper/book`, `endpaper/reading-list` and `endpaper/reading-goal`.
 
 Both blocks have a margin above and below by default: 1.5em, and never less than 32px. A theme changes it the same way as any other style:
 
