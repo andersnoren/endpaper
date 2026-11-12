@@ -9,6 +9,9 @@ namespace AndersNoren\Endpaper;
 
 defined( 'ABSPATH' ) || exit;
 
+// The option for the style new Book blocks start with: "default" for Plain, or "card".
+define( 'ENDPAPER_DEFAULT_STYLE_OPTION', 'endpaper_default_book_style' );
+
 /**
  * Returns the HTML tag to use for a book title.
  *
@@ -855,4 +858,13 @@ function get_icon_path( $name ) {
 	}
 
 	return isset( $icons[ $name ] ) && is_string( $icons[ $name ] ) ? $icons[ $name ] : '';
+}
+
+/**
+ * Returns the style new Book blocks start with.
+ *
+ * @return string "card", or "default" for the Plain style.
+ */
+function get_default_book_style() {
+	return 'card' === get_option( ENDPAPER_DEFAULT_STYLE_OPTION, 'default' ) ? 'card' : 'default';
 }

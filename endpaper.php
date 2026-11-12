@@ -114,8 +114,9 @@ function add_editor_data( $block_type ) {
 		'enqueue_block_editor_assets',
 		function () use ( $handle ) {
 			$data = array(
-				'keyTrouble'  => get_token_trouble(),
-				'settingsUrl' => current_user_can( 'manage_options' ) ? get_settings_url() : '',
+				'keyTrouble'       => get_token_trouble(),
+				'settingsUrl'      => current_user_can( 'manage_options' ) ? get_settings_url() : '',
+				'defaultBookStyle' => get_default_book_style(),
 			);
 
 			wp_add_inline_script( $handle, 'window.endpaperEditor = ' . wp_json_encode( $data ) . ';', 'before' );

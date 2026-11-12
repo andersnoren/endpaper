@@ -113,7 +113,35 @@ export default function Edit( {
 		onAnimationEnd: () => setJustPicked( false ),
 	} );
 	useKeepImages( wrapper );
-	const { keyTrouble, settingsUrl } = getEditorData();
+	const { keyTrouble, settingsUrl, defaultBookStyle } = getEditorData();
+
+	// A new block starts with the style chosen in the Endpaper settings, unless it has a style or a book already. This runs once, when the block is first selected, which is when it is inserted.
+	const styleChecked = useRef( false );
+	useEffect( () => {
+		if ( ! isSelected || styleChecked.current ) {
+			return;
+		}
+
+		styleChecked.current = true;
+
+		const className = attributes.className || '';
+
+		if (
+			'card' === defaultBookStyle &&
+			! attributes.bookId &&
+			! /(^|\s)is-style-/.test( className )
+		) {
+			setAttributes( {
+				className: `${ className } is-style-card`.trim(),
+			} );
+		}
+	}, [
+		isSelected,
+		defaultBookStyle,
+		attributes.className,
+		attributes.bookId,
+		setAttributes,
+	] );
 
 	useEffect( () => {
 		if ( justPicked && attributes.bookId ) {

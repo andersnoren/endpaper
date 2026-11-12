@@ -40,10 +40,12 @@ use function AndersNoren\Endpaper\get_editions;
 use function AndersNoren\Endpaper\get_key_problem_message;
 use function AndersNoren\Endpaper\get_privacy_policy_text;
 use function AndersNoren\Endpaper\get_site_health_result;
+use function AndersNoren\Endpaper\get_default_book_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_token;
 use function AndersNoren\Endpaper\is_token_rejected;
 use function AndersNoren\Endpaper\render_settings_page;
+use function AndersNoren\Endpaper\sanitize_default_style_setting;
 use function AndersNoren\Endpaper\sanitize_token_setting;
 use function AndersNoren\Endpaper\search_books;
 use function AndersNoren\Endpaper\the_key_notice;
@@ -665,6 +667,17 @@ try {
 	endpaper_check( 'it renders for an administrator', false !== strpos( $endpaper_html, 'endpaper-token' ) && false !== strpos( $endpaper_html, 'read:library:public' ) );
 	endpaper_check( 'it lists both blocks with their copy markup, and the patterns', false !== strpos( $endpaper_html, 'data-copy="&lt;!-- wp:endpaper/book /--&gt;"' ) && false !== strpos( $endpaper_html, 'data-copy="&lt;!-- wp:endpaper/reading-list /--&gt;"' ) && false !== strpos( $endpaper_html, '/reading list' ) && false !== strpos( $endpaper_html, 'Currently reading' ) && false !== strpos( $endpaper_html, 'Recently read' ) );
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
+
+	delete_option( ENDPAPER_DEFAULT_STYLE_OPTION );
+	endpaper_check( 'new Book blocks start as Plain until a style is chosen', 'default' === get_default_book_style() );
+	endpaper_check( 'only the styles the block has can be saved as the default', 'card' === sanitize_default_style_setting( 'card' ) && 'default' === sanitize_default_style_setting( 'is-style-card' ) && 'default' === sanitize_default_style_setting( array( 'card' ) ) );
+
+	update_option( ENDPAPER_DEFAULT_STYLE_OPTION, 'card' );
+	ob_start();
+	render_settings_page();
+	$endpaper_html = ob_get_clean();
+	endpaper_check( 'the settings screen offers both styles, with the chosen one selected', 'card' === get_default_book_style() && 1 === preg_match( '/value="card"\s+checked/', $endpaper_html ) && 1 === preg_match( '/value="default"\s*\/>/', $endpaper_html ) );
+	delete_option( ENDPAPER_DEFAULT_STYLE_OPTION );
 	endpaper_check( 'the suggested privacy text says that covers are loaded from Hardcover, when they are', false !== strpos( get_privacy_policy_text(), 'receives your IP address' ) );
 	remove_filter( 'endpaper_import_covers', '__return_false' );
 	endpaper_check( 'and that nothing is sent, when covers are saved on the site', ! can_store_covers() || false !== strpos( get_privacy_policy_text(), 'Nothing about you is sent to Hardcover' ) );

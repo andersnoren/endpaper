@@ -17,6 +17,7 @@ function endpaper_remove_site_data() {
 
 	delete_option( 'endpaper_hardcover_token' );
 	delete_option( 'endpaper_cache_generation' );
+	delete_option( 'endpaper_default_book_style' );
 	delete_option( 'endpaper_covers' );
 	delete_option( 'endpaper_cover_queue' );
 
