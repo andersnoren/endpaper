@@ -120,8 +120,17 @@ if ( ! empty( $attributes['showMeta'] ) ) {
 
 $endpaper_show_rating = ! empty( $attributes['showRating'] ) && $endpaper_book['rating'] > 0;
 
+// How large the cover is: a class for the styles, and its width for the browser to pick a file by.
+$endpaper_cover_size  = isset( $attributes['coverSize'] ) && in_array( $attributes['coverSize'], array( 'small', 'large' ), true ) ? $attributes['coverSize'] : 'medium';
+$endpaper_cover_sizes = array(
+	'small'  => '(max-width: 600px) 22vw, 128px',
+	'medium' => '(max-width: 600px) 30vw, 192px',
+	'large'  => '(max-width: 600px) 40vw, 256px',
+);
+
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
+		'class' => 'endpaper-book--cover-' . $endpaper_cover_size,
 		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ),
 	)
 );
@@ -136,7 +145,7 @@ $endpaper_card_style = get_card_style( $attributes );
 				<?php if ( $endpaper_link ) : ?>
 					<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
 				<?php endif; ?>
-				<?php the_cover_image( $endpaper_cover, '(max-width: 600px) 30vw, 192px' ); ?>
+				<?php the_cover_image( $endpaper_cover, $endpaper_cover_sizes[ $endpaper_cover_size ] ); ?>
 				<?php if ( $endpaper_link ) : ?>
 					</a>
 				<?php endif; ?>

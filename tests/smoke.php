@@ -324,6 +324,9 @@ try {
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCover":false,"showMeta":false,"showRating":false,"showDescription":false,"linkToHardcover":false,"titleLevel":0} /-->' );
 	endpaper_check( 'it renders with everything switched off', false !== strpos( $endpaper_html, 'endpaper-book__title' ) && false === strpos( $endpaper_html, 'endpaper-book__cover' ) );
 
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"coverSize":"large"} /-->' );
+	endpaper_check( 'the cover can be made larger, and smaller', false !== strpos( $endpaper_html, 'endpaper-book--cover-large' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"coverSize":"small"} /-->' ), 'endpaper-book--cover-small' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), 'endpaper-book--cover-medium' ) );
+
 	echo "Edition covers\n";
 	$endpaper_editions = get_editions( 42 );
 	endpaper_check( 'editions without a cover, or with one already listed, are left out', is_array( $endpaper_editions ) && array( 101, 103 ) === wp_list_pluck( $endpaper_editions, 'id' ) );

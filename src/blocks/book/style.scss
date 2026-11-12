@@ -42,9 +42,23 @@
 	gap: 1.5em;
 }
 
+/*
+ * The cover takes a share of the card, up to a width. Both follow the Cover
+ * size setting: this is Medium.
+ */
 .endpaper-book__cover {
-	flex: 0 0 min(12em, 30%);
+	flex: 0 0 min(var(--endpaper-cover-width, 12em), var(--endpaper-cover-share, 30%));
 	margin: 0;
+}
+
+.endpaper-book--cover-small {
+	--endpaper-cover-width: 8em;
+	--endpaper-cover-share: 22%;
+}
+
+.endpaper-book--cover-large {
+	--endpaper-cover-width: 16em;
+	--endpaper-cover-share: 40%;
 }
 
 .endpaper-book__cover img,

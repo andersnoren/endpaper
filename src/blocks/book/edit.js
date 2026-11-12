@@ -10,6 +10,7 @@ import {
 	InspectorControls,
 	useBlockProps,
 } from '@wordpress/block-editor';
+/* eslint-disable @wordpress/no-unsafe-wp-apis -- The segmented control core uses for choices like these has no stable equivalent yet. */
 import {
 	PanelBody,
 	Placeholder,
@@ -17,7 +18,10 @@ import {
 	ToggleControl,
 	ToolbarButton,
 	ToolbarGroup,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+/* eslint-enable @wordpress/no-unsafe-wp-apis */
 import ServerSideRender from '@wordpress/server-side-render';
 
 /**
@@ -219,6 +223,34 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						}
 					/>
 				</PanelBody>
+
+				{ attributes.showCover && (
+					<PanelBody title={ __( 'Layout', 'endpaper' ) }>
+						<ToggleGroupControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							isBlock
+							label={ __( 'Cover size', 'endpaper' ) }
+							value={ attributes.coverSize || 'medium' }
+							onChange={ ( coverSize ) =>
+								setAttributes( { coverSize } )
+							}
+						>
+							<ToggleGroupControlOption
+								value="small"
+								label={ __( 'Small', 'endpaper' ) }
+							/>
+							<ToggleGroupControlOption
+								value="medium"
+								label={ __( 'Medium', 'endpaper' ) }
+							/>
+							<ToggleGroupControlOption
+								value="large"
+								label={ __( 'Large', 'endpaper' ) }
+							/>
+						</ToggleGroupControl>
+					</PanelBody>
+				) }
 
 				{ attributes.showCover && (
 					<PanelBody

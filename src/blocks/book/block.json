@@ -22,6 +22,11 @@
 		"coverRadius": {
 			"type": [ "string", "object" ]
 		},
+		"coverSize": {
+			"type": "string",
+			"enum": [ "small", "medium", "large" ],
+			"default": "medium"
+		},
 		"titleLevel": {
 			"type": "integer",
 			"default": 2
