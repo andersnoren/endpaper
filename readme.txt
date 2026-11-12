@@ -31,7 +31,7 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 
 = Made to fit your theme =
 
-* **Looks like your site.** Sizes follow the block’s font size, and colors follow the text color, so the blocks work on light and dark designs alike. The accent color comes from your theme, and you can change it for a single block.
+* **Looks like your site.** The blocks inherit the typography and colors of your theme, so they look right at home from the start, on light and dark designs alike. The accent color comes from your theme too. From there, make them yours: change the colors, typography and spacing of any block right in the editor.
 * **The controls you know.** The standard color, typography, spacing, border and shadow settings are supported, in the editor and in `theme.json`, along with wide and full alignment.
 
 = Fast, and respectful of your visitors =
