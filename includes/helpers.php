@@ -136,7 +136,7 @@ function the_progress_bar( $progress, $class_name ) {
 	$label = sprintf( __( '%s%% read', 'endpaper' ), number_format_i18n( $percent ) );
 
 	printf(
-		'<p class="%1$s"><progress max="100" value="%2$s" aria-label="%3$s"></progress> <span>%4$s</span></p>',
+		'<p class="%1$s"><progress max="100" value="%2$s" aria-label="%3$s"></progress> <span><bdi>%4$s</bdi></span></p>',
 		esc_attr( $class_name ),
 		esc_attr( $percent ),
 		esc_attr( $label ),

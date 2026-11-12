@@ -219,13 +219,13 @@ $endpaper_card_style = get_card_style( $attributes );
 				<?php if ( $endpaper_facts || $endpaper_show_rating ) : ?>
 					<p class="endpaper-book__meta">
 						<?php foreach ( $endpaper_facts as $endpaper_fact ) : ?>
-							<span class="endpaper-book__fact"><?php echo esc_html( $endpaper_fact ); ?></span>
+							<span class="endpaper-book__fact"><bdi><?php echo esc_html( $endpaper_fact ); ?></bdi></span>
 						<?php endforeach; ?>
 
 						<?php if ( $endpaper_show_rating ) : ?>
 							<span class="endpaper-book__fact endpaper-book__rating">
 								<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?><?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?></span>
-								<span class="endpaper-book__rating-count" aria-hidden="true">
+								<span class="endpaper-book__rating-count" aria-hidden="true"><bdi>
 									<?php
 									echo esc_html(
 										sprintf(
@@ -235,7 +235,7 @@ $endpaper_card_style = get_card_style( $attributes );
 										)
 									);
 									?>
-								</span>
+								</bdi></span>
 								<span class="screen-reader-text">
 									<?php
 									echo esc_html(
