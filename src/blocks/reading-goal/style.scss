@@ -68,8 +68,8 @@
 }
 
 /*
- * How far along the goal is, and what is left of the time, on one line when
- * there is room. The percentage stands at the far end.
+ * How far along the goal is, with the percentage next to it, and what is
+ * left of the time at the far end, on one line when there is room.
  */
 .endpaper-reading-goal__summary {
 	align-items: baseline;
@@ -84,8 +84,11 @@
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__percent {
-	margin-inline-start: auto;
 	white-space: nowrap;
+}
+
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__status {
+	margin-inline-start: auto;
 }
 
 /*

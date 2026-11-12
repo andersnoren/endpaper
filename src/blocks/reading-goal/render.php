@@ -86,6 +86,7 @@ $endpaper_card_style = get_card_style( $attributes );
 
 		<div class="endpaper-reading-goal__summary">
 			<p class="endpaper-reading-goal__amount"><?php echo esc_html( $endpaper_amount ); ?></p>
+			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
 			<?php if ( $endpaper_status ) : ?>
 				<?php
 				// The page may be kept and served for days, so the days left are worked out again in the browser. The text here is for until then, and for browsers without scripts.
@@ -93,7 +94,6 @@ $endpaper_card_style = get_card_style( $attributes );
 				?>
 				<p class="endpaper-reading-goal__status"<?php echo $endpaper_status_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>><?php echo esc_html( $endpaper_status ); ?></p>
 			<?php endif; ?>
-			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
 		</div>
 
 		<progress class="endpaper-reading-goal__bar" max="100" value="<?php echo esc_attr( $endpaper_bar ); ?>" aria-label="<?php echo esc_attr( $endpaper_percent_label ); ?>"></progress>
