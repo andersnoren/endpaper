@@ -161,7 +161,7 @@ export default function EditionPicker( { bookId, value, onChange } ) {
 		<div className="endpaper-edition-picker">
 			<p className="endpaper-edition-picker__help">
 				{ __(
-					'The block shows the cover of the edition in your Hardcover library, or else the book’s main cover. Pick another edition to use its cover.',
+					'The block shows the cover from your Hardcover library, or the book’s default cover. You can pick another cover below.',
 					'endpaper'
 				) }
 			</p>
