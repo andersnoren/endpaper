@@ -84,7 +84,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'showCredit',
 		label: __( 'Hardcover logo', 'endpaper' ),
 		help: __(
-			'Shows Hardcover’s logo under the list, linked to Hardcover. A way to credit them for the data.',
+			'Credits Hardcover with their logo, under the list.',
 			'endpaper'
 		),
 	},

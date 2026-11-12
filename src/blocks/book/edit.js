@@ -223,7 +223,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						__nextHasNoMarginBottom
 						label={ __( 'Hardcover logo', 'endpaper' ) }
 						help={ __(
-							'Shows Hardcover’s logo in the card, linked to the book on Hardcover. A way to credit them for the data.',
+							'Credits Hardcover with their logo, linked to the book there.',
 							'endpaper'
 						) }
 						checked={ !! attributes.showCredit }
