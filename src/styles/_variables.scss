@@ -24,6 +24,11 @@ $dot-color: color-mix(in srgb, currentcolor 33%, transparent);
 
 /* Secondary text is the text color at reduced opacity. */
 $muted-opacity: 0.75;
+$muted-color: color-mix(in srgb, currentcolor #{$muted-opacity * 100%}, transparent);
+
+/* What a link or logo fades to when it is hovered. */
+$hover-opacity: 0.75;
+$hover-color: color-mix(in srgb, currentcolor #{$hover-opacity * 100%}, transparent);
 
 /*
  * How light the text color is, from 0 (black) to 1 (white). It is worked out

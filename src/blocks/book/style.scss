@@ -263,7 +263,7 @@
 }
 
 .wp-block-endpaper-book .endpaper-book__spoilers summary {
-	color: color-mix(in srgb, currentcolor 70%, transparent);
+	color: $muted-color;
 	cursor: pointer;
 	font-size: 0.875em;
 	list-style-position: inside;
@@ -451,7 +451,7 @@
  * changes opacity to a layer of its own, which makes the logo shift a little.
  */
 .endpaper-book__credit:hover {
-	color: color-mix(in srgb, currentcolor 75%, transparent);
+	color: $hover-color;
 }
 
 /* The logo is 16px tall at the default size, and scales with the font size. */
@@ -528,5 +528,5 @@
 }
 
 .endpaper-book__cover a:hover {
-	opacity: 0.75;
+	opacity: $hover-opacity;
 }

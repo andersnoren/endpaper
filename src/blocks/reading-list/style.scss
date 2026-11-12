@@ -218,7 +218,7 @@ $gap: var(--endpaper-gap, 1.5em);
 }
 
 .endpaper-reading-list__cover a:hover {
-	opacity: 0.75;
+	opacity: $hover-opacity;
 }
 
 /*
@@ -238,7 +238,7 @@ $gap: var(--endpaper-gap, 1.5em);
  * changes opacity to a layer of its own, which makes the logo shift a little.
  */
 .endpaper-reading-list__credit:hover {
-	color: color-mix(in srgb, currentcolor 75%, transparent);
+	color: $hover-color;
 }
 
 .endpaper-reading-list__credit .endpaper-logo {
