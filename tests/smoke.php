@@ -338,9 +338,16 @@ try {
 	endpaper_check( 'it renders for an administrator', false !== strpos( $endpaper_html, 'endpaper-token' ) && false !== strpos( $endpaper_html, 'read:library:public' ) );
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
 	endpaper_check( 'it has a button to clear the cache', false !== strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && false === strpos( $endpaper_html, 'disabled' ) );
+	endpaper_check( 'it says the plugin is unofficial, and where to get help', false !== strpos( $endpaper_html, 'It is an unofficial plugin' ) && false !== strpos( $endpaper_html, 'wordpress.org/support/plugin/endpaper/' ) );
+	endpaper_check( 'with a key, the explanations are folded away', false === strpos( $endpaper_html, '<details class="endpaper-disclosure" open>' ) );
 	endpaper_check( 'it links to the form for a new key, with the permissions ticked', false !== strpos( $endpaper_html, 'hardcover.app/account/api/keys/new?scope=read%3Acatalog%20read%3Alibrary%3Apublic%20read%3Ame%3Acontent' ) );
 
 	delete_option( 'endpaper_hardcover_token' );
+
+	ob_start();
+	render_settings_page();
+	$endpaper_html = ob_get_clean();
+	endpaper_check( 'without a key, there is no button to clear the cache, and the explanations are open', false === strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && 2 === substr_count( $endpaper_html, '<details class="endpaper-disclosure" open>' ) );
 
 	echo "After the key is removed\n";
 	delete_transient( 'endpaper_api_backoff' );

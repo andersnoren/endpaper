@@ -20,6 +20,11 @@ define( 'ENDPAPER_TOKEN_OPTION', 'endpaper_hardcover_token' );
 define( 'ENDPAPER_NEW_KEY_URL', 'https://hardcover.app/account/api/keys/new' );
 
 /**
+ * Where to ask for help with the plugin: its own forum, not Hardcover.
+ */
+define( 'ENDPAPER_SUPPORT_URL', 'https://wordpress.org/support/plugin/endpaper/' );
+
+/**
  * Returns the URL of the settings screen.
  *
  * @return string The URL.
@@ -401,6 +406,21 @@ function add_settings_link( $links ) {
 add_filter( 'plugin_action_links_' . plugin_basename( ENDPAPER_DIR . 'endpaper.php' ), __NAMESPACE__ . '\add_settings_link' );
 
 /**
+ * Loads the styles for the settings screen.
+ *
+ * @param string $hook_suffix The current admin screen.
+ * @return void
+ */
+function enqueue_settings_styles( $hook_suffix ) {
+	if ( 'settings_page_endpaper' !== $hook_suffix ) {
+		return;
+	}
+
+	wp_enqueue_style( 'endpaper-settings', plugins_url( 'assets/settings.css', ENDPAPER_DIR . 'endpaper.php' ), array(), ENDPAPER_VERSION );
+}
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_settings_styles' );
+
+/**
  * Outputs the notice that says whether the key works.
  *
  * @return void
@@ -471,6 +491,10 @@ function get_new_key_url() {
  * field shows a row of dots, always the same number, so it looks filled in
  * without giving away the key or its length.
  *
+ * The screen is in the order people need it. Without a key, how to create
+ * one comes first, and the explanations of what the key allows and how it is
+ * kept are open. With a key, those fold away and the cache gets its section.
+ *
  * @return void
  */
 function render_settings_page() {
@@ -489,10 +513,10 @@ function render_settings_page() {
 	// Only read, to say what the button on this screen did. Nothing is changed based on it.
 	$cache_result = isset( $_GET['endpaper_cache'] ) ? sanitize_key( wp_unslash( $_GET['endpaper_cache'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	?>
-	<div class="wrap">
+	<div class="wrap endpaper-settings">
 		<h1><?php esc_html_e( 'Endpaper', 'endpaper' ); ?></h1>
 
-		<p><?php esc_html_e( 'Endpaper shows books from Hardcover. To do that it needs an API key from your Hardcover account.', 'endpaper' ); ?></p>
+		<p class="endpaper-settings__intro"><?php esc_html_e( 'Endpaper shows books from Hardcover on your site. It is an unofficial plugin: Hardcover did not make it and does not support it.', 'endpaper' ); ?></p>
 
 		<?php if ( 'cleared' === $cache_result ) : ?>
 			<div class="notice notice-success inline is-dismissible"><p><?php esc_html_e( 'The cache was cleared. Everything is fetched from Hardcover again the next time it is shown.', 'endpaper' ); ?></p></div>
@@ -500,15 +524,23 @@ function render_settings_page() {
 			<div class="notice notice-warning inline is-dismissible"><p><?php esc_html_e( 'The cache was not cleared, because there is no working API key.', 'endpaper' ); ?></p></div>
 		<?php endif; ?>
 
-		<?php the_connection_notice(); ?>
+		<div class="endpaper-settings__column">
 
-		<form method="post" action="options.php">
-			<?php settings_fields( 'endpaper' ); ?>
+			<section class="endpaper-card endpaper-card--connection" aria-labelledby="endpaper-connection-title">
+				<h2 id="endpaper-connection-title"><?php esc_html_e( 'Connection', 'endpaper' ); ?></h2>
 
-			<table class="form-table" role="presentation">
-				<tr>
-					<th scope="row"><label for="endpaper-token"><?php esc_html_e( 'Hardcover API key', 'endpaper' ); ?></label></th>
-					<td>
+				<?php the_connection_notice(); ?>
+
+				<?php if ( ! $has_token ) : ?>
+					<?php the_key_steps(); ?>
+				<?php endif; ?>
+
+				<form method="post" action="options.php">
+					<?php settings_fields( 'endpaper' ); ?>
+
+					<div class="endpaper-field">
+						<label class="endpaper-field__label" for="endpaper-token"><?php esc_html_e( 'Hardcover API key', 'endpaper' ); ?></label>
+
 						<?php if ( $in_config ) : ?>
 							<input type="text" id="endpaper-token" class="regular-text" value="<?php esc_attr_e( 'Set in wp-config.php', 'endpaper' ); ?>" disabled />
 							<p class="description">
@@ -532,7 +564,7 @@ function render_settings_page() {
 								?>
 							</p>
 							<?php if ( $has_token ) : ?>
-								<p>
+								<p class="endpaper-field__option">
 									<label>
 										<input type="checkbox" name="endpaper_remove_token" value="1" />
 										<?php esc_html_e( 'Remove the saved key', 'endpaper' ); ?>
@@ -540,86 +572,117 @@ function render_settings_page() {
 								</p>
 							<?php endif; ?>
 						<?php endif; ?>
-					</td>
-				</tr>
-			</table>
+					</div>
 
-			<?php
-			if ( ! $in_config ) {
-				submit_button();
-			}
-			?>
-		</form>
+					<?php
+					if ( ! $in_config ) {
+						submit_button( $has_token ? null : __( 'Save the key', 'endpaper' ) );
+					}
+					?>
+				</form>
 
-		<h2><?php esc_html_e( 'Cache', 'endpaper' ); ?></h2>
+				<?php if ( $has_token ) : ?>
+					<details class="endpaper-disclosure">
+						<summary><?php esc_html_e( 'Create a new key', 'endpaper' ); ?></summary>
+						<?php the_key_steps(); ?>
+					</details>
+				<?php endif; ?>
+			</section>
 
-		<p><?php esc_html_e( 'Endpaper saves what it fetches from Hardcover, so your pages stay fast and Hardcover is not asked more often than needed. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. Clear the cache to fetch everything again the next time it is shown, for example after changing something on Hardcover.', 'endpaper' ); ?></p>
+			<?php if ( ! $key_trouble ) : ?>
+				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">
+					<h2 id="endpaper-cache-title"><?php esc_html_e( 'Cache', 'endpaper' ); ?></h2>
 
-		<?php if ( $key_trouble ) : ?>
-			<p><?php esc_html_e( 'The cache cannot be cleared without a working API key. The books on your site are shown from it, and would disappear.', 'endpaper' ); ?></p>
-		<?php endif; ?>
+					<p><?php esc_html_e( 'Endpaper saves what it fetches from Hardcover, so your pages stay fast. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. Clear the cache to fetch everything again now, for example after changing something on Hardcover.', 'endpaper' ); ?></p>
 
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<input type="hidden" name="action" value="endpaper_clear_cache" />
-			<?php wp_nonce_field( 'endpaper_clear_cache' ); ?>
-			<?php submit_button( __( 'Clear the cache', 'endpaper' ), 'secondary', 'endpaper-clear-cache', true, $key_trouble ? array( 'disabled' => 'disabled' ) : null ); ?>
-		</form>
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+						<input type="hidden" name="action" value="endpaper_clear_cache" />
+						<?php wp_nonce_field( 'endpaper_clear_cache' ); ?>
+						<?php submit_button( __( 'Clear the cache', 'endpaper' ), 'secondary', 'endpaper-clear-cache' ); ?>
+					</form>
+				</section>
+			<?php endif; ?>
 
-		<h2><?php esc_html_e( 'Creating a key', 'endpaper' ); ?></h2>
+			<section class="endpaper-card" aria-labelledby="endpaper-key-title">
+				<h2 id="endpaper-key-title"><?php esc_html_e( 'About your key', 'endpaper' ); ?></h2>
 
-		<ol>
-			<li><?php esc_html_e( 'Open the form for a new key on Hardcover with the button below. The permissions Endpaper needs are already ticked.', 'endpaper' ); ?></li>
-			<li><?php esc_html_e( 'Give the key a name, and choose when it expires. With “Never” you will not have to replace it.', 'endpaper' ); ?></li>
-			<li><?php esc_html_e( 'Create the key, copy it, and paste it into the field above.', 'endpaper' ); ?></li>
-		</ol>
+				<details class="endpaper-disclosure"<?php echo $has_token ? '' : ' open'; ?>>
+					<summary><?php esc_html_e( 'What the key allows', 'endpaper' ); ?></summary>
 
-		<p>
-			<a class="button button-secondary" href="<?php echo esc_url( get_new_key_url() ); ?>" target="_blank" rel="noopener">
-				<?php esc_html_e( 'Create a key on Hardcover', 'endpaper' ); ?>
-				<span class="screen-reader-text"><?php esc_html_e( '(opens in a new tab)', 'endpaper' ); ?></span>
-			</a>
-		</p>
+					<p><?php esc_html_e( 'The button for creating a key asks for these permissions and nothing else:', 'endpaper' ); ?></p>
 
-		<h2><?php esc_html_e( 'What the key allows', 'endpaper' ); ?></h2>
+					<table class="widefat striped endpaper-scopes">
+						<tbody>
+							<?php foreach ( $scopes as $endpaper_scope => $endpaper_purpose ) : ?>
+								<tr>
+									<td><code><?php echo esc_html( $endpaper_scope ); ?></code></td>
+									<td><?php echo esc_html( $endpaper_purpose ); ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
 
-		<p><?php esc_html_e( 'The button asks for these permissions and nothing else:', 'endpaper' ); ?></p>
+					<p class="description">
+						<?php esc_html_e( 'A key cannot be changed once it is created, which is why the last two are included now. None of these let Endpaper change anything on Hardcover, or read anything you have not made public.', 'endpaper' ); ?>
+					</p>
+				</details>
 
-		<table class="widefat striped">
-			<tbody>
-				<?php foreach ( $scopes as $endpaper_scope => $endpaper_purpose ) : ?>
-					<tr>
-						<td><code><?php echo esc_html( $endpaper_scope ); ?></code></td>
-						<td><?php echo esc_html( $endpaper_purpose ); ?></td>
-					</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
+				<details class="endpaper-disclosure"<?php echo $has_token ? '' : ' open'; ?>>
+					<summary><?php esc_html_e( 'How your key is kept safe', 'endpaper' ); ?></summary>
 
-		<p class="description">
-			<?php esc_html_e( 'A key cannot be changed once it is created, which is why the last two are included now. None of these let Endpaper change anything on Hardcover, or read anything you have not made public.', 'endpaper' ); ?>
-		</p>
+					<ul class="ul-disc">
+						<li><?php esc_html_e( 'It is only sent to Hardcover. Your server makes all the requests, so the key never reaches your visitors’ browsers, the page source or the editor.', 'endpaper' ); ?></li>
+						<li><?php esc_html_e( 'It is never shown again. Once saved, nobody can read it back from this screen, administrators included.', 'endpaper' ); ?></li>
+						<li><?php esc_html_e( 'It can only read. The permissions above do not let anyone change your Hardcover account, or see anything you have not made public.', 'endpaper' ); ?></li>
+						<li><?php esc_html_e( 'It is removed with the plugin. Deleting Endpaper deletes the key.', 'endpaper' ); ?></li>
+					</ul>
 
-		<h2><?php esc_html_e( 'How your key is kept safe', 'endpaper' ); ?></h2>
+					<p><?php esc_html_e( 'The key is stored in your site’s database as it is, not encrypted, which is how WordPress stores settings. Anyone who can read the database, or a backup of it, can read the key. If you think it has got out, delete it on Hardcover and create a new one: the old key stops working at once.', 'endpaper' ); ?></p>
 
-		<ul class="ul-disc">
-			<li><?php esc_html_e( 'It is only sent to Hardcover. Your server makes all the requests, so the key never reaches your visitors’ browsers, the page source or the editor.', 'endpaper' ); ?></li>
-			<li><?php esc_html_e( 'It is never shown again. Once saved, nobody can read it back from this screen, administrators included.', 'endpaper' ); ?></li>
-			<li><?php esc_html_e( 'It can only read. The permissions above do not let anyone change your Hardcover account, or see anything you have not made public.', 'endpaper' ); ?></li>
-			<li><?php esc_html_e( 'It is removed with the plugin. Deleting Endpaper deletes the key.', 'endpaper' ); ?></li>
-		</ul>
+					<p>
+						<?php
+						printf(
+							/* translators: 1: The name of a PHP constant, 2: A file name. */
+							esc_html__( 'To keep the key out of the database, define it as %1$s in %2$s instead. This screen then stops asking for it.', 'endpaper' ),
+							'<code>ENDPAPER_HARDCOVER_TOKEN</code>',
+							'<code>wp-config.php</code>'
+						);
+						?>
+					</p>
+				</details>
+			</section>
 
-		<p><?php esc_html_e( 'The key is stored in your site’s database as it is, not encrypted, which is how WordPress stores settings. Anyone who can read the database, or a backup of it, can read the key. If you think it has got out, delete it on Hardcover and create a new one: the old key stops working at once.', 'endpaper' ); ?></p>
+			<section class="endpaper-card" aria-labelledby="endpaper-help-title">
+				<h2 id="endpaper-help-title"><?php esc_html_e( 'Help', 'endpaper' ); ?></h2>
 
-		<p>
-			<?php
-			printf(
-				/* translators: 1: The name of a PHP constant, 2: A file name. */
-				esc_html__( 'To keep the key out of the database, define it as %1$s in %2$s instead. This screen then stops asking for it.', 'endpaper' ),
-				'<code>ENDPAPER_HARDCOVER_TOKEN</code>',
-				'<code>wp-config.php</code>'
-			);
-			?>
-		</p>
+				<p><?php esc_html_e( 'Endpaper is an independent plugin and is not affiliated with Hardcover. If something is not working, please ask in the plugin’s own support forum, not at Hardcover.', 'endpaper' ); ?></p>
+
+				<p><a href="<?php echo esc_url( ENDPAPER_SUPPORT_URL ); ?>"><?php esc_html_e( 'Endpaper support forum on WordPress.org', 'endpaper' ); ?></a></p>
+			</section>
+
+		</div>
 	</div>
+	<?php
+}
+
+/**
+ * Outputs how to create an API key, with the button that opens Hardcover's form.
+ *
+ * @return void
+ */
+function the_key_steps() {
+	?>
+	<ol>
+		<li><?php esc_html_e( 'Open the form for a new key on Hardcover with the button below. The permissions Endpaper needs are already ticked.', 'endpaper' ); ?></li>
+		<li><?php esc_html_e( 'Give the key a name, and choose when it expires. With “Never” you will not have to replace it.', 'endpaper' ); ?></li>
+		<li><?php esc_html_e( 'Create the key, copy it, and paste it into the field on this screen.', 'endpaper' ); ?></li>
+	</ol>
+
+	<p>
+		<a class="button button-secondary" href="<?php echo esc_url( get_new_key_url() ); ?>" target="_blank" rel="noopener">
+			<?php esc_html_e( 'Create a key on Hardcover', 'endpaper' ); ?>
+			<span class="screen-reader-text"><?php esc_html_e( '(opens in a new tab)', 'endpaper' ); ?></span>
+		</a>
+	</p>
 	<?php
 }

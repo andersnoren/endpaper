@@ -1,0 +1,133 @@
+/*
+ * The settings screen. It keeps to the look of the WordPress admin, with no
+ * colors of the plugin's own.
+ */
+
+.endpaper-settings__intro {
+	font-size: 14px;
+	max-width: 720px;
+}
+
+.endpaper-settings__column {
+	display: grid;
+	gap: 16px;
+	margin-top: 16px;
+	max-width: 720px;
+}
+
+.endpaper-settings > .notice.inline {
+	box-sizing: border-box;
+	margin: 16px 0 0;
+	max-width: 720px;
+}
+
+.endpaper-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	padding: 20px 24px;
+}
+
+.endpaper-card > :first-child {
+	margin-top: 0;
+}
+
+.endpaper-card > :last-child,
+.endpaper-card > form:last-child > :last-child {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.endpaper-card h2 {
+	font-size: 16px;
+	margin: 0 0 12px;
+}
+
+.endpaper-card .notice.inline {
+	margin: 0;
+}
+
+.endpaper-card--connection ol,
+.endpaper-card--connection form {
+	margin-top: 20px;
+}
+
+.endpaper-card ol,
+.endpaper-card ul {
+	margin-bottom: 16px;
+	margin-top: 0;
+}
+
+.endpaper-card .submit {
+	margin: 16px 0 0;
+	padding: 0;
+}
+
+/* The field for the key, with its label above it. */
+.endpaper-field__label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 6px;
+}
+
+.endpaper-field .regular-text {
+	max-width: 100%;
+	width: 100%;
+}
+
+.endpaper-field__option {
+	margin: 12px 0 0;
+}
+
+/* Sections that open when their heading is clicked. */
+.endpaper-disclosure {
+	border-top: 1px solid #dcdcde;
+}
+
+.endpaper-disclosure:last-child {
+	margin-bottom: -8px;
+}
+
+.endpaper-disclosure > summary {
+	cursor: pointer;
+	font-weight: 600;
+	padding: 12px 0;
+}
+
+.endpaper-disclosure > summary:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.endpaper-disclosure > :last-child:not(summary) {
+	margin-bottom: 16px;
+}
+
+.endpaper-disclosure > :nth-child(2) {
+	margin-top: 4px;
+}
+
+.endpaper-card--connection .endpaper-disclosure {
+	margin-top: 24px;
+}
+
+.endpaper-card--connection .endpaper-disclosure ol {
+	margin-top: 4px;
+}
+
+.endpaper-scopes td:first-child {
+	white-space: nowrap;
+	width: 1%;
+}
+
+@media (max-width: 600px) {
+
+	.endpaper-card {
+		padding: 16px;
+	}
+
+	.endpaper-scopes td:first-child {
+		white-space: normal;
+		width: auto;
+	}
+}
