@@ -103,8 +103,8 @@ if ( ! empty( $attributes['showReview'] ) && ! empty( $endpaper_entry['review'] 
 		$endpaper_entry['review'],
 		isset( $attributes['reviewLength'] ) ? absint( $attributes['reviewLength'] ) : 300
 	);
-	$endpaper_is_review = true;
-	$endpaper_spoilers  = ! empty( $endpaper_entry['spoilers'] );
+	$endpaper_is_review   = true;
+	$endpaper_spoilers    = ! empty( $endpaper_entry['spoilers'] );
 } elseif ( ! empty( $attributes['showDescription'] ) ) {
 	$endpaper_description = trim_to_sentence(
 		$endpaper_book['description'],
