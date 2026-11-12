@@ -69,9 +69,8 @@
 
 /*
  * The count with the percentage after it, and what is left of the time at the
- * far end. On a short line the percentage moves down first, then the days
- * left. The figures have no set width, so they give way to the days left,
- * but never narrower than the count itself.
+ * far end. The count and the percentage stay on one line. On a short line the
+ * days left move down instead.
  */
 .endpaper-reading-goal__summary {
 	align-items: baseline;
@@ -83,18 +82,17 @@
 .endpaper-reading-goal__figures {
 	flex: 1 1 0;
 	min-width: min-content;
+	white-space: nowrap;
 }
 
 /* How far along the goal is, in bold, with a space before the percentage. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__amount {
 	display: inline;
 	font-weight: 700;
-	white-space: nowrap;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__percent {
 	display: inline;
-	white-space: nowrap;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__status {
@@ -105,10 +103,12 @@
  * The bar takes the whole width. The track is 1em tall and the fill sits
  * inside it, with a gap of 1/8em all around: a border that is see-through,
  * so the track shows behind it. The track is a faded accent, which is the
- * text color when no accent is set.
+ * text color when no accent is set. The negative margin takes the space
+ * above it from 1em to 0.75em.
  */
 .endpaper-reading-goal__bar {
 	appearance: none;
+	margin-block-start: -0.25em;
 	background: color-mix(in srgb, #{$accent-color} 20%, transparent);
 	border: 0.125em solid transparent;
 	border-radius: 999px;
