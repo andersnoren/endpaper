@@ -151,6 +151,12 @@
 	@include muted-text;
 }
 
+/* "68% read" stays on one line next to the bar, also in a narrow column. */
+.endpaper-book__progress span {
+	flex: none;
+	white-space: nowrap;
+}
+
 /*
  * The shelf is a pill with a tint of the accent color. The text keeps the
  * normal text color, so it is readable whatever the accent is.

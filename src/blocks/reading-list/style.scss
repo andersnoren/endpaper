@@ -160,6 +160,12 @@ $gap: var(--endpaper-gap, 1.5em);
 	@include muted-text;
 }
 
+/* "68% read" stays on one line next to the bar, also in a narrow column. */
+.endpaper-reading-list__progress span {
+	flex: none;
+	white-space: nowrap;
+}
+
 /* The rating and the date finished, side by side. */
 .endpaper-reading-list__read {
 	align-items: center;
