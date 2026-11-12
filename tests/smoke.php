@@ -338,7 +338,8 @@ try {
 	endpaper_check( 'it renders for an administrator', false !== strpos( $endpaper_html, 'endpaper-token' ) && false !== strpos( $endpaper_html, 'read:library:public' ) );
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
 	endpaper_check( 'it has a button to clear the cache', false !== strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && false === strpos( $endpaper_html, 'disabled' ) );
-	endpaper_check( 'it says the plugin is unofficial, and where to get help', false !== strpos( $endpaper_html, 'It is an unofficial plugin' ) && false !== strpos( $endpaper_html, 'wordpress.org/support/plugin/endpaper/' ) );
+	endpaper_check( 'it says the plugin is unofficial, and where to get help', false !== strpos( $endpaper_html, 'Endpaper is an unofficial plugin' ) && false !== strpos( $endpaper_html, 'not maintained or endorsed by Hardcover' ) && false !== strpos( $endpaper_html, 'wordpress.org/support/plugin/endpaper/' ) );
+	endpaper_check( 'it credits the author, and links to GitHub and the plugin directory', false !== strpos( $endpaper_html, 'https://andersnoren.se' ) && false !== strpos( $endpaper_html, 'github.com/andersnoren/endpaper/issues' ) && false !== strpos( $endpaper_html, 'wordpress.org/plugins/endpaper/' ) );
 	endpaper_check( 'with a key, the explanations are folded away', false === strpos( $endpaper_html, '<details class="endpaper-disclosure" open>' ) );
 	endpaper_check( 'it links to the form for a new key, with the permissions ticked', false !== strpos( $endpaper_html, 'hardcover.app/account/api/keys/new?scope=read%3Acatalog%20read%3Alibrary%3Apublic%20read%3Ame%3Acontent' ) );
 

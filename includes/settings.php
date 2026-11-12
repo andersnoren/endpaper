@@ -25,6 +25,16 @@ define( 'ENDPAPER_NEW_KEY_URL', 'https://hardcover.app/account/api/keys/new' );
 define( 'ENDPAPER_SUPPORT_URL', 'https://wordpress.org/support/plugin/endpaper/' );
 
 /**
+ * The plugin's page in the WordPress.org plugin directory.
+ */
+define( 'ENDPAPER_DIRECTORY_URL', 'https://wordpress.org/plugins/endpaper/' );
+
+/**
+ * Where feature requests go: the issues of the plugin's repository.
+ */
+define( 'ENDPAPER_ISSUES_URL', 'https://github.com/andersnoren/endpaper/issues' );
+
+/**
  * Returns the URL of the settings screen.
  *
  * @return string The URL.
@@ -494,6 +504,7 @@ function get_new_key_url() {
  * The screen is in the order people need it. Without a key, how to create
  * one comes first, and the questions about what the key allows and how it is
  * kept are open. With a key, those fold away and the cache gets its section.
+ * Help holds the questions, and About Endpaper the credit and the links out.
  *
  * @return void
  */
@@ -516,7 +527,9 @@ function render_settings_page() {
 	<div class="wrap endpaper-settings">
 		<h1><?php esc_html_e( 'Endpaper', 'endpaper' ); ?></h1>
 
-		<p class="endpaper-settings__intro"><?php esc_html_e( 'Endpaper shows books from Hardcover on your site. It is an unofficial plugin: Hardcover did not make it and does not support it.', 'endpaper' ); ?></p>
+		<p class="endpaper-settings__intro"><?php esc_html_e( 'Share what you are reading. Endpaper brings the books, shelves and ratings from your Hardcover library to your site, in blocks that take on the look of your theme.', 'endpaper' ); ?></p>
+
+		<p class="endpaper-settings__disclosure"><?php esc_html_e( 'Endpaper is an unofficial plugin. It is not maintained or endorsed by Hardcover.', 'endpaper' ); ?></p>
 
 		<?php if ( 'cleared' === $cache_result ) : ?>
 			<div class="notice notice-success inline is-dismissible"><p><?php esc_html_e( 'The cache was cleared. Everything is fetched from Hardcover again the next time it is shown.', 'endpaper' ); ?></p></div>
@@ -603,8 +616,8 @@ function render_settings_page() {
 				</section>
 			<?php endif; ?>
 
-			<section class="endpaper-card" aria-labelledby="endpaper-faq-title">
-				<h2 id="endpaper-faq-title"><?php esc_html_e( 'Frequently asked questions', 'endpaper' ); ?></h2>
+			<section class="endpaper-card" aria-labelledby="endpaper-help-title">
+				<h2 id="endpaper-help-title"><?php esc_html_e( 'Help', 'endpaper' ); ?></h2>
 
 				<h3><?php esc_html_e( 'About your key', 'endpaper' ); ?></h3>
 
@@ -657,7 +670,7 @@ function render_settings_page() {
 				the_faq_item(
 					__( 'What happens when my key expires?', 'endpaper' ),
 					array(
-						__( 'Hardcover keys can have an end date. When Hardcover stops accepting the key, the blocks keep showing what they last fetched, for up to a month. You will see a notice here in the admin, and Site Health reports it too.', 'endpaper' ),
+						__( 'Hardcover keys can have an end date. When Hardcover stops accepting the key, the blocks keep showing what they last fetched, for as long as the cached version lasts. You will see a notice here in the admin, and Site Health reports it too.', 'endpaper' ),
 						__( 'Save a new key and everything picks up again.', 'endpaper' ),
 					)
 				);
@@ -684,32 +697,37 @@ function render_settings_page() {
 				the_faq_item(
 					__( 'Can I choose which cover a book has?', 'endpaper' ),
 					array(
-						__( 'Yes. A book shows the cover of the edition in your library, if it is there, and otherwise Hardcover’s cover for the book. To pick another edition’s cover, select the Book block and open “Cover” in the block settings.', 'endpaper' ),
+						__( 'Yes. A book shows the cover of the edition in your library, if it is there, and otherwise Hardcover’s default cover for the book. To pick another edition’s cover, select the Book block and open “Cover” in the block settings.', 'endpaper' ),
 					)
 				);
 
 				the_faq_item(
 					__( 'Can I change how the blocks look?', 'endpaper' ),
 					array(
-						__( 'Yes. The blocks take their fonts and colors from your theme, and both support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in theme.json.', 'endpaper' ),
+						__( 'Yes. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in theme.json.', 'endpaper' ),
 					)
 				);
 				?>
 
 				<h3><?php esc_html_e( 'About the plugin', 'endpaper' ); ?></h3>
 
+				<details class="endpaper-disclosure">
+					<summary><?php esc_html_e( 'Is this an official Hardcover plugin?', 'endpaper' ); ?></summary>
+					<p>
+						<?php
+						printf(
+							/* translators: %s: A link to the plugin's support forum. */
+							esc_html__( 'No. Endpaper is created independently, using Hardcover’s public API. Hardcover does not maintain or endorse it. For questions about the plugin, use the %s.', 'endpaper' ),
+							'<a href="' . esc_url( ENDPAPER_SUPPORT_URL ) . '">' . esc_html__( 'Endpaper support forum on WordPress.org', 'endpaper' ) . '</a>'
+						);
+						?>
+					</p>
+				</details>
 				<?php
-				the_faq_item(
-					__( 'Is this an official Hardcover plugin?', 'endpaper' ),
-					array(
-						__( 'No. Endpaper is made independently, using Hardcover’s public API. Hardcover does not make or support it. Questions about the plugin belong in its own support forum.', 'endpaper' ),
-					)
-				);
-
 				the_faq_item(
 					__( 'Will the blocks slow my site down?', 'endpaper' ),
 					array(
-						__( 'No. Hardcover is not asked on every page view, because what Endpaper fetches is saved on your site. If Hardcover cannot be reached, the blocks show the last copy they have.', 'endpaper' ),
+						__( 'No. Endpaper saves what it fetches on your site, so your pages do not wait for Hardcover each time they are viewed. If Hardcover cannot be reached, the blocks show the last copy they have.', 'endpaper' ),
 					)
 				);
 
@@ -720,14 +738,44 @@ function render_settings_page() {
 					)
 				);
 				?>
+
+				<h3><?php esc_html_e( 'Other questions', 'endpaper' ); ?></h3>
+
+				<p>
+					<?php
+					printf(
+						/* translators: %s: A link to the plugin's support forum. */
+						esc_html__( 'Did not find your answer? Ask in the %s. Please do not contact Hardcover about the plugin, since they do not maintain it.', 'endpaper' ),
+						'<a href="' . esc_url( ENDPAPER_SUPPORT_URL ) . '">' . esc_html__( 'Endpaper support forum on WordPress.org', 'endpaper' ) . '</a>'
+					);
+					?>
+				</p>
 			</section>
 
-			<section class="endpaper-card" aria-labelledby="endpaper-help-title">
-				<h2 id="endpaper-help-title"><?php esc_html_e( 'Help', 'endpaper' ); ?></h2>
+			<section class="endpaper-card" aria-labelledby="endpaper-about-title">
+				<h2 id="endpaper-about-title"><?php esc_html_e( 'About Endpaper', 'endpaper' ); ?></h2>
 
-				<p><?php esc_html_e( 'Endpaper is an independent plugin and is not affiliated with Hardcover. If something is not working, please ask in the plugin’s own support forum, not at Hardcover.', 'endpaper' ); ?></p>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: The name of the plugin's author, linked to his website. */
+						esc_html__( 'Endpaper is a free, open source plugin created by %s.', 'endpaper' ),
+						'<a href="https://andersnoren.se">Anders Norén</a>'
+					);
+					?>
+					<?php
+					printf(
+						/* translators: %s: A link to the plugin's issues on GitHub. */
+						esc_html__( 'Have an idea for a feature? %s.', 'endpaper' ),
+						'<a href="' . esc_url( ENDPAPER_ISSUES_URL ) . '">' . esc_html__( 'Suggest it on GitHub', 'endpaper' ) . '</a>'
+					);
+					?>
+				</p>
 
-				<p><a href="<?php echo esc_url( ENDPAPER_SUPPORT_URL ); ?>"><?php esc_html_e( 'Endpaper support forum on WordPress.org', 'endpaper' ); ?></a></p>
+				<div class="endpaper-review">
+					<p><strong><?php esc_html_e( 'Enjoying Endpaper?', 'endpaper' ); ?></strong> <?php esc_html_e( 'A review on WordPress.org helps other readers find it.', 'endpaper' ); ?></p>
+					<a class="button button-secondary" href="<?php echo esc_url( ENDPAPER_DIRECTORY_URL ); ?>"><?php esc_html_e( 'Leave a review', 'endpaper' ); ?></a>
+				</div>
 			</section>
 
 		</div>

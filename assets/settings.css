@@ -5,6 +5,14 @@
 
 .endpaper-settings__intro {
 	font-size: 14px;
+	margin-bottom: 6px;
+	max-width: 720px;
+}
+
+/* The line that says the plugin is unofficial: quieter than the intro. */
+.endpaper-settings__disclosure {
+	color: #646970;
+	margin-top: 0;
 	max-width: 720px;
 }
 
@@ -137,6 +145,22 @@
 .endpaper-scopes td:first-child {
 	white-space: nowrap;
 	width: 1%;
+}
+
+/* The invitation to review the plugin: the words on one side, the button on the other. */
+.endpaper-review {
+	align-items: center;
+	border-top: 1px solid #dcdcde;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 24px;
+	justify-content: space-between;
+	margin-top: 20px;
+	padding-top: 20px;
+}
+
+.endpaper-review p {
+	margin: 0;
 }
 
 @media (max-width: 600px) {
