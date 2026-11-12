@@ -123,7 +123,7 @@ $endpaper_show_rating = ! empty( $attributes['showRating'] ) && $endpaper_book['
 // How large the cover is: a class for the styles, and its width for the browser to pick a file by.
 $endpaper_cover_size  = isset( $attributes['coverSize'] ) && in_array( $attributes['coverSize'], array( 'small', 'large' ), true ) ? $attributes['coverSize'] : 'medium';
 $endpaper_cover_sizes = array(
-	'small'  => '(max-width: 600px) 22vw, 128px',
+	'small'  => '(max-width: 600px) 18vw, 96px',
 	'medium' => '(max-width: 600px) 30vw, 192px',
 	'large'  => '(max-width: 600px) 40vw, 256px',
 );
