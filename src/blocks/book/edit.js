@@ -436,7 +436,10 @@ export default function Edit( {
 					/>
 				</PanelBody>
 
-				<PanelBody title={ __( 'Layout', 'endpaper' ) }>
+				<PanelBody
+					title={ __( 'Layout', 'endpaper' ) }
+					initialOpen={ false }
+				>
 					{ attributes.showCover && (
 						<>
 							<ToggleGroupControl
