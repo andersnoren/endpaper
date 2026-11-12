@@ -9,6 +9,17 @@
 	"description": "Embed a book from Hardcover with its cover, description and rating.",
 	"keywords": [ "hardcover", "reading", "endpaper" ],
 	"textdomain": "endpaper",
+	"styles": [
+		{
+			"name": "default",
+			"label": "Default",
+			"isDefault": true
+		},
+		{
+			"name": "card",
+			"label": "Card"
+		}
+	],
 	"attributes": {
 		"bookId": {
 			"type": "integer"

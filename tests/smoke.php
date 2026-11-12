@@ -393,6 +393,7 @@ try {
 	echo "The Book block\n";
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showShelf":true,"showProgress":true} /-->' );
 	endpaper_check( 'it renders a card', false !== strpos( $endpaper_html, 'endpaper-book__card' ) );
+	endpaper_check( 'the book has no frame unless it is given one', false === strpos( $endpaper_html, 'endpaper-book__card--framed' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"style":{"border":{"width":"1px"}}} /-->' ), 'endpaper-book__card--framed' ) );
 	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '"Complete"' ) && false !== strpos( $endpaper_html, 'Complete' ) );
 	endpaper_check( 'it shows the reading progress', false !== strpos( $endpaper_html, '<progress' ) );
 	endpaper_check( 'it shows the owner’s rating as stars, next to the progress', false !== strpos( $endpaper_html, 'endpaper-book__my-rating' ) && false !== strpos( $endpaper_html, 'endpaper-icon--star-half' ) && false !== strpos( $endpaper_html, 'Rated 3.5 out of 5' ) );

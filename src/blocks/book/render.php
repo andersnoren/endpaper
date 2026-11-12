@@ -17,6 +17,7 @@ use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_book;
 use function AndersNoren\Endpaper\get_book_end_time;
 use function AndersNoren\Endpaper\get_card_style;
+use function AndersNoren\Endpaper\has_card_frame;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_edition;
 use function AndersNoren\Endpaper\get_library_entry;
@@ -155,7 +156,7 @@ $endpaper_wrapper = get_block_wrapper_attributes(
 $endpaper_card_style = get_card_style( $attributes );
 ?>
 <div <?php echo $endpaper_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<div class="endpaper-book__card"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
+	<div class="endpaper-book__card<?php echo has_card_frame( $attributes ) ? ' endpaper-book__card--framed' : ''; ?>"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
 
 		<?php if ( ! empty( $attributes['showCover'] ) ) : ?>
 			<figure class="endpaper-book__cover">
