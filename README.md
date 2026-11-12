@@ -81,9 +81,10 @@ A few settings are specific to Endpaper. A theme sets their defaults under `sett
 - `mutedText` is the opacity of secondary text, such as the date of a review. The default is 0.75.
 - `mutedElement` is the opacity of small marks, such as the dots between facts and the line beside a quote. The default is 0.33.
 - `hover` is the opacity links and logos fade to under the pointer. The default is 0.75.
+- `accentFaded` is how strong the accent color is as the background of the shelf label. The default is 0.15, or 0.25 in the Card style.
 - `columnMin` is the narrowest a column in the Reading List grid gets. The default is 10em. A narrow card gets fewer columns, down to one.
 
-The same values can be set as CSS variables, `--endpaper-muted-text`, `--endpaper-muted-element`, `--endpaper-hover` and `--endpaper-column-min`, on the block or anywhere above it.
+The same values can be set as CSS variables, `--endpaper-muted-text`, `--endpaper-muted-element`, `--endpaper-hover`, `--endpaper-accent-faded` and `--endpaper-column-min`, on the block or anywhere above it.
 
 The space between the items in a Reading List grid has two more CSS variables, `--endpaper-row-gap` (default 1.5em) and `--endpaper-column-gap` (default 1.5em, or 4% of the width if that is smaller). They aren’t theme.json settings. If a block has a gap set in the editor, that value is used for both unless one of these is set.
 

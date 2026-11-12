@@ -71,6 +71,10 @@
 	.endpaper-book__spoilers summary {
 		color: inherit;
 	}
+
+	.endpaper-book__shelf span {
+		background: $accent-faded-color-card;
+	}
 }
 
 .wp-block-endpaper-book {
@@ -418,7 +422,7 @@
  * normal text color, so it is readable whatever the accent is.
  */
 .endpaper-book__shelf span {
-	background: color-mix(in srgb, $accent-color 15%, transparent);
+	background: $accent-faded-color;
 	border-radius: 999px;
 	display: inline-block;
 	font-size: 0.875em;
