@@ -52,13 +52,19 @@ const TITLE_LEVELS = [ 0, 2, 3, 4, 5, 6 ];
 const CURRENTLY_READING = 2;
 
 /**
- * The parts of the book that can be shown or hidden, in display order.
+ * The parts of the book itself that can be shown or hidden, in display order.
  */
 const DISPLAY_TOGGLES = [
 	{ attribute: 'showCover', label: __( 'Cover', 'endpaper' ) },
 	{ attribute: 'showAuthors', label: __( 'Authors', 'endpaper' ) },
 	{ attribute: 'showMeta', label: __( 'Year and page count', 'endpaper' ) },
 	{ attribute: 'showRating', label: __( 'Hardcover rating', 'endpaper' ) },
+];
+
+/**
+ * The parts that come from the site owner's own activity on the book.
+ */
+const READING_TOGGLES = [
 	{ attribute: 'showShelf', label: __( 'Your shelf', 'endpaper' ) },
 	{ attribute: 'showUserRating', label: __( 'Your rating', 'endpaper' ) },
 	{
@@ -280,6 +286,24 @@ export default function Edit( {
 		);
 	}
 
+	// A list of switches. Those that only apply to a certain shelf stay hidden until the shelf is known.
+	const renderToggles = ( toggles ) =>
+		toggles
+			.filter(
+				( { onlyOnShelf } ) => ! onlyOnShelf || onlyOnShelf === shelf
+			)
+			.map( ( { attribute, label } ) => (
+				<ToggleControl
+					key={ attribute }
+					__nextHasNoMarginBottom
+					label={ label }
+					checked={ !! attributes[ attribute ] }
+					onChange={ ( value ) =>
+						setAttributes( { [ attribute ]: value } )
+					}
+				/>
+			) );
+
 	return (
 		<>
 			<BlockControls group="block">
@@ -313,34 +337,33 @@ export default function Edit( {
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Display', 'endpaper' ) }>
+					{ renderToggles( DISPLAY_TOGGLES ) }
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Your reading', 'endpaper' ) }
+					initialOpen={ false }
+				>
 					<p className="endpaper-panel-note">
 						{ __(
-							'Your shelf, rating and progress show only if your activity on the book is public on Hardcover.',
+							'These show only if your activity on the book is public on Hardcover.',
 							'endpaper'
 						) }
 					</p>
-					{ DISPLAY_TOGGLES.filter(
-						( { onlyOnShelf } ) =>
-							! onlyOnShelf || onlyOnShelf === shelf
-					).map( ( { attribute, label } ) => (
-						<ToggleControl
-							key={ attribute }
-							__nextHasNoMarginBottom
-							label={ label }
-							checked={ !! attributes[ attribute ] }
-							onChange={ ( value ) =>
-								setAttributes( { [ attribute ]: value } )
-							}
-						/>
-					) ) }
+					{ renderToggles( READING_TOGGLES ) }
+				</PanelBody>
 
+				<PanelBody
+					title={ __( 'Text', 'endpaper' ) }
+					initialOpen={ false }
+				>
 					<ToggleGroupControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						isBlock
-						label={ __( 'Text', 'endpaper' ) }
+						label={ __( 'Show', 'endpaper' ) }
 						help={ __(
-							'Review shows your public review from Hardcover. Without one, the description is shown.',
+							'Review falls back to the description if you have no public review.',
 							'endpaper'
 						) }
 						value={ getTextMode( attributes ) }
@@ -374,10 +397,7 @@ export default function Edit( {
 									? __( 'Review length', 'endpaper' )
 									: __( 'Description length', 'endpaper' )
 							}
-							help={ __(
-								'The most characters to show, ending on a whole sentence. 0 shows everything.',
-								'endpaper'
-							) }
+							help={ __( '0 shows everything.', 'endpaper' ) }
 							min={ 0 }
 							max={ 1000 }
 							step={ 20 }
@@ -389,12 +409,16 @@ export default function Edit( {
 							}
 						/>
 					) }
+				</PanelBody>
 
+				<PanelBody
+					title={ __( 'Hardcover', 'endpaper' ) }
+					initialOpen={ false }
+				>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Link to Hardcover', 'endpaper' ) }
-						help={ __(
-							'Links the title and cover to the book on Hardcover.',
+						label={ __(
+							'Link title and cover to Hardcover',
 							'endpaper'
 						) }
 						checked={ !! attributes.linkToHardcover }
@@ -405,10 +429,6 @@ export default function Edit( {
 					<ToggleControl
 						__nextHasNoMarginBottom
 						label={ __( 'Hardcover logo', 'endpaper' ) }
-						help={ __(
-							'Credits Hardcover with their logo, linked to the book there.',
-							'endpaper'
-						) }
 						checked={ !! attributes.showCredit }
 						onChange={ ( showCredit ) =>
 							setAttributes( { showCredit } )
