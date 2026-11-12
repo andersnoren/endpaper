@@ -1,3 +1,5 @@
+![Endpaper: book blocks for WordPress, powered by Hardcover](.wordpress-org/banner-1544x500.png)
+
 # Endpaper
 
 Book blocks for WordPress, powered by [Hardcover](https://hardcover.app).
