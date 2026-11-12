@@ -154,7 +154,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						__next40pxDefaultSize
 						label={ __( 'Status', 'endpaper' ) }
 						help={ __(
-							'Only books where your activity is public on Hardcover are shown.',
+							'Only shows books with public activity on Hardcover.',
 							'endpaper'
 						) }
 						value={ attributes.status }
