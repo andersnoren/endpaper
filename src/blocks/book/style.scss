@@ -201,6 +201,11 @@
 	overflow-wrap: anywhere;
 }
 
+/* A line of text is easier to read when it is not too long. */
+.endpaper-book__description {
+	max-width: min(100%, 40em);
+}
+
 .endpaper-book__header {
 	display: flex;
 	flex-direction: column;
