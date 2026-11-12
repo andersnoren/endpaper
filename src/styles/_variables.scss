@@ -24,23 +24,27 @@ $track-color: color-mix(in srgb, currentcolor 20%, transparent);
 /*
  * How faded things are, as opacities from 0 to 1. Each can be changed with a
  * CSS variable, or in theme.json under settings.custom.endpaper (mutedText,
- * mutedElement, hover and accentFaded).
+ * mutedElement, hover, logoHover and accentFaded).
  *
  * - Muted text is secondary text, such as the review date.
  * - Muted elements are small marks, such as the dots between facts and the
  *   line beside a quote.
- * - Hover is what links and logos fade to under the pointer.
+ * - Hover is what links and covers fade to under the pointer.
+ * - Logo hover is what the Hardcover logo fades to. It is lower, since the
+ *   logo has no underline or other sign that it is a link.
  * - Accent faded is how much of the accent color the shelf label has as its
  *   background.
  */
 $muted-opacity-text: var(--endpaper-muted-text, var(--wp--custom--endpaper--muted-text, 0.75));
 $muted-opacity-element: var(--endpaper-muted-element, var(--wp--custom--endpaper--muted-element, 0.33));
 $hover-opacity: var(--endpaper-hover, var(--wp--custom--endpaper--hover, 0.75));
+$logo-hover-opacity: var(--endpaper-logo-hover, var(--wp--custom--endpaper--logo-hover, 0.5));
 $accent-faded-opacity: var(--endpaper-accent-faded, var(--wp--custom--endpaper--accent-faded, 0.15));
 
 $muted-color-text: color-mix(in srgb, currentcolor calc(#{$muted-opacity-text} * 100%), transparent);
 $muted-color-element: color-mix(in srgb, currentcolor calc(#{$muted-opacity-element} * 100%), transparent);
 $hover-color: color-mix(in srgb, currentcolor calc(#{$hover-opacity} * 100%), transparent);
+$logo-hover-color: color-mix(in srgb, currentcolor calc(#{$logo-hover-opacity} * 100%), transparent);
 $accent-faded-color: color-mix(in srgb, #{$accent-color} calc(#{$accent-faded-opacity} * 100%), transparent);
 
 /* The narrowest a column in the Reading List grid gets. */

@@ -245,7 +245,7 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
  * changes opacity to a layer of its own, which makes the logo shift a little.
  */
 .endpaper-reading-list__credit:hover {
-	color: $hover-color;
+	color: $logo-hover-color;
 }
 
 .endpaper-reading-list__credit .endpaper-logo {
