@@ -211,7 +211,7 @@ $gap: var(--endpaper-gap, 1.5em);
 
 /*
  * The credit to Hardcover: their logo under the list, lined up with it, and
- * inside the frame if the list has one. It is 18px tall at the default size,
+ * inside the frame if the list has one. It is 16px tall at the default size,
  * and scales with the font size.
  */
 .wp-block-endpaper-reading-list .endpaper-reading-list__credit {
@@ -228,7 +228,7 @@ $gap: var(--endpaper-gap, 1.5em);
 .endpaper-reading-list__credit .endpaper-logo {
 	display: block;
 	fill: currentcolor;
-	height: 1.125em;
+	height: 1em;
 	width: auto;
 }
 
