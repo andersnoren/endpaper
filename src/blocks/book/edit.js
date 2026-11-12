@@ -76,10 +76,7 @@ const READING_TOGGLES = [
 	{
 		attribute: 'showReview',
 		label: __( 'Your review', 'endpaper' ),
-		help: __(
-			'Shown in place of the description.',
-			'endpaper'
-		),
+		help: __( 'Shown in place of the description.', 'endpaper' ),
 	},
 ];
 
