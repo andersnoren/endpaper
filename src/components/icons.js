@@ -4,23 +4,12 @@
 import { Path, SVG } from '@wordpress/components';
 
 /**
- * A book. The editor canvas does not load the Dashicons font, so the
- * placeholder in it needs an icon that is drawn, not a font character.
+ * The Dashicons book, the icon the Book block has in the inserter and the
+ * toolbar, drawn as an SVG. The editor canvas does not load the Dashicons
+ * font, so the placeholder in it cannot use the font character.
  */
 export const bookIcon = (
-	<SVG
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="1.5"
-		strokeLinecap="round"
-		strokeLinejoin="round"
-	>
-		<Path
-			fill="none"
-			d="M7 4.75h11.25v14.5H7A1.75 1.75 0 0 1 5.25 17.5v-11A1.75 1.75 0 0 1 7 4.75z"
-		/>
-		<Path fill="none" d="M5.25 17.5A1.75 1.75 0 0 1 7 15.75h11.25" />
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+		<Path d="M16.02 3.01H18.01V18.98H5Q3.75 18.98 2.87 18.11Q1.99 17.23 1.99 16.02V3.98Q1.99 2.77 2.87 1.89Q3.75 1.02 5 1.02H13.98V15H5Q4.57 15 4.28 15.29Q3.98 15.59 3.98 16Q3.98 16.41 4.28 16.7Q4.57 16.99 5 16.99H16.02Z" />
 	</SVG>
 );
