@@ -9,9 +9,6 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 > [!NOTE]
 > Endpaper is an unofficial plugin. It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Please bring questions and requests about the plugin to this repository’s issues, not to Hardcover.
 
-> [!NOTE]
-> Endpaper is an early work in progress. It hasn’t been released yet, and it will change.
-
 ## The Book block
 
 - Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page.
