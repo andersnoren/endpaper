@@ -187,3 +187,18 @@
 		opacity: 0.5;
 	}
 }
+
+/* Covers fade in over the placeholder box once they have loaded. */
+@media (prefers-reduced-motion: no-preference) {
+
+	.endpaper-book-search__cover--image {
+		animation: endpaper-book-search-fade 0.2s ease-out;
+	}
+}
+
+@keyframes endpaper-book-search-fade {
+
+	from {
+		opacity: 0;
+	}
+}

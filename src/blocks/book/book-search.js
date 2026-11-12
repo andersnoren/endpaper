@@ -4,8 +4,11 @@
 import apiFetch from '@wordpress/api-fetch';
 import { Button, Notice, SearchControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+/* eslint-disable import/no-unresolved -- WordPress provides this package in the editor, and the build leaves it out. */
+import { speak } from '@wordpress/a11y';
+/* eslint-enable import/no-unresolved */
 
 /**
  * Internal dependencies
@@ -46,6 +49,30 @@ function highlight( text, term ) {
 }
 
 /**
+ * A result's cover. A missing or broken image falls back to the plain box.
+ *
+ * @param {Object} props       Component props.
+ * @param {string} props.cover Image URL, if the book has one.
+ * @return {Element} The cover element.
+ */
+function Cover( { cover } ) {
+	const [ failed, setFailed ] = useState( false );
+
+	if ( ! cover || failed ) {
+		return <span className="endpaper-book-search__cover" />;
+	}
+
+	return (
+		<img
+			className="endpaper-book-search__cover endpaper-book-search__cover--image"
+			src={ cover }
+			alt=""
+			onError={ () => setFailed( true ) }
+		/>
+	);
+}
+
+/**
  * Search field and result list, shown until a book is picked.
  *
  * Searches go through the plugin's own REST route, which keeps the Hardcover
@@ -61,6 +88,7 @@ export default function BookSearch( { onSelect } ) {
 	const [ status, setStatus ] = useState( 'idle' );
 	const [ message, setMessage ] = useState( '' );
 	const latestRequest = useRef( 0 );
+	const wrapper = useRef( null );
 
 	useEffect( () => {
 		const query = term.trim();
@@ -107,8 +135,64 @@ export default function BookSearch( { onSelect } ) {
 		return () => clearTimeout( timer );
 	}, [ term ] );
 
+	// Tell screen reader users what the search is doing.
+	useEffect( () => {
+		if ( 'loading' === status ) {
+			speak( __( 'Searching…', 'endpaper' ) );
+		} else if ( 'done' === status ) {
+			speak(
+				results.length
+					? sprintf(
+							/* translators: %d: number of books found. */
+							_n(
+								'%d book found.',
+								'%d books found.',
+								results.length,
+								'endpaper'
+							),
+							results.length
+						)
+					: __( 'No books found.', 'endpaper' )
+			);
+		}
+	}, [ status, results.length ] );
+
+	// Arrow keys move between the search field and the results.
+	const moveFocus = ( event ) => {
+		if ( 'ArrowDown' !== event.key && 'ArrowUp' !== event.key ) {
+			return;
+		}
+
+		const items = Array.from(
+			wrapper.current?.querySelectorAll(
+				'.endpaper-book-search__results:not(.endpaper-book-search__results--loading) button'
+			) || []
+		);
+
+		if ( ! items.length ) {
+			return;
+		}
+
+		const index = items.indexOf( event.target );
+		const next = 'ArrowDown' === event.key ? index + 1 : index - 1;
+
+		if ( -1 === index && 'ArrowUp' === event.key ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		if ( next < 0 ) {
+			wrapper.current.querySelector( 'input[type="search"]' )?.focus();
+		} else if ( next < items.length ) {
+			items[ next ].focus();
+		}
+	};
+
 	// Enter on a link to a book on Hardcover picks that book at once, without waiting for it to be listed.
 	const pickLink = ( event ) => {
+		moveFocus( event );
+
 		const url = getBookUrl( term );
 
 		if ( 'Enter' !== event.key || ! url ) {
@@ -162,7 +246,11 @@ export default function BookSearch( { onSelect } ) {
 	return (
 		// The key press comes from the search field inside.
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
-		<div className="endpaper-book-search" onKeyDown={ pickLink }>
+		<div
+			className="endpaper-book-search"
+			ref={ wrapper }
+			onKeyDown={ pickLink }
+		>
 			<SearchControl
 				__nextHasNoMarginBottom
 				label={ __( 'Search for a book', 'endpaper' ) }
@@ -201,7 +289,12 @@ export default function BookSearch( { onSelect } ) {
 			) }
 
 			{ 'done' === status && 0 === results.length && (
-				<p>{ __( 'No books found.', 'endpaper' ) }</p>
+				<p>
+					{ __(
+						'No books found. Try the author’s name or an ISBN, or paste a link to the book’s Hardcover page.',
+						'endpaper'
+					) }
+				</p>
 			) }
 
 			{ 'loading' !== status && results.length > 0 && (
@@ -212,15 +305,7 @@ export default function BookSearch( { onSelect } ) {
 								className="endpaper-book-search__result"
 								onClick={ () => onSelect( book.id ) }
 							>
-								{ book.cover ? (
-									<img
-										className="endpaper-book-search__cover"
-										src={ book.cover }
-										alt=""
-									/>
-								) : (
-									<span className="endpaper-book-search__cover" />
-								) }
+								<Cover cover={ book.cover } />
 								<span className="endpaper-book-search__text">
 									<strong>
 										{ highlight( book.title, term ) }
