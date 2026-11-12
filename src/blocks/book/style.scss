@@ -180,15 +180,19 @@
 	color: inherit;
 	display: block;
 	flex: none;
-	transition: opacity 0.15s ease;
+	transition: color 0.15s ease;
 }
 
 .endpaper-book__credit:only-child {
 	margin-inline-start: auto;
 }
 
+/*
+ * The logo fades by color, not by opacity. Safari moves an element that
+ * changes opacity to a layer of its own, which makes the logo shift a little.
+ */
 .endpaper-book__credit:hover {
-	opacity: 0.75;
+	color: color-mix(in srgb, currentcolor 75%, transparent);
 }
 
 /* The logo is 16px tall at the default size, and scales with the font size. */
