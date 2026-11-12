@@ -36,6 +36,7 @@ import CardPlaceholder from './card-placeholder';
 import EditionPicker from './edition-picker';
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
+import RefreshButton from '../../components/refresh-button';
 import getEditorData from '../../utils/editor-data';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
 import metadata from './block.json';
@@ -102,6 +103,9 @@ export default function Edit( {
 
 	// A book just picked here fades in, and focus moves to the block, so it is not lost with the search field.
 	const [ justPicked, setJustPicked ] = useState( false );
+
+	// Counts how many times the data has been fetched again, so that the preview starts over each time.
+	const [ refreshCount, setRefreshCount ] = useState( 0 );
 	const blockProps = useBlockProps( {
 		ref: wrapper,
 		className: justPicked ? 'endpaper-is-new' : undefined,
@@ -343,6 +347,11 @@ export default function Edit( {
 				</ToolbarGroup>
 			</BlockControls>
 
+			<RefreshButton
+				request={ { kind: 'entry', book_id: attributes.bookId } }
+				onRefreshed={ () => setRefreshCount( ( count ) => count + 1 ) }
+			/>
+
 			<InspectorControls>
 				<PanelBody title={ __( 'Display', 'endpaper' ) }>
 					{ renderToggles( DISPLAY_TOGGLES ) }
@@ -482,6 +491,7 @@ export default function Edit( {
 
 			<div { ...blockProps }>
 				<ServerSideRender
+					key={ refreshCount }
 					block={ metadata.name }
 					attributes={ getPreviewAttributes( attributes ) }
 					LoadingResponsePlaceholder={ () => (

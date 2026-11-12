@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	BlockControls,
@@ -21,6 +22,7 @@ import ServerSideRender from '@wordpress/server-side-render';
  */
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
+import RefreshButton from '../../components/refresh-button';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
 import metadata from './block.json';
 import './editor.scss';
@@ -126,6 +128,9 @@ function getGapValue( blockGap ) {
  * @return {Element} The editor element.
  */
 export default function Edit( { attributes, clientId, setAttributes } ) {
+	// Counts how many times the data has been fetched again, so that the preview starts over each time.
+	const [ refreshCount, setRefreshCount ] = useState( 0 );
+
 	// The preview is rendered without the Block spacing setting, so the gap is set here.
 	const blockProps = useBlockProps( {
 		style: {
@@ -146,6 +151,15 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 					}
 				/>
 			</BlockControls>
+
+			<RefreshButton
+				request={ {
+					kind: 'list',
+					status_id: attributes.status,
+					limit: attributes.count,
+				} }
+				onRefreshed={ () => setRefreshCount( ( count ) => count + 1 ) }
+			/>
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Books', 'endpaper' ) }>
@@ -223,6 +237,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<ServerSideRender
+					key={ refreshCount }
 					block={ metadata.name }
 					attributes={ getPreviewAttributes( attributes ) }
 				/>

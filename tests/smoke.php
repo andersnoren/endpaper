@@ -450,6 +450,26 @@ try {
 	$endpaper_response = rest_do_request( new WP_REST_Request( 'GET', '/endpaper/v1/editions/42' ) )->get_data();
 	endpaper_check( 'the editor gets the editions and the languages to list first', 2 === count( $endpaper_response['editions'] ) && 'Swedish' === $endpaper_response['languages']['edition'] && get_locale() === $endpaper_response['languages']['site'] );
 
+	// Fetching again marks the saved copy as old and asks Hardcover at once. A second request in a row has to wait.
+	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
+	$endpaper_refresh  = new WP_REST_Request( 'POST', '/endpaper/v1/refresh' );
+	$endpaper_refresh->set_body_params(
+		array(
+			'kind'    => 'entry',
+			'book_id' => 42,
+		)
+	);
+	$endpaper_response = rest_do_request( $endpaper_refresh );
+	endpaper_check( 'a block can be fetched again, and Hardcover is asked once', 200 === $endpaper_response->get_status() && $endpaper_requests + 1 === $GLOBALS['endpaper_api_requests'] );
+	endpaper_check( 'a second request in a row has to wait', 429 === rest_do_request( $endpaper_refresh )->get_status() && $endpaper_requests + 1 === $GLOBALS['endpaper_api_requests'] );
+	delete_transient( 'endpaper_refresh_limit_1' );
+	$endpaper_unknown = new WP_REST_Request( 'POST', '/endpaper/v1/refresh' );
+	$endpaper_unknown->set_body_params( array( 'kind' => 'covers' ) );
+	endpaper_check( 'only the person’s own activity can be fetched again', 400 === rest_do_request( $endpaper_unknown )->get_status() );
+	wp_set_current_user( 0 );
+	endpaper_check( 'people who cannot edit cannot ask for it', in_array( rest_do_request( $endpaper_refresh )->get_status(), array( 401, 403 ), true ) );
+	wp_set_current_user( 1 );
+
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"editionId":103} /-->' );
 	endpaper_check( 'a picked edition decides the cover', false !== strpos( $endpaper_html, 'edition-103.jpg' ) && false === strpos( $endpaper_html, 'edition-entry.jpg' ) );
 

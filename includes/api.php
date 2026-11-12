@@ -89,7 +89,7 @@ function cache_key( $name ) {
  * @return bool Whether the saved copy should be used for now.
  */
 function refresh_later( $kind, $args ) {
-	if ( wp_doing_cron() || wp_doing_ajax() || is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) ) {
+	if ( is_refreshing_now() || wp_doing_cron() || wp_doing_ajax() || is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) ) {
 		return false;
 	}
 
@@ -100,6 +100,24 @@ function refresh_later( $kind, $args ) {
 	}
 
 	return true;
+}
+
+/**
+ * Tells whether something is being fetched again at once, for a person who asked for it.
+ *
+ * Then nothing is left to the background, whatever kind of request it is.
+ *
+ * @param bool|null $set Pass true or false to change it. Leave out to only ask.
+ * @return bool Whether something is being fetched again at once.
+ */
+function is_refreshing_now( $set = null ) {
+	static $refreshing = false;
+
+	if ( null !== $set ) {
+		$refreshing = (bool) $set;
+	}
+
+	return $refreshing;
 }
 
 /**
@@ -125,6 +143,99 @@ function run_refresh( $kind, $args ) {
 	}
 }
 add_action( 'endpaper_refresh', __NAMESPACE__ . '\run_refresh', 10, 2 );
+
+/**
+ * Returns the name a library entry is saved under.
+ *
+ * The token is part of it, so switching to another account starts fresh. The
+ * version changes when the stored shape does.
+ *
+ * @param int $book_id Hardcover book ID.
+ * @return string The name of the saved copy.
+ */
+function get_entry_cache_key( $book_id ) {
+	return cache_key( 'endpaper_entry_v5_' . substr( md5( get_token() ), 0, 10 ) . '_' . absint( $book_id ) );
+}
+
+/**
+ * Returns the name a reading list is saved under.
+ *
+ * @param int $status_id Hardcover status ID.
+ * @param int $limit     Maximum number of books in the list.
+ * @return string The name of the saved copy.
+ */
+function get_list_cache_key( $status_id, $limit ) {
+	return cache_key( 'endpaper_list_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . absint( $status_id ) . '_' . absint( $limit ) );
+}
+
+/**
+ * Returns the name the reading goals are saved under.
+ *
+ * @return string The name of the saved copy.
+ */
+function get_goals_cache_key() {
+	return cache_key( 'endpaper_goals_v1_' . substr( md5( get_token() ), 0, 10 ) );
+}
+
+/**
+ * Fetches something from Hardcover again at once, for a person who asked for it in the editor.
+ *
+ * The saved copy is marked as old and not removed, so it is still there to
+ * show if Hardcover cannot be reached. A wait after an earlier failure is
+ * ended, since the person asked. Only the person's own activity can be
+ * fetched again this way: a library entry, a reading list or the goals.
+ *
+ * @param string $kind What to fetch again: entry, list or goals.
+ * @param array  $args The arguments of the function that fetches it.
+ * @return true|WP_Error True once it is fetched, or an error.
+ */
+function refresh_now( $kind, $args ) {
+	$args = is_array( $args ) ? array_values( $args ) : array();
+
+	if ( 'entry' === $kind && ! empty( $args[0] ) ) {
+		$cache_key = get_entry_cache_key( $args[0] );
+	} elseif ( 'list' === $kind && isset( $args[0], $args[1] ) ) {
+		$cache_key = get_list_cache_key( $args[0], max( 1, min( 20, absint( $args[1] ) ) ) );
+	} elseif ( 'goals' === $kind ) {
+		$cache_key = get_goals_cache_key();
+	} else {
+		return new WP_Error( 'endpaper_refresh_unknown', __( 'There is nothing to update.', 'endpaper' ), array( 'status' => 400 ) );
+	}
+
+	$cached = get_transient( $cache_key );
+
+	if ( is_array( $cached ) ) {
+		$cached['fetched'] = 0;
+		set_transient( $cache_key, $cached, WEEK_IN_SECONDS );
+	}
+
+	delete_transient( 'endpaper_api_backoff' );
+
+	is_refreshing_now( true );
+
+	if ( 'entry' === $kind ) {
+		$result = get_library_entry( $args[0] );
+	} elseif ( 'list' === $kind ) {
+		$result = get_reading_list( $args[0], $args[1] );
+	} else {
+		$result = get_goals();
+	}
+
+	is_refreshing_now( false );
+
+	if ( is_wp_error( $result ) ) {
+		return $result;
+	}
+
+	// A failed request leaves the old copy to be shown, and a note of what went wrong.
+	$backoff = get_transient( 'endpaper_api_backoff' );
+
+	if ( $backoff ) {
+		return new WP_Error( 'endpaper_refresh_failed', (string) $backoff, array( 'status' => 502 ) );
+	}
+
+	return true;
+}
 
 /**
  * Clears everything Endpaper has fetched from Hardcover, covers included, so that it is fetched again.
@@ -772,7 +883,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = cache_key( 'endpaper_entry_v5_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id );
+	$cache_key = get_entry_cache_key( $book_id );
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
 
@@ -843,7 +954,7 @@ function get_reading_list( $status_id, $limit ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = cache_key( 'endpaper_list_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $status_id . '_' . $limit );
+	$cache_key = get_list_cache_key( $status_id, $limit );
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entries'] ) ? $cached['entries'] : null;
 
@@ -946,7 +1057,7 @@ function normalize_goal( $raw ) {
  */
 function get_goals() {
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = cache_key( 'endpaper_goals_v1_' . substr( md5( get_token() ), 0, 10 ) );
+	$cache_key = get_goals_cache_key();
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['goals'] ) ? $cached['goals'] : null;
 

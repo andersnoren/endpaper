@@ -69,6 +69,35 @@ function register_rest_routes() {
 
 	register_rest_route(
 		'endpaper/v1',
+		'/refresh',
+		array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => __NAMESPACE__ . '\rest_refresh',
+			'permission_callback' => __NAMESPACE__ . '\rest_permission',
+			'args'                => array(
+				'kind'      => array(
+					'type'     => 'string',
+					'required' => true,
+					'enum'     => array( 'entry', 'list', 'goals' ),
+				),
+				'book_id'   => array(
+					'type'              => 'integer',
+					'sanitize_callback' => 'absint',
+				),
+				'status_id' => array(
+					'type'              => 'integer',
+					'sanitize_callback' => 'absint',
+				),
+				'limit'     => array(
+					'type'              => 'integer',
+					'sanitize_callback' => 'absint',
+				),
+			),
+		)
+	);
+
+	register_rest_route(
+		'endpaper/v1',
 		'/editions/(?P<book_id>\d+)',
 		array(
 			'methods'             => WP_REST_Server::READABLE,
@@ -146,6 +175,44 @@ function rest_library_entry( $request ) {
 			'status_id' => isset( $entry['status_id'] ) ? absint( $entry['status_id'] ) : 0,
 		)
 	);
+}
+
+/**
+ * Handles a request to fetch a block's data from Hardcover again.
+ *
+ * It is for the person's own activity: a library entry, a reading list or the
+ * goals. Anyone who can edit posts can ask, so each person has to wait a few
+ * seconds between requests.
+ *
+ * @param WP_REST_Request $request The request.
+ * @return WP_REST_Response|WP_Error A note that it is done, or an error.
+ */
+function rest_refresh( $request ) {
+	$limit_key = 'endpaper_refresh_limit_' . get_current_user_id();
+
+	if ( get_transient( $limit_key ) ) {
+		return new WP_Error( 'endpaper_refresh_limit', __( 'Wait a few seconds and try again.', 'endpaper' ), array( 'status' => 429 ) );
+	}
+
+	set_transient( $limit_key, 1, 10 );
+
+	$kind = (string) $request->get_param( 'kind' );
+
+	if ( 'entry' === $kind ) {
+		$args = array( absint( $request->get_param( 'book_id' ) ) );
+	} elseif ( 'list' === $kind ) {
+		$args = array( absint( $request->get_param( 'status_id' ) ), absint( $request->get_param( 'limit' ) ) );
+	} else {
+		$args = array();
+	}
+
+	$result = refresh_now( $kind, $args );
+
+	if ( is_wp_error( $result ) ) {
+		return $result;
+	}
+
+	return rest_ensure_response( array( 'refreshed' => true ) );
 }
 
 /**

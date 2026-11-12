@@ -95,11 +95,11 @@ No. Endpaper saves what it fetches on your site, so your pages do not wait for H
 
 = Why is a book, my shelf or my rating missing? =
 
-Endpaper only shows what is public. Your shelf, rating and progress for a book appear when your activity on that book is public on Hardcover, and the Reading List leaves out books where it is not. After changing it on Hardcover, clear the cache on the settings screen to see the change right away.
+Endpaper only shows what is public. Your shelf, rating and progress for a book appear when your activity on that book is public on Hardcover, and the Reading List leaves out books where it is not. After changing it on Hardcover, use the update button in the block’s toolbar to see the change right away.
 
 = I changed something on Hardcover. Why has my site not updated? =
 
-Endpaper saves what it fetches for a while, so a change can take some time to appear. To fetch everything again now, use the “Clear the cache” button on the settings screen.
+Endpaper saves what it fetches for a while, so a change can take some time to appear. To fetch a block’s data again now, use the update button in its toolbar. It fetches your own activity: your shelf, rating, progress and review, the reading lists and your goals. To fetch everything again, use the “Clear the cache” button on the settings screen.
 
 = Can I choose which cover a book has? =
 

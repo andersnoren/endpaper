@@ -25,6 +25,7 @@ import ServerSideRender from '@wordpress/server-side-render';
  */
 import AccentColorControl from '../../components/accent-color-control';
 import BlockIcon from '../../components/block-icon';
+import RefreshButton from '../../components/refresh-button';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
 import metadata from './block.json';
 import './editor.scss';
@@ -51,6 +52,9 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 	const blockProps = useBlockProps();
 	const [ goals, setGoals ] = useState( null );
 	const [ error, setError ] = useState( '' );
+
+	// Counts how many times the data has been fetched again, so that the preview starts over each time.
+	const [ refreshCount, setRefreshCount ] = useState( 0 );
 
 	useEffect( () => {
 		let current = true;
@@ -139,7 +143,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 		// A new style has different markup, so the preview starts over. The preview debounces changes and drops one if the editor draws again within half a second, which a change of style does.
 		body = (
 			<ServerSideRender
-				key={ previewAttributes.className || 'default' }
+				key={ `${ previewAttributes.className || 'default' }-${ refreshCount }` }
 				block={ metadata.name }
 				attributes={ previewAttributes }
 			/>
@@ -157,6 +161,15 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 					}
 				/>
 			</BlockControls>
+
+			{ !! goalId && (
+				<RefreshButton
+					request={ { kind: 'goals' } }
+					onRefreshed={ () =>
+						setRefreshCount( ( count ) => count + 1 )
+					}
+				/>
+			) }
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Goal', 'endpaper' ) }>
