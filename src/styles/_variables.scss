@@ -39,6 +39,9 @@ $muted-color-text: color-mix(in srgb, currentcolor calc(#{$muted-opacity-text} *
 $muted-color-element: color-mix(in srgb, currentcolor calc(#{$muted-opacity-element} * 100%), transparent);
 $hover-color: color-mix(in srgb, currentcolor calc(#{$hover-opacity} * 100%), transparent);
 
+/* The narrowest a column in the Reading List grid gets. */
+$column-min: var(--endpaper-column-min, var(--wp--custom--endpaper--column-min, 11em));
+
 /*
  * How light the text color is, from 0 (black) to 1 (white). It is worked out
  * from the color itself, which browsers allow in relative colors.

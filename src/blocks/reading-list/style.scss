@@ -253,12 +253,14 @@ $gap: var(--endpaper-gap, 1.5em);
  *
  * As many columns as fit, up to the number set in the block (four unless
  * it says otherwise). A column is at least 11em wide, which scales with the
- * font size, so a narrow card gets fewer. It is never narrower than its share
- * of the card, which stops at the set number of columns, and on a card too
- * narrow for two columns of 11em it is half the card, which keeps two.
+ * font size, so a narrow card gets fewer, down to a single column. The width
+ * can be changed with --endpaper-column-min, or in theme.json under
+ * settings.custom.endpaper.columnMin. It is never narrower than its share of
+ * the card, which stops at the set number of columns, and never wider than
+ * the card itself.
  */
 .wp-block-endpaper-reading-list.endpaper-reading-list--grid .endpaper-reading-list__items {
-	grid-template-columns: repeat(auto-fill, minmax(max(min(11em, (100% - #{$gap}) / 2), (100% - (var(--endpaper-columns, 4) - 1) * #{$gap}) / var(--endpaper-columns, 4)), 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, max(#{$column-min}, (100% - (var(--endpaper-columns, 4) - 1) * #{$gap}) / var(--endpaper-columns, 4))), 1fr));
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__item {
