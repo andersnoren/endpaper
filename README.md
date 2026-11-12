@@ -170,6 +170,17 @@ The filters for book covers are listed under [Book covers](#book-covers).
 - **Little code on the front end.** Each block’s styles are small and are only added to pages that use the block. The Book and Reading List blocks add no JavaScript for visitors. The Reading Goal block adds one small script, which keeps “days left” correct on pages that are served from a page cache. The editor code is only loaded in the editor.
 - **Plays well with page caching.** The blocks are rendered on the server like any other block, so full-page caches work as usual. After the cache is cleared, a page may be cached once without a book that wasn’t saved yet, which saving the book in the editor normally prevents.
 
+### Under the hood
+
+Fetching is built to stay out of the way of both your visitors and Hardcover:
+
+- **Stale while revalidate.** Each kind of data has a time it counts as fresh (a week for books, an hour for your shelf, lists and goals). Past that, the saved copy is still served at once, and a refresh is queued as a single WP-Cron event, `endpaper_refresh`, so the page never waits. Saved copies are kept for much longer than they count as fresh, so a page still has something to show if Hardcover is down. Change the times with the `endpaper_cache_lifetime` filter.
+- **One shared backoff.** When a request fails, every block holds off for a few minutes (`endpaper_backoff`) instead of each page view trying again, so an outage or a rate limit isn’t made worse by your traffic.
+- **Searching is guarded.** Searches in the editor are cached for an hour and limited to 20 a minute for each person, so a busy editor can’t use up the API key.
+- **A rejected key is noticed.** If Hardcover turns the key down, visitors keep seeing what is saved, and Site Health and the settings screen tell the people who can fix it.
+
+See [Hooks for developers](#hooks-for-developers) for the filters.
+
 ## Requirements
 
 - WordPress 6.6 or later
