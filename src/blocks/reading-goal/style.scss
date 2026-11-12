@@ -117,7 +117,7 @@
 .endpaper-reading-goal__bar {
 	appearance: none;
 	margin-block-start: -0.25em;
-	background: color-mix(in srgb, #{$accent-color} 20%, transparent);
+	background: $accent-faded-color;
 	border: 0.125em solid transparent;
 	border-radius: 999px;
 	box-sizing: border-box;
