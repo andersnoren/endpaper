@@ -725,7 +725,7 @@ function render_settings_page() {
 				the_faq_item(
 					__( 'I changed something on Hardcover. Why has my site not updated?', 'endpaper' ),
 					array(
-						__( 'Endpaper saves what it fetches. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. To fetch everything again now, clear the cache on this screen.', 'endpaper' ),
+						__( 'Endpaper saves what it fetches for a while, so a change can take some time to appear. To fetch everything again now, use the “Clear the cache” button on this screen.', 'endpaper' ),
 					)
 				);
 

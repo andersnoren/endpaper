@@ -18,7 +18,7 @@ Endpaper adds two blocks that show books from [Hardcover](https://hardcover.app)
 
 **The Reading List block** shows books from your own Hardcover library: the ones you are reading now, have read, or want to read. Show them as a list or as a grid of covers, with your reading progress, your ratings and the dates you finished.
 
-Both blocks are made to fit your theme:
+The blocks are made to fit your theme:
 
 * Sizes follow the block’s font size, and colors follow the text color, so the blocks work on light and dark designs alike.
 * The accent color comes from your theme. You can change it for a single block.
@@ -66,6 +66,10 @@ To keep the key out of the database, you can define it in `wp-config.php` instea
 
 == Frequently Asked Questions ==
 
+= Is this an official Hardcover plugin? =
+
+No. Endpaper is created independently, using Hardcover’s public API. Hardcover does not maintain or endorse it. For questions about the plugin, use its support forum on WordPress.org, not Hardcover’s own channels.
+
 = Do I need a Hardcover account? =
 
 Yes. The plugin reads from Hardcover with an API key from your own account. Accounts are free.
@@ -82,23 +86,31 @@ The key is stored in your site’s database as it is, not encrypted, which is ho
 
 = Will the blocks slow my site down? =
 
-No. Books are stored for a week and reading lists for an hour, so Hardcover is not asked on every page view. If Hardcover cannot be reached, the blocks show the last copy they have. To fetch everything again right away, for example after changing something on Hardcover, use the button on the settings screen to clear the cache.
+No. Endpaper saves what it fetches on your site, so your pages do not wait for Hardcover each time they are viewed. Books are saved for a week, and reading lists, shelves and progress for an hour. If Hardcover cannot be reached, the blocks show the last copy they have.
 
-= Can I show books that are private on Hardcover? =
+= Why is a book, my shelf or my rating missing? =
 
-No. Only books you have made public on Hardcover are shown.
+Endpaper only shows what is public. Your shelf, rating and progress for a book appear when your activity on that book is public on Hardcover, and the Reading List leaves out books where it is not. After changing it on Hardcover, clear the cache on the settings screen to see the change right away.
+
+= I changed something on Hardcover. Why has my site not updated? =
+
+Endpaper saves what it fetches for a while, so a change can take some time to appear. To fetch everything again now, use the “Clear the cache” button on the settings screen.
+
+= Can I choose which cover a book has? =
+
+Yes. A book shows the cover of the edition in your library, if it is there, and otherwise Hardcover’s default cover for the book. To pick another edition’s cover, select the Book block and open “Cover” in the block settings.
 
 = Can I change how the blocks look? =
 
-Yes. Both blocks support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
+Yes. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
 
 = What happens when I delete the plugin? =
 
-The API key and everything the plugin has stored are removed.
+The API key and everything the plugin has stored are removed. Book and Reading List blocks left in your posts stop showing.
 
 = What happens when my API key expires? =
 
-Hardcover keys can have an end date. When Hardcover stops accepting the key, the blocks keep showing what they last fetched for a while, and administrators see a notice in the admin with a link to the settings. Site Health reports it too. Save a new key and everything picks up again.
+Hardcover keys can have an end date. When Hardcover stops accepting the key, the blocks keep showing what they last fetched, for as long as the cached version lasts, and administrators see a notice in the admin with a link to the settings. Site Health reports it too. Save a new key and everything picks up again.
 
 == Screenshots ==
 
