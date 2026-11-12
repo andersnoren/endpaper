@@ -194,8 +194,13 @@
 	display: inline-block;
 }
 
+/*
+ * The two lines under the gauge have a line height of 1.2, as in the design,
+ * so the space between them is the 0.5em that is set, and not more.
+ */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__label {
 	font-weight: 700;
+	line-height: 1.2;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__meta {
@@ -211,6 +216,10 @@
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__meta .endpaper-reading-goal__status {
 	padding-inline-start: 0;
 	text-align: center;
+}
+
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__meta p {
+	line-height: 1.2;
 }
 
 /* A dot between the percentage and the days left, if both are there. */
