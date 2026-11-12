@@ -39,6 +39,7 @@ import CoverRadiusPanel from '../../components/cover-radius-panel';
 import RefreshButton from '../../components/refresh-button';
 import getEditorData from '../../utils/editor-data';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
+import useKeepImages from '../../utils/use-keep-images';
 import metadata from './block.json';
 import './editor.scss';
 
@@ -111,6 +112,7 @@ export default function Edit( {
 		className: justPicked ? 'endpaper-is-new' : undefined,
 		onAnimationEnd: () => setJustPicked( false ),
 	} );
+	useKeepImages( wrapper );
 	const { keyTrouble, settingsUrl } = getEditorData();
 
 	useEffect( () => {
