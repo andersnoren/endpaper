@@ -187,7 +187,7 @@
 }
 
 .endpaper-reading-goal__arc-track {
-	stroke: color-mix(in srgb, #{$accent-color} 20%, transparent);
+	stroke: $accent-faded-color;
 }
 
 /*
