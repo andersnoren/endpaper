@@ -502,8 +502,8 @@ function get_new_key_url() {
  * without giving away the key or its length.
  *
  * The screen is in the order people need it. Without a key, how to create
- * one comes first, and the questions about what the key allows and how it is
- * kept are open. With a key, those fold away and the cache gets its section.
+ * one comes first. With a key, that folds away, unless Hardcover has turned
+ * the key down, and the cache gets its section.
  * With a working key the screen also lists the blocks, as the next step.
  * Help holds the questions, and About Endpaper the credit and the links out.
  *
@@ -519,8 +519,14 @@ function render_settings_page() {
 
 	$scopes = get_key_scopes();
 
+	// Checked first, so that a key Hardcover has just turned down is known about below.
+	get_connection_status();
+
 	// Without a key that works, the cache is what keeps the books on the site.
 	$key_trouble = '' !== get_token_trouble();
+
+	// A key that Hardcover has turned down has to be replaced, so how to create one is shown.
+	$key_rejected = 'rejected' === get_token_trouble();
 
 	// Only read, to say what the button on this screen did. Nothing is changed based on it.
 	$cache_result = isset( $_GET['endpaper_cache'] ) ? sanitize_key( wp_unslash( $_GET['endpaper_cache'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -596,7 +602,7 @@ function render_settings_page() {
 				</form>
 
 				<?php if ( $has_token ) : ?>
-					<details class="endpaper-disclosure">
+					<details class="endpaper-disclosure"<?php echo $key_rejected ? ' open' : ''; ?>>
 						<summary><?php esc_html_e( 'Create a new key', 'endpaper' ); ?></summary>
 						<?php the_key_steps(); ?>
 					</details>
@@ -607,7 +613,7 @@ function render_settings_page() {
 				<section class="endpaper-card" aria-labelledby="endpaper-blocks-title">
 					<h2 id="endpaper-blocks-title"><?php esc_html_e( 'Blocks', 'endpaper' ); ?></h2>
 
-					<p><?php esc_html_e( 'You are all set. Add these blocks to any post, page or template:', 'endpaper' ); ?></p>
+					<p><?php esc_html_e( 'Add these blocks to any post, page or template:', 'endpaper' ); ?></p>
 
 					<dl class="endpaper-blocks">
 						<div>
@@ -650,7 +656,7 @@ function render_settings_page() {
 
 				<h3><?php esc_html_e( 'About your key', 'endpaper' ); ?></h3>
 
-				<details class="endpaper-disclosure"<?php echo $has_token ? '' : ' open'; ?>>
+				<details class="endpaper-disclosure">
 					<summary><?php esc_html_e( 'What does the key allow?', 'endpaper' ); ?></summary>
 
 					<p><?php esc_html_e( 'The button for creating a key asks for these permissions and nothing else:', 'endpaper' ); ?></p>
@@ -671,7 +677,7 @@ function render_settings_page() {
 					</p>
 				</details>
 
-				<details class="endpaper-disclosure"<?php echo $has_token ? '' : ' open'; ?>>
+				<details class="endpaper-disclosure">
 					<summary><?php esc_html_e( 'How is my key kept safe?', 'endpaper' ); ?></summary>
 
 					<ul class="ul-disc">
@@ -774,7 +780,7 @@ function render_settings_page() {
 					<?php
 					printf(
 						/* translators: %s: A link to the plugin's support forum. */
-						esc_html__( 'Did not find your answer? Ask in the %s. Please do not contact Hardcover about the plugin, since they do not maintain it.', 'endpaper' ),
+						esc_html__( 'Did not find your answer? Ask in the %s.', 'endpaper' ),
 						'<a href="' . esc_url( ENDPAPER_SUPPORT_URL ) . '">' . esc_html__( 'Endpaper support forum on WordPress.org', 'endpaper' ) . '</a>'
 					);
 					?>

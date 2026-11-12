@@ -341,7 +341,7 @@ try {
 	endpaper_check( 'it says the plugin is unofficial, and where to get help', false !== strpos( $endpaper_html, 'Endpaper is an unofficial plugin' ) && false !== strpos( $endpaper_html, 'not maintained or endorsed by Hardcover' ) && false !== strpos( $endpaper_html, 'wordpress.org/support/plugin/endpaper/' ) );
 	endpaper_check( 'it credits the author and Hardcover, and links to GitHub and the reviews', false !== strpos( $endpaper_html, 'https://andersnoren.se' ) && false !== strpos( $endpaper_html, 'made possible by <a href="https://hardcover.app">Hardcover</a>' ) && false !== strpos( $endpaper_html, 'github.com/andersnoren/endpaper/issues' ) && false !== strpos( $endpaper_html, 'wordpress.org/support/plugin/endpaper/reviews/#new-post' ) );
 	endpaper_check( 'with a key, it lists the blocks', false !== strpos( $endpaper_html, 'endpaper-blocks' ) && false !== strpos( $endpaper_html, '/reading list' ) );
-	endpaper_check( 'with a key, the explanations are folded away', false === strpos( $endpaper_html, '<details class="endpaper-disclosure" open>' ) );
+	endpaper_check( 'with a key, how to create one is folded away', false === strpos( $endpaper_html, '<details class="endpaper-disclosure" open>' ) );
 	endpaper_check( 'it links to the form for a new key, with the permissions ticked', false !== strpos( $endpaper_html, 'hardcover.app/account/api/keys/new?scope=read%3Acatalog%20read%3Alibrary%3Apublic%20read%3Ame%3Acontent' ) );
 
 	delete_option( 'endpaper_hardcover_token' );
@@ -349,7 +349,15 @@ try {
 	ob_start();
 	render_settings_page();
 	$endpaper_html = ob_get_clean();
-	endpaper_check( 'without a key, there is no list of blocks or button to clear the cache, and the explanations are open', false === strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && false === strpos( $endpaper_html, 'endpaper-blocks' ) && 2 === substr_count( $endpaper_html, '<details class="endpaper-disclosure" open>' ) );
+	endpaper_check( 'without a key, there is no list of blocks or button to clear the cache, and how to create a key is shown', false === strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) && false === strpos( $endpaper_html, 'endpaper-blocks' ) && false !== strpos( $endpaper_html, 'Create a key on Hardcover' ) );
+
+	update_option( 'endpaper_hardcover_token', 'key-that-expired' );
+	ob_start();
+	render_settings_page();
+	$endpaper_html = ob_get_clean();
+	endpaper_check( 'with a key Hardcover turns down, how to create a new one is open', false !== strpos( $endpaper_html, '<details class="endpaper-disclosure" open>' ) && false === strpos( $endpaper_html, 'value="endpaper_clear_cache"' ) );
+	delete_option( 'endpaper_hardcover_token' );
+	delete_transient( 'endpaper_key_rejected' );
 
 	echo "After the key is removed\n";
 	delete_transient( 'endpaper_api_backoff' );
