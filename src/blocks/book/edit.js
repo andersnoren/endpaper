@@ -5,6 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useState } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import {
+	AlignmentControl,
 	BlockControls,
 	HeadingLevelDropdown,
 	InspectorControls,
@@ -136,6 +137,10 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 					onChange={ ( titleLevel ) =>
 						setAttributes( { titleLevel } )
 					}
+				/>
+				<AlignmentControl
+					value={ attributes.textAlign }
+					onChange={ ( textAlign ) => setAttributes( { textAlign } ) }
 				/>
 			</BlockControls>
 
