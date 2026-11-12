@@ -277,7 +277,16 @@
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__attribution .endpaper-reading-goal__credit {
 	color: inherit;
 	display: block;
+	transition: color 0.15s ease;
 	width: fit-content;
+}
+
+/*
+ * The logo fades by color, not by opacity. Safari moves an element that
+ * changes opacity to a layer of its own, which makes the logo shift a little.
+ */
+.endpaper-reading-goal__credit:hover {
+	color: $logo-hover-color;
 }
 
 .endpaper-reading-goal__credit .endpaper-logo {
