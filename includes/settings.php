@@ -353,9 +353,20 @@ function get_covers_site_health_result() {
 		'test'        => 'endpaper_covers',
 	);
 
-	if ( ! is_cover_import_enabled() ) {
+	if ( ! is_cover_import_enabled() && ! are_remote_covers_allowed() ) {
+		$result['label']       = __( 'Endpaper is set not to show book covers', 'endpaper' );
+		$result['description'] = '<p>' . esc_html__( 'Both saving book covers and loading them from Hardcover have been switched off in code, so no covers are shown.', 'endpaper' ) . '</p>';
+	} elseif ( ! is_cover_import_enabled() ) {
 		$result['label']       = __( 'Endpaper is set not to save book covers', 'endpaper' );
 		$result['description'] = '<p>' . esc_html__( 'Saving book covers has been switched off in code. Covers are loaded from Hardcover by your visitors’ browsers, so Hardcover sees their IP address and browser details.', 'endpaper' ) . '</p>';
+	} elseif ( ! can_store_covers() && ! are_remote_covers_allowed() ) {
+		$result['label']       = __( 'Endpaper cannot show book covers', 'endpaper' );
+		$result['status']      = 'recommended';
+		$result['description'] = '<p>' . sprintf(
+			/* translators: %s: The path of a folder. */
+			esc_html__( 'The folder %s cannot be created or written to, and this site is set not to load covers from Hardcover. Until the folder can be written to, books are shown without their covers.', 'endpaper' ),
+			'<code>' . esc_html( '' !== $dir['path'] ? $dir['path'] : 'wp-content/uploads/endpaper/covers' ) . '</code>'
+		) . '</p>';
 	} elseif ( ! can_store_covers() ) {
 		$result['label']       = __( 'Endpaper cannot save book covers', 'endpaper' );
 		$result['status']      = 'recommended';
@@ -694,8 +705,12 @@ function render_settings_page() {
 
 					<p class="endpaper-cache-status">
 						<?php
-						if ( ! is_cover_import_enabled() ) {
+						if ( ! is_cover_import_enabled() && ! are_remote_covers_allowed() ) {
+							esc_html_e( 'Book covers are switched off on this site.', 'endpaper' );
+						} elseif ( ! is_cover_import_enabled() ) {
 							esc_html_e( 'Book covers are not saved on this site. They are loaded from Hardcover.', 'endpaper' );
+						} elseif ( ! can_store_covers() && ! are_remote_covers_allowed() ) {
+							esc_html_e( 'Book covers cannot be saved, because their folder cannot be written to. Until that is fixed, books are shown without covers. Site Health has the details.', 'endpaper' );
 						} elseif ( ! can_store_covers() ) {
 							esc_html_e( 'Book covers cannot be saved, because their folder cannot be written to. Until that is fixed, they are loaded from Hardcover. Site Health has the details.', 'endpaper' );
 						} elseif ( $cover_stats['covers'] > 0 ) {
@@ -852,6 +867,7 @@ function render_settings_page() {
 						<li><code>endpaper_cover_widths</code> <?php esc_html_e( 'The widths covers are saved in, in pixels.', 'endpaper' ); ?></li>
 						<li><code>endpaper_cover_quality</code> <?php esc_html_e( 'The quality they are saved with, from 1 to 100. It is 80 to begin with.', 'endpaper' ); ?></li>
 						<li><code>endpaper_import_covers</code> <?php esc_html_e( 'Return false to load covers from Hardcover and save nothing.', 'endpaper' ); ?></li>
+						<li><code>endpaper_allow_remote_covers</code> <?php esc_html_e( 'Return false to never load a cover from Hardcover. A cover that cannot be saved is then a gray box.', 'endpaper' ); ?></li>
 					</ul>
 					<p>
 						<?php
@@ -875,13 +891,22 @@ function render_settings_page() {
 					)
 				);
 
-				the_faq_item(
-					__( 'Do my visitors’ browsers contact Hardcover?', 'endpaper' ),
-					array(
-						__( 'No. Covers are shown from your own site, and nothing else is loaded from Hardcover. A visitor only reaches Hardcover by following a link to it.', 'endpaper' ),
-						__( 'There is one exception. If your site cannot save covers, they are loaded from Hardcover instead, and Hardcover then sees each visitor’s IP address and browser details, though not which page they are reading. Site Health tells you if that is the case.', 'endpaper' ),
-					)
-				);
+				?>
+				<details class="endpaper-disclosure">
+					<summary><?php esc_html_e( 'Do my visitors’ browsers contact Hardcover?', 'endpaper' ); ?></summary>
+					<p><?php esc_html_e( 'No. Covers are shown from your own site, and nothing else is loaded from Hardcover. A visitor only reaches Hardcover by following a link to it.', 'endpaper' ); ?></p>
+					<p><?php esc_html_e( 'There is one exception. If your site cannot save covers, they are loaded from Hardcover instead, and Hardcover then sees each visitor’s IP address and browser details, though not which page they are reading. Site Health tells you if that is the case.', 'endpaper' ); ?></p>
+					<p>
+						<?php
+						printf(
+							/* translators: %s: The name of a filter. */
+							esc_html__( 'To rule the exception out, a developer can return false from the %s filter. Covers are then never loaded from Hardcover, and one that cannot be saved is shown as a gray box.', 'endpaper' ),
+							'<code>endpaper_allow_remote_covers</code>'
+						);
+						?>
+					</p>
+				</details>
+				<?php
 
 				the_faq_item(
 					__( 'Does anything load from Hardcover in the editor?', 'endpaper' ),

@@ -48,6 +48,24 @@ function is_cover_import_enabled() {
 }
 
 /**
+ * Tells whether a cover that is not saved on the site may be loaded from Hardcover instead.
+ *
+ * It may, unless the site says otherwise: a site whose visitors' browsers
+ * must never contact Hardcover. Its covers show as placeholders when they
+ * cannot be saved.
+ *
+ * @return bool Whether covers may be loaded from Hardcover.
+ */
+function are_remote_covers_allowed() {
+	/**
+	 * Filters whether book covers that are not saved on the site may be loaded from Hardcover.
+	 *
+	 * @param bool $allowed Whether they may. Default true.
+	 */
+	return (bool) apply_filters( 'endpaper_allow_remote_covers', true );
+}
+
+/**
  * Returns the widths covers are saved in, smallest first.
  *
  * A cover is never made larger than the one Hardcover has.
@@ -277,8 +295,12 @@ function get_cover( $url ) {
 		return null;
 	}
 
-	// Covers that cannot be saved are loaded from Hardcover, as are those from an address that is not known.
+	// Covers that cannot be saved are loaded from Hardcover, as are those from an address that is not known. Unless the site does not allow that: then there is nothing to show.
 	if ( ! is_cover_import_enabled() || ! is_allowed_cover_url( $url ) || ! can_store_covers() ) {
+		if ( ! are_remote_covers_allowed() ) {
+			return null;
+		}
+
 		return array(
 			'src'    => $url,
 			'remote' => true,

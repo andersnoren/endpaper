@@ -104,7 +104,10 @@ Developers can change this with filters:
 | `endpaper_cover_widths` | The widths covers are saved in, in pixels. Default `[ 160, 320, 640 ]`. |
 | `endpaper_cover_quality` | The quality they are saved with, from 1 to 100. Default `80`. |
 | `endpaper_import_covers` | Return `false` to load covers from Hardcover and save nothing. |
+| `endpaper_allow_remote_covers` | Return `false` to never load a cover from Hardcover. A cover that can’t be saved is then a placeholder. |
 | `endpaper_cover_hosts` | The hosts covers may be downloaded from. Default `[ 'assets.hardcover.app' ]`. |
+
+Returning `false` from both `endpaper_import_covers` and `endpaper_allow_remote_covers` means no covers are shown at all. The edition picker in the editor always loads its thumbnails from Hardcover, in the browser of the person editing.
 
 The format follows WordPress’s own `image_editor_output_format` filter, so a site that saves its images as AVIF gets AVIF covers.
 

@@ -48,7 +48,7 @@ These requests are made by your site’s server. No information about your visit
 
 Nothing, normally. Book covers are saved on your site and shown from there.
 
-There are two exceptions. If your site cannot save files, or a developer has switched saving off, covers are loaded directly from Hardcover’s servers instead. A visitor’s browser then asks Hardcover for each image, and Hardcover receives the visitor’s IP address and browser details, though not the address of the page. Site Health tells you when this is the case. And in the editor, when you choose a cover for a Book block, the covers to choose from are loaded from Hardcover by the browser of the person editing.
+There are two exceptions. If your site cannot save files, or a developer has switched saving off, covers are loaded directly from Hardcover’s servers instead. A visitor’s browser then asks Hardcover for each image, and Hardcover receives the visitor’s IP address and browser details, though not the address of the page. Site Health tells you when this is the case, and a developer can switch this fallback off with the `endpaper_allow_remote_covers` filter. And in the editor, when you choose a cover for a Book block, the covers to choose from are loaded from Hardcover by the browser of the person editing.
 
 **Links to Hardcover**
 
@@ -115,7 +115,7 @@ The cover is being saved. That happens in the background, usually within a minut
 
 = Do my visitors’ browsers contact Hardcover? =
 
-No. Covers are shown from your own site, and nothing else is loaded from Hardcover. The plugin sets no cookies and stores nothing about your visitors. The one exception is a site that cannot save covers: see “External services” above.
+No. Covers are shown from your own site, and nothing else is loaded from Hardcover. The plugin sets no cookies and stores nothing about your visitors. The one exception is a site that cannot save covers: see “External services” above. A developer can rule that out with the `endpaper_allow_remote_covers` filter.
 
 = Can developers change how covers are saved? =
 
@@ -124,6 +124,7 @@ Yes, with these filters:
 * `endpaper_cover_widths`: the widths covers are saved in, in pixels.
 * `endpaper_cover_quality`: the quality they are saved with, from 1 to 100. It is 80 to begin with.
 * `endpaper_import_covers`: return false to load covers from Hardcover and save nothing.
+* `endpaper_allow_remote_covers`: return false to never load a cover from Hardcover. A cover that cannot be saved is then a gray box.
 
 The format follows WordPress’s own `image_editor_output_format` filter.
 

@@ -366,6 +366,11 @@ try {
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
 	endpaper_check( 'a cover that is not saved is loaded from Hardcover, without a referrer', false !== strpos( $endpaper_html, 'src="https://assets.hardcover.app/edition-entry.jpg"' ) && false !== strpos( $endpaper_html, 'referrerpolicy="no-referrer"' ) );
 
+	add_filter( 'endpaper_allow_remote_covers', '__return_false' );
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+	endpaper_check( 'a site can rule out loading covers from Hardcover, and gets a placeholder', false === strpos( $endpaper_html, 'assets.hardcover.app' ) && false !== strpos( $endpaper_html, 'endpaper-cover-placeholder' ) && 'Endpaper is set not to show book covers' === get_covers_site_health_result()['label'] );
+	remove_filter( 'endpaper_allow_remote_covers', '__return_false' );
+
 	remove_filter( 'endpaper_import_covers', '__return_false' );
 
 	if ( ! can_store_covers() || ! wp_image_editor_supports( array( 'mime_type' => 'image/jpeg' ) ) ) {
