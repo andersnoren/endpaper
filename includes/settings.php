@@ -841,53 +841,6 @@ function render_settings_page() {
 			</section>
 
 			<?php if ( ! $key_trouble ) : ?>
-				<section class="endpaper-card" aria-labelledby="endpaper-appearance-title">
-					<h2 id="endpaper-appearance-title"><?php esc_html_e( 'Appearance', 'endpaper' ); ?></h2>
-
-					<form method="post" action="options.php">
-						<?php settings_fields( 'endpaper_appearance' ); ?>
-
-						<?php
-						$endpaper_styles = array(
-							'default' => array(
-								'label'       => __( 'Plain', 'endpaper' ),
-								'description' => __( 'The book sits in the page, with no frame around it.', 'endpaper' ),
-							),
-							'card'    => array(
-								'label'       => __( 'Card', 'endpaper' ),
-								'description' => __( 'The book sits on a light background, with rounded corners.', 'endpaper' ),
-							),
-						);
-						?>
-
-						<fieldset class="endpaper-style-choice">
-							<legend class="endpaper-field__label"><?php esc_html_e( 'Default Book style', 'endpaper' ); ?></legend>
-
-							<div class="endpaper-style-choice__options">
-								<?php foreach ( $endpaper_styles as $endpaper_style => $endpaper_style_data ) : ?>
-									<label class="endpaper-style-choice__option">
-										<span class="endpaper-style-choice__name">
-											<input type="radio" name="<?php echo esc_attr( ENDPAPER_DEFAULT_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $endpaper_style ); ?>"<?php checked( get_default_book_style(), $endpaper_style ); ?> />
-											<?php echo esc_html( $endpaper_style_data['label'] ); ?>
-										</span>
-										<span class="endpaper-style-choice__preview" aria-hidden="true">
-											<span class="endpaper-style-choice__drawing endpaper-style-choice__drawing--<?php echo esc_attr( $endpaper_style ); ?>">
-												<span class="endpaper-style-choice__cover"></span>
-												<span class="endpaper-style-choice__lines"><span></span><span></span><span></span><span></span></span>
-											</span>
-										</span>
-										<span class="endpaper-style-choice__text"><?php echo esc_html( $endpaper_style_data['description'] ); ?></span>
-									</label>
-								<?php endforeach; ?>
-							</div>
-
-							<p class="description"><?php esc_html_e( 'The style new Book blocks start with. Blocks that already have a style keep it, and you can change the style of any block in the editor.', 'endpaper' ); ?></p>
-						</fieldset>
-
-						<?php submit_button(); ?>
-					</form>
-				</section>
-
 				<section class="endpaper-card" aria-labelledby="endpaper-blocks-title">
 					<h2 id="endpaper-blocks-title"><?php esc_html_e( 'Blocks in Endpaper', 'endpaper' ); ?></h2>
 
@@ -934,6 +887,53 @@ function render_settings_page() {
 							<?php endforeach; ?>
 						</ul>
 					</details>
+				</section>
+
+				<section class="endpaper-card" aria-labelledby="endpaper-appearance-title">
+					<h2 id="endpaper-appearance-title"><?php esc_html_e( 'Appearance', 'endpaper' ); ?></h2>
+
+					<form method="post" action="options.php">
+						<?php settings_fields( 'endpaper_appearance' ); ?>
+
+						<?php
+						$endpaper_styles = array(
+							'default' => array(
+								'label'       => __( 'Plain', 'endpaper' ),
+								'description' => __( 'The book sits in the page, with no frame around it.', 'endpaper' ),
+							),
+							'card'    => array(
+								'label'       => __( 'Card', 'endpaper' ),
+								'description' => __( 'The book sits on a light background, with rounded corners.', 'endpaper' ),
+							),
+						);
+						?>
+
+						<fieldset class="endpaper-style-choice">
+							<legend class="endpaper-field__label"><?php esc_html_e( 'Default Book style', 'endpaper' ); ?></legend>
+
+							<div class="endpaper-style-choice__options">
+								<?php foreach ( $endpaper_styles as $endpaper_style => $endpaper_style_data ) : ?>
+									<label class="endpaper-style-choice__option">
+										<span class="endpaper-style-choice__name">
+											<input type="radio" name="<?php echo esc_attr( ENDPAPER_DEFAULT_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $endpaper_style ); ?>"<?php checked( get_default_book_style(), $endpaper_style ); ?> />
+											<?php echo esc_html( $endpaper_style_data['label'] ); ?>
+										</span>
+										<span class="endpaper-style-choice__preview" aria-hidden="true">
+											<span class="endpaper-style-choice__drawing endpaper-style-choice__drawing--<?php echo esc_attr( $endpaper_style ); ?>">
+												<span class="endpaper-style-choice__cover"></span>
+												<span class="endpaper-style-choice__lines"><span></span><span></span><span></span><span></span></span>
+											</span>
+										</span>
+										<span class="endpaper-style-choice__text"><?php echo esc_html( $endpaper_style_data['description'] ); ?></span>
+									</label>
+								<?php endforeach; ?>
+							</div>
+
+							<p class="description"><?php esc_html_e( 'The style new Book blocks start with. Blocks that already have a style keep it, and you can change the style of any block in the editor.', 'endpaper' ); ?></p>
+						</fieldset>
+
+						<?php submit_button(); ?>
+					</form>
 				</section>
 
 				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">
