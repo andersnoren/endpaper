@@ -30,6 +30,14 @@
 	box-sizing: border-box;
 }
 
+/*
+ * The title and the line under the gauge are balanced, so they do not end on
+ * a single word.
+ */
+:where(.endpaper-reading-goal__title, .endpaper-reading-goal__label) {
+	text-wrap: balance;
+}
+
 /* Spacing inside the block is set with gaps, not with the theme's margins. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__card p,
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__title {

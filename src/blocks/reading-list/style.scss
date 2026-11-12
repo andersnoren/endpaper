@@ -33,6 +33,11 @@ $gap: var(--endpaper-gap, 1.5em);
 	box-sizing: border-box;
 }
 
+/* Titles are balanced, so one on two lines does not end on a single word. */
+:where(.endpaper-reading-list__title) {
+	text-wrap: balance;
+}
+
 /* Spacing inside the block is set with gaps, not with the theme's margins. */
 .wp-block-endpaper-reading-list p,
 .wp-block-endpaper-reading-list .endpaper-reading-list__title {

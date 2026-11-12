@@ -38,6 +38,19 @@
 	box-sizing: border-box;
 }
 
+/*
+ * Titles are balanced, so a title on two lines does not end on a single
+ * word, and the description does not end on one either. A browser that does
+ * not know this wraps the text as before.
+ */
+:where(.endpaper-book__title) {
+	text-wrap: balance;
+}
+
+:where(.endpaper-book__description) {
+	text-wrap: pretty;
+}
+
 /* Spacing inside the block is set with gaps, not with the theme's margins. */
 .wp-block-endpaper-book p,
 .wp-block-endpaper-book .endpaper-book__title {
