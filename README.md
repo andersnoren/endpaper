@@ -28,6 +28,10 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Shows the cover of your edition, the title, authors and your rating for each book, and your reading progress for books you are currently reading. Each part can be switched on or off.
 - Only shows books that are public on Hardcover, so a book you keep private there never appears on your site.
 
+## Patterns
+
+Two patterns are included, in the Endpaper category of the block inserter: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the covers of the books you last finished.
+
 ## For theme authors
 
 The blocks have very little styling of their own, and support the standard color, typography, spacing, border and shadow settings. A theme can style them in `theme.json` like any core block, under `styles.blocks` with `endpaper/book` and `endpaper/reading-list`.

@@ -751,6 +751,8 @@ function render_settings_page() {
 						);
 						?>
 					</p>
+
+					<p class="description"><?php esc_html_e( 'The inserter also has two ready-made patterns, under “Endpaper”: Currently reading and Recently read.', 'endpaper' ); ?></p>
 				</section>
 
 				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">

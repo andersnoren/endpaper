@@ -416,6 +416,12 @@ try {
 	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
 	add_filter( 'endpaper_import_covers', '__return_false' );
 
+	echo "Patterns\n";
+	$endpaper_patterns = WP_Block_Patterns_Registry::get_instance();
+	endpaper_check( 'the two patterns are registered, in a category of their own', $endpaper_patterns->is_registered( 'endpaper/currently-reading' ) && $endpaper_patterns->is_registered( 'endpaper/recently-read' ) && WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'endpaper' ) );
+	$endpaper_html = do_blocks( $endpaper_patterns->get_registered( 'endpaper/recently-read' )['content'] );
+	endpaper_check( 'a pattern renders a heading and a list, with the titles one level down', false !== strpos( $endpaper_html, '<h2 class="wp-block-heading">Recently read</h2>' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list--grid' ) && false !== strpos( $endpaper_html, '<h3' ) );
+
 	echo "Clearing the cache\n";
 	do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
 	$endpaper_generation = (int) get_option( 'endpaper_cache_generation', 0 );
