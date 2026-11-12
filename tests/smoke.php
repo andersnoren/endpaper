@@ -575,7 +575,41 @@ try {
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	endpaper_check( 'the big number takes the font of the theme\'s headings', false !== strpos( $endpaper_html, '--endpaper-heading-font-family: &quot;Playfair Display&quot;, serif;' ) || false !== strpos( $endpaper_html, '--endpaper-heading-font-family: "Playfair Display", serif;' ) );
 	endpaper_check( 'and its weight and letter spacing', false !== strpos( $endpaper_html, '--endpaper-heading-font-weight: 400;' ) && false !== strpos( $endpaper_html, '--endpaper-heading-letter-spacing: -0.02em;' ) );
-	$endpaper_theme_style = \AndersNoren\Endpaper\get_heading_typography_style();
+	$endpaper_block_headings = static function ( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version' => 3,
+				'styles'  => array(
+					'elements' => array(
+						'heading' => array(
+							'typography' => array(
+								'fontFamily' => 'Georgia, serif',
+								'fontWeight' => '400',
+							),
+						),
+					),
+					'blocks'   => array(
+						'endpaper/reading-goal' => array(
+							'elements' => array(
+								'heading' => array(
+									'typography' => array( 'fontWeight' => '800' ),
+								),
+							),
+						),
+					),
+				),
+			)
+		);
+	};
+	add_filter( 'wp_theme_json_data_theme', $endpaper_block_headings );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	$endpaper_block_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
+	$endpaper_other_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/book' );
+	remove_filter( 'wp_theme_json_data_theme', $endpaper_block_headings );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	endpaper_check( 'a theme can change the heading typography for one block, on top of the global one', false !== strpos( $endpaper_block_style, '--endpaper-heading-font-family: Georgia, serif;' ) && false !== strpos( $endpaper_block_style, '--endpaper-heading-font-weight: 800;' ) && false !== strpos( $endpaper_other_style, '--endpaper-heading-font-weight: 400;' ) );
+
+	$endpaper_theme_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
 	endpaper_check( 'a theme\'s heading font is resolved to the font itself, not a variable', false !== strpos( $endpaper_theme_style, '--endpaper-heading-font-family: ' ) && false === strpos( $endpaper_theme_style, 'var(' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2,"className":"is-style-gauge","showPercent":true} /-->' );
