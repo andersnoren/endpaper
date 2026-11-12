@@ -52,6 +52,23 @@
 	padding: 1.5em;
 }
 
+/* On the tinted background the secondary text is not faded. */
+.wp-block-endpaper-book.is-style-card {
+
+	.endpaper-book__review-part,
+	.endpaper-book__progress span,
+	.endpaper-book__rating-count {
+		opacity: 1;
+
+		/* stylelint-disable-next-line property-no-vendor-prefix */
+		-webkit-text-fill-color: currentcolor;
+	}
+
+	.endpaper-book__spoilers summary {
+		color: inherit;
+	}
+}
+
 .wp-block-endpaper-book {
 	box-sizing: border-box;
 }
