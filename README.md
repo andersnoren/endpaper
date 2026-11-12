@@ -85,6 +85,8 @@ A few settings are specific to Endpaper. A theme sets their defaults under `sett
 
 The same values can be set as CSS variables, `--endpaper-muted-text`, `--endpaper-muted-element`, `--endpaper-hover` and `--endpaper-column-min`, on the block or anywhere above it.
 
+The space between the items in a Reading List grid has two more CSS variables, `--endpaper-row-gap` (default 1.5em) and `--endpaper-column-gap` (default 1.5em, or 4% of the width if that is smaller). They aren’t theme.json settings. If a block has a gap set in the editor, that value is used for both unless one of these is set.
+
 To set any of them for one block only, put the same `custom` settings under `settings.blocks`:
 
 ```json
