@@ -5,11 +5,14 @@
 $gap: var(--endpaper-gap, 1.5em);
 
 /*
- * Between the columns of a grid the gap is 1em, but never more than 4% of the
- * width, so a narrow card does not lose much of it. A percentage does not
- * work between rows, which is why those keep $gap.
+ * In a grid the gap between columns is 1em and between rows 1.5em, but never
+ * more than 4% of the width, so a narrow card does not lose much of it. A
+ * percentage does not work between rows, since it is a share of the height,
+ * which is not known yet. Container units, which are a share of the width, do.
+ * The grid has its card as the container for them.
  */
 $column-gap: var(--endpaper-gap, min(1em, 4%));
+$row-gap: var(--endpaper-gap, min(1.5em, 4cqw));
 
 /*
  * Reading List block.
@@ -269,6 +272,11 @@ $column-gap: var(--endpaper-gap, min(1em, 4%));
 .wp-block-endpaper-reading-list.endpaper-reading-list--grid .endpaper-reading-list__items {
 	column-gap: $column-gap;
 	grid-template-columns: repeat(auto-fill, minmax(min(100%, max(#{$column-min}, (100% - (var(--endpaper-columns, 4) - 1) * #{$column-gap}) / var(--endpaper-columns, 4))), 1fr));
+	row-gap: $row-gap;
+}
+
+.endpaper-reading-list--grid .endpaper-reading-list__card {
+	container-type: inline-size;
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__item {
