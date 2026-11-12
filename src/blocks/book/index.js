@@ -2,6 +2,13 @@
  * WordPress dependencies
  */
 import { createBlock, registerBlockType } from '@wordpress/blocks';
+/* eslint-disable import/no-extraneous-dependencies, import/no-unresolved -- WordPress provides these packages in the editor, and the build leaves them out. */
+import { addFilter } from '@wordpress/hooks';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
+/* eslint-enable import/no-extraneous-dependencies, import/no-unresolved */
+import { useEffect } from '@wordpress/element';
+import { store as blockEditorStore } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -45,3 +52,35 @@ registerBlockType( metadata.name, {
 		],
 	},
 } );
+
+/**
+ * Puts a Book block in place of an Embed block that is given a link to a book on Hardcover.
+ *
+ * Hardcover has no embeds, so the Embed block could only turn the link into
+ * a plain link. This is for the Embed block added from the inserter, where the
+ * link is typed or pasted into its field.
+ */
+const withBookLink = createHigherOrderComponent(
+	( BlockEdit ) =>
+		function EndpaperBookLink( props ) {
+			const { replaceBlocks } = useDispatch( blockEditorStore );
+			const url =
+				props.name === 'core/embed'
+					? getBookUrl( props.attributes?.url )
+					: '';
+
+			useEffect( () => {
+				if ( url ) {
+					replaceBlocks(
+						props.clientId,
+						createBlock( metadata.name, { bookUrl: url } )
+					);
+				}
+			}, [ url, props.clientId, replaceBlocks ] );
+
+			return <BlockEdit { ...props } />;
+		},
+	'withBookLink'
+);
+
+addFilter( 'editor.BlockEdit', 'endpaper/book-link', withBookLink );
