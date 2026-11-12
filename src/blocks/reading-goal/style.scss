@@ -40,23 +40,24 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	gap: 0.5em;
+	gap: 1em;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__title {
-	font-size: 1.25em;
+	font-size: 1.5em;
+	letter-spacing: -0.01em;
 	line-height: 1.2;
+
+	/* Room below the title: 1em from the card gap, and the rest here. */
+	margin-bottom: 0.3333em;
 
 	/* A word too long for the line breaks, so it never sticks out of the card. */
 	overflow-wrap: anywhere;
 }
 
-/*
- * A title that is a heading takes its weight from the theme's headings. A
- * plain one is not bold, so the count under it stands out.
- */
+/* A title that is a heading takes its weight from the theme's headings. */
 .wp-block-endpaper-reading-goal p.endpaper-reading-goal__title {
-	font-weight: 400;
+	font-weight: 700;
 }
 
 /*
@@ -77,7 +78,7 @@
 	align-items: baseline;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25em 0.8125em;
+	gap: 0.25em 1em;
 }
 
 /* How far along the goal is, all in bold. */
@@ -91,16 +92,20 @@
 	white-space: nowrap;
 }
 
-/* The bar takes the whole width. */
+/*
+ * The bar takes the whole width. The track is 1em tall and the fill sits
+ * inside it, with a gap of 1/8em all around: a border that is see-through,
+ * so the track shows behind it.
+ */
 .endpaper-reading-goal__bar {
 	appearance: none;
 	background: $track-color;
-	border: 0;
+	border: 0.125em solid transparent;
 	border-radius: 999px;
+	box-sizing: border-box;
 	display: block;
 	font-size: inherit;
-	height: 0.625em;
-	margin-top: 0.25em;
+	height: 1em;
 	overflow: hidden;
 	width: 100%;
 }
