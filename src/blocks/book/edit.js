@@ -369,7 +369,11 @@ export default function Edit( {
 						<RangeControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={ __( 'Text length', 'endpaper' ) }
+							label={
+								'review' === getTextMode( attributes )
+									? __( 'Review length', 'endpaper' )
+									: __( 'Description length', 'endpaper' )
+							}
 							help={ __(
 								'The most characters to show, ending on a whole sentence. 0 shows everything.',
 								'endpaper'
