@@ -59,6 +59,7 @@ const DISPLAY_TOGGLES = [
 	{ attribute: 'showAuthors', label: __( 'Authors', 'endpaper' ) },
 	{ attribute: 'showMeta', label: __( 'Year and page count', 'endpaper' ) },
 	{ attribute: 'showRating', label: __( 'Hardcover rating', 'endpaper' ) },
+	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
 ];
 
 /**
@@ -72,23 +73,15 @@ const READING_TOGGLES = [
 		onlyOnShelf: CURRENTLY_READING,
 		label: __( 'Your reading progress', 'endpaper' ),
 	},
+	{
+		attribute: 'showReview',
+		label: __( 'Your review', 'endpaper' ),
+		help: __(
+			'Shown in place of the description, if you have written one.',
+			'endpaper'
+		),
+	},
 ];
-
-/**
- * Returns what the text under the title is: nothing, the description or the owner's review.
- *
- * It is kept in two attributes, so a block saved before the review existed still reads the same.
- *
- * @param {Object} attributes Block attributes.
- * @return {string} One of none, description and review.
- */
-function getTextMode( attributes ) {
-	if ( ! attributes.showDescription ) {
-		return 'none';
-	}
-
-	return attributes.showReview ? 'review' : 'description';
-}
 
 /**
  * Editor component for the Book block.
@@ -292,17 +285,35 @@ export default function Edit( {
 			.filter(
 				( { onlyOnShelf } ) => ! onlyOnShelf || onlyOnShelf === shelf
 			)
-			.map( ( { attribute, label } ) => (
+			.map( ( { attribute, label, help } ) => (
 				<ToggleControl
 					key={ attribute }
 					__nextHasNoMarginBottom
 					label={ label }
+					help={ help }
 					checked={ !! attributes[ attribute ] }
 					onChange={ ( value ) =>
 						setAttributes( { [ attribute ]: value } )
 					}
 				/>
 			) );
+
+	// How many characters of the description or the review to show.
+	const renderLength = ( attribute, label ) => (
+		<RangeControl
+			__nextHasNoMarginBottom
+			__next40pxDefaultSize
+			label={ label }
+			help={ __( '0 shows everything.', 'endpaper' ) }
+			min={ 0 }
+			max={ 1000 }
+			step={ 20 }
+			value={ attributes[ attribute ] }
+			onChange={ ( value ) =>
+				setAttributes( { [ attribute ]: value || 0 } )
+			}
+		/>
+	);
 
 	return (
 		<>
@@ -338,6 +349,11 @@ export default function Edit( {
 			<InspectorControls>
 				<PanelBody title={ __( 'Display', 'endpaper' ) }>
 					{ renderToggles( DISPLAY_TOGGLES ) }
+					{ attributes.showDescription &&
+						renderLength(
+							'descriptionLength',
+							__( 'Description length', 'endpaper' )
+						) }
 				</PanelBody>
 
 				<PanelBody
@@ -351,64 +367,11 @@ export default function Edit( {
 						) }
 					</p>
 					{ renderToggles( READING_TOGGLES ) }
-				</PanelBody>
-
-				<PanelBody
-					title={ __( 'Text', 'endpaper' ) }
-					initialOpen={ false }
-				>
-					<ToggleGroupControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						isBlock
-						label={ __( 'Show', 'endpaper' ) }
-						help={ __(
-							'Review falls back to the description if you have no public review.',
-							'endpaper'
+					{ attributes.showReview &&
+						renderLength(
+							'reviewLength',
+							__( 'Review length', 'endpaper' )
 						) }
-						value={ getTextMode( attributes ) }
-						onChange={ ( mode ) =>
-							setAttributes( {
-								showDescription: 'none' !== mode,
-								showReview: 'review' === mode,
-							} )
-						}
-					>
-						<ToggleGroupControlOption
-							value="none"
-							label={ __( 'None', 'endpaper' ) }
-						/>
-						<ToggleGroupControlOption
-							value="description"
-							label={ __( 'Description', 'endpaper' ) }
-						/>
-						<ToggleGroupControlOption
-							value="review"
-							label={ __( 'Review', 'endpaper' ) }
-						/>
-					</ToggleGroupControl>
-
-					{ attributes.showDescription && (
-						<RangeControl
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							label={
-								'review' === getTextMode( attributes )
-									? __( 'Review length', 'endpaper' )
-									: __( 'Description length', 'endpaper' )
-							}
-							help={ __( '0 shows everything.', 'endpaper' ) }
-							min={ 0 }
-							max={ 1000 }
-							step={ 20 }
-							value={ attributes.descriptionLength }
-							onChange={ ( value ) =>
-								setAttributes( {
-									descriptionLength: value || 0,
-								} )
-							}
-						/>
-					) }
 				</PanelBody>
 
 				<PanelBody

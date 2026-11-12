@@ -409,7 +409,8 @@ try {
 
 	$endpaper_html_review = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
 	endpaper_check( 'the review can take the place of the description', false !== strpos( $endpaper_html_review, 'A quiet, sharp book' ) && false !== strpos( $endpaper_html_review, 'endpaper-book__description--review' ) && false === strpos( $endpaper_html_review, '<details' ) );
-	endpaper_check( 'the review is hidden along with the description', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"showDescription":false} /-->' ), 'A quiet, sharp book' ) );
+	endpaper_check( 'the review can be shown without the description', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"showDescription":false} /-->' ), 'A quiet, sharp book' ) );
+	endpaper_check( 'the review is cut to its own length', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"reviewLength":20} /-->' ), 'The ending stayed' ) );
 
 	$GLOBALS['endpaper_review_spoilers'] = true;
 	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v4_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );

@@ -90,6 +90,10 @@
 			"type": "boolean",
 			"default": false
 		},
+		"reviewLength": {
+			"type": "integer",
+			"default": 300
+		},
 		"descriptionLength": {
 			"type": "integer",
 			"default": 160

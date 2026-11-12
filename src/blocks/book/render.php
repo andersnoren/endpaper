@@ -97,17 +97,19 @@ $endpaper_description = '';
 $endpaper_is_review   = false;
 $endpaper_spoilers    = false;
 
-if ( ! empty( $attributes['showDescription'] ) ) {
-	$endpaper_length = isset( $attributes['descriptionLength'] ) ? absint( $attributes['descriptionLength'] ) : 160;
-
-	// The owner's own review can take the place of the description, if there is one. Otherwise the description is shown.
-	if ( ! empty( $attributes['showReview'] ) && ! empty( $endpaper_entry['review'] ) ) {
-		$endpaper_description = trim_to_sentence( $endpaper_entry['review'], $endpaper_length );
-		$endpaper_is_review   = true;
-		$endpaper_spoilers    = ! empty( $endpaper_entry['spoilers'] );
-	} else {
-		$endpaper_description = trim_to_sentence( $endpaper_book['description'], $endpaper_length );
-	}
+// The owner's own review comes first, if it is switched on and there is one. Otherwise the description is shown, if that is switched on.
+if ( ! empty( $attributes['showReview'] ) && ! empty( $endpaper_entry['review'] ) ) {
+	$endpaper_description = trim_to_sentence(
+		$endpaper_entry['review'],
+		isset( $attributes['reviewLength'] ) ? absint( $attributes['reviewLength'] ) : 300
+	);
+	$endpaper_is_review = true;
+	$endpaper_spoilers  = ! empty( $endpaper_entry['spoilers'] );
+} elseif ( ! empty( $attributes['showDescription'] ) ) {
+	$endpaper_description = trim_to_sentence(
+		$endpaper_book['description'],
+		isset( $attributes['descriptionLength'] ) ? absint( $attributes['descriptionLength'] ) : 160
+	);
 }
 
 // The facts shown in the row at the bottom of the card.
