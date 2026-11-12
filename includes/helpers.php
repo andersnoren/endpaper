@@ -394,16 +394,14 @@ function format_goal_number( $value ) {
 }
 
 /**
- * Returns how far along a goal is, as markup such as "<strong>34</strong> of 50 books".
- *
- * The part done is in a strong element, so it can be set larger than the rest.
+ * Returns how far along a goal is, as a text such as "34 of 50 books read".
  *
  * @param array $goal A normalized goal.
- * @return string The text, with the number done in a strong element.
+ * @return string The text.
  */
-function get_goal_amount_html( $goal ) {
-	$progress = '<strong class="endpaper-reading-goal__done">' . esc_html( format_goal_number( $goal['progress'] ) ) . '</strong>';
-	$target   = esc_html( format_goal_number( $goal['target'] ) );
+function get_goal_amount_text( $goal ) {
+	$progress = format_goal_number( $goal['progress'] );
+	$target   = format_goal_number( $goal['target'] );
 	$count    = (int) round( $goal['target'] );
 
 	if ( 'page' === $goal['metric'] ) {
@@ -417,7 +415,7 @@ function get_goal_amount_html( $goal ) {
 		$text = _n( '%1$s of %2$s book read', '%1$s of %2$s books read', $count, 'endpaper' );
 	}
 
-	return wp_kses( sprintf( $text, $progress, $target ), array( 'strong' => array( 'class' => true ) ) );
+	return sprintf( $text, $progress, $target );
 }
 
 /**

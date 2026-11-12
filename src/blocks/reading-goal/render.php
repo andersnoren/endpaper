@@ -13,7 +13,7 @@ use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\get_goal;
-use function AndersNoren\Endpaper\get_goal_amount_html;
+use function AndersNoren\Endpaper\get_goal_amount_text;
 use function AndersNoren\Endpaper\get_goal_days_text;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\get_token_trouble;
@@ -45,7 +45,7 @@ if ( ! $endpaper_goal ) {
 
 $endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 0 );
 $endpaper_title   = '' !== $endpaper_goal['title'] ? $endpaper_goal['title'] : __( 'Reading goal', 'endpaper' );
-$endpaper_amount  = get_goal_amount_html( $endpaper_goal );
+$endpaper_amount  = get_goal_amount_text( $endpaper_goal );
 $endpaper_reached = $endpaper_goal['progress'] >= $endpaper_goal['target'];
 // The percentage is rounded down, so it never says 100 before the goal is reached.
 $endpaper_percent = (int) floor( $endpaper_goal['progress'] / $endpaper_goal['target'] * 100 + 0.0001 );
@@ -81,7 +81,7 @@ $endpaper_card_style = get_card_style( $attributes );
 		<?php endif; ?>
 
 		<div class="endpaper-reading-goal__summary">
-			<p class="endpaper-reading-goal__amount"><?php echo $endpaper_amount; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in get_goal_amount_html(). ?></p>
+			<p class="endpaper-reading-goal__amount"><?php echo esc_html( $endpaper_amount ); ?></p>
 			<?php if ( $endpaper_status ) : ?>
 				<p class="endpaper-reading-goal__status"><?php echo esc_html( $endpaper_status ); ?></p>
 			<?php endif; ?>
