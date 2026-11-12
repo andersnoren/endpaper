@@ -136,8 +136,10 @@
 
 /*
  * The gauge style: a semicircle with the count big inside it, then what the
- * count is of, then the percentage and the days left. The gauge is as wide as
- * the room allows, up to 16em, and everything in it scales with its width
+ * count is of, then the percentage and the days left. The space between the
+ * parts is set with margins in em, so it follows the text size. The gauge
+ * is as wide as the room allows, up to 16em, and everything in it scales
+ * with its width
  * (cqw is 1% of that). The count is as big as the arc has room for, and
  * smaller the more characters it has. That is a guess from the number of
  * characters, as the font is not known here, so view.js measures the real
@@ -145,20 +147,28 @@
  */
 .wp-block-endpaper-reading-goal.is-style-gauge .endpaper-reading-goal__card {
 	align-items: center;
+	gap: 0;
 	text-align: center;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__gauge {
-	aspect-ratio: 256 / 134;
+	aspect-ratio: 2 / 1;
 	container-type: inline-size;
-	margin: 1em 0 -0.375em;
+	margin: 0 0 1em;
 	position: relative;
 	width: min(100%, 16em);
 }
 
+/* With a title above it, the gauge has 2em of room. */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__title + .endpaper-reading-goal__gauge {
+	margin-top: 2em;
+}
+
+/* The round ends of the arc reach a little below the line it stands on. */
 .endpaper-reading-goal__arc {
 	display: block;
 	height: auto;
+	overflow: visible;
 	width: 100%;
 }
 
@@ -184,7 +194,7 @@
 
 /* The bottom of the count is on the line the arc starts and ends on. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__gauge .endpaper-reading-goal__count {
-	bottom: 4.48%;
+	bottom: 0;
 	font-size: min(26.5cqw, calc(86cqw / var(--endpaper-chars, 2)));
 	font-weight: 700;
 	inset-inline: 0;
@@ -215,7 +225,7 @@
 	flex-wrap: wrap;
 	gap: 0.25em 0.5em;
 	justify-content: center;
-	margin: -0.5em 0 0;
+	margin: 0.5em 0 0;
 }
 
 /* The days left in the default style sit apart, here they are centered. */
@@ -246,12 +256,17 @@
 	margin-top: 0.5em;
 }
 
+/* The gauge style has no gap between its parts, so the credit has more. */
+.wp-block-endpaper-reading-goal.is-style-gauge .endpaper-reading-goal__attribution {
+	margin-top: 1.5em;
+}
+
 /*
  * The credit to Hardcover: their logo under the goal, lined up with it, and
  * inside the frame if the goal has one. It is 16px tall at the default size,
  * and scales with the font size.
  */
-.wp-block-endpaper-reading-goal .endpaper-reading-goal__credit {
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__attribution .endpaper-reading-goal__credit {
 	color: inherit;
 	display: block;
 	width: fit-content;

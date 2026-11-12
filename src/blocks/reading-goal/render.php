@@ -92,7 +92,7 @@ $endpaper_card_style = get_card_style( $attributes );
 		<?php if ( $endpaper_is_gauge ) : ?>
 			<?php // The arc is drawn so that its whole length counts as 100, whatever its size. ?>
 			<div class="endpaper-reading-goal__gauge" style="--endpaper-chars: <?php echo esc_attr( mb_strlen( $endpaper_parts['count'] ) ); ?>">
-				<svg class="endpaper-reading-goal__arc" viewBox="0 0 256 134" aria-hidden="true" focusable="false">
+				<svg class="endpaper-reading-goal__arc" viewBox="0 0 256 128" aria-hidden="true" focusable="false">
 					<path class="endpaper-reading-goal__arc-track" d="M6 128A122 122 0 0 1 250 128" pathLength="100" />
 					<?php if ( $endpaper_percent > 0 ) : ?>
 						<path class="endpaper-reading-goal__arc-fill" d="M6 128A122 122 0 0 1 250 128" pathLength="100" stroke-dasharray="<?php echo esc_attr( $endpaper_percent ); ?> 100" />
