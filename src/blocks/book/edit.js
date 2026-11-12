@@ -53,7 +53,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'showShelf',
 		label: __( 'Your shelf', 'endpaper' ),
 		help: __(
-			'Shows which of your Hardcover shelves the book is on, such as Currently Reading. Only if the book is public in your library.',
+			'Your shelf for the book on Hardcover, such as Currently Reading. Only if the book is public there.',
 			'endpaper'
 		),
 	},
@@ -61,7 +61,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'showUserRating',
 		label: __( 'Your rating', 'endpaper' ),
 		help: __(
-			'Shows the stars you gave the book on Hardcover. Only if the book is public in your library.',
+			'The stars you gave the book. Only if the book is public on Hardcover.',
 			'endpaper'
 		),
 	},
@@ -69,10 +69,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'showProgress',
 		onlyOnShelf: CURRENTLY_READING,
 		label: __( 'Your reading progress', 'endpaper' ),
-		help: __(
-			'Shows how far you are, as logged on Hardcover.',
-			'endpaper'
-		),
+		help: __( 'How far you are, as logged on Hardcover.', 'endpaper' ),
 	},
 	{ attribute: 'showDescription', label: __( 'Description', 'endpaper' ) },
 ];
@@ -192,7 +189,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 							__next40pxDefaultSize
 							label={ __( 'Description length', 'endpaper' ) }
 							help={ __(
-								'The most characters to show. The text ends on a whole sentence where it can. Set to 0 to show the full description.',
+								'The most characters to show, ending on a whole sentence. 0 shows everything.',
 								'endpaper'
 							) }
 							min={ 0 }
@@ -211,7 +208,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 						__nextHasNoMarginBottom
 						label={ __( 'Link to Hardcover', 'endpaper' ) }
 						help={ __(
-							'Links the title and the cover to the book on Hardcover.',
+							'Links the title and cover to the book on Hardcover.',
 							'endpaper'
 						) }
 						checked={ !! attributes.linkToHardcover }

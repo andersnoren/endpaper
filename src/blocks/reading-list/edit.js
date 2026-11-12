@@ -76,7 +76,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'linkToHardcover',
 		label: __( 'Link to Hardcover', 'endpaper' ),
 		help: __(
-			'Links the title and the cover to the book on Hardcover.',
+			'Links the title and cover to the book on Hardcover.',
 			'endpaper'
 		),
 	},
