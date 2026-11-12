@@ -533,7 +533,7 @@ try {
 	endpaper_check( 'only public goals in a known unit are listed', ! is_wp_error( $endpaper_goals ) && array( 1, 2 ) === wp_list_pluck( $endpaper_goals, 'id' ) );
 	endpaper_check( 'a goal is found by its ID', 2 === get_goal( 2 )['id'] && null === get_goal( 3 ) && null === get_goal( 0 ) );
 
-	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showPercent":true} /-->' );
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar","showPercent":true} /-->' );
 	endpaper_check( 'a goal shows its title, count and percentage', false !== strpos( $endpaper_html, '34 of 50 books read' ) && false !== strpos( $endpaper_html, '68%' ) && false !== strpos( $endpaper_html, 'value="68"' ) );
 	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '<b>this year</b>' ) );
 	endpaper_check( 'the days left carry the end date and the ended text for the browser', 1 === preg_match( '/__status" data-end="\d{4}-\d{2}-\d{2}" data-ended="Ended [^"]+"/', $endpaper_html ) );
@@ -542,10 +542,13 @@ try {
 	endpaper_check( 'the title is a level 2 heading, and can be set to another level or a paragraph', false !== strpos( $endpaper_html, '<h2 class="endpaper-reading-goal__title">' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"titleLevel":4} /-->' ), '<h4 class="endpaper-reading-goal__title">' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"titleLevel":0} /-->' ), '<p class="endpaper-reading-goal__title">' ) );
 	endpaper_check( 'the title and the days can be left out', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showTitle":false,"showDays":false} /-->' ), 'endpaper-reading-goal__title' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showDays":false} /-->' ), 'days left' ) );
 
-	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2,"showPercent":true} /-->' );
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2,"className":"is-style-bar","showPercent":true} /-->' );
 	endpaper_check( 'a goal that is beaten stops at 100%, like the bar', false !== strpos( $endpaper_html, '10,508 of 10,000 pages read' ) && false !== strpos( $endpaper_html, 'Goal reached' ) && false === strpos( $endpaper_html, 'days left' ) && false === strpos( $endpaper_html, '105%' ) && false !== strpos( $endpaper_html, '(100%)' ) && false !== strpos( $endpaper_html, 'value="100"' ) );
 
 	endpaper_check( 'the percentage is left out unless that is switched on', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' ), '__percent' ) );
+
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
+	endpaper_check( 'a goal is a gauge unless it has the Bar style', false !== strpos( $endpaper_html, 'endpaper-reading-goal__gauge' ) && false !== strpos( $endpaper_html, 'endpaper-reading-goal--gauge' ) && false === strpos( $endpaper_html, '<progress' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), '<progress' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), 'endpaper-reading-goal--gauge' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2,"className":"is-style-gauge","showPercent":true} /-->' );
 	endpaper_check( 'the gauge style shows the count big, with the rest under it', false !== strpos( $endpaper_html, 'endpaper-reading-goal__gauge' ) && false !== strpos( $endpaper_html, '__number">10,508</span>' ) && false !== strpos( $endpaper_html, '__label">of 10,000 pages read<' ) && false !== strpos( $endpaper_html, '--endpaper-chars: 6' ) && false === strpos( $endpaper_html, '<progress' ) );

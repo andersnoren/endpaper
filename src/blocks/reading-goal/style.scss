@@ -153,7 +153,7 @@
  * characters, as the font is not known here, so view.js measures the real
  * width and fits it again.
  */
-.wp-block-endpaper-reading-goal.is-style-gauge .endpaper-reading-goal__card {
+.wp-block-endpaper-reading-goal.endpaper-reading-goal--gauge .endpaper-reading-goal__card {
 	align-items: center;
 	gap: 0;
 	text-align: center;
@@ -265,7 +265,7 @@
 }
 
 /* The gauge style has no gap between its parts, so the credit has its own. */
-.wp-block-endpaper-reading-goal.is-style-gauge .endpaper-reading-goal__attribution {
+.wp-block-endpaper-reading-goal.endpaper-reading-goal--gauge .endpaper-reading-goal__attribution {
 	margin-top: 1em;
 }
 

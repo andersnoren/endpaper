@@ -37,7 +37,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 - Shows how far along you are on one of your reading goals on Hardcover. You choose the goal in the block settings. Only goals that are public on Hardcover can be shown, and not archived ones.
 - Shows the goal’s title, how much you have done of the target (books read, pages read or hours listened), and how many days are left. A goal that is reached says so instead. The percentage can be shown too.
-- Two styles: **Bar**, a progress bar, and **Gauge**, a half circle with the count in the middle.
+- Two styles: **Gauge**, a half circle with the count in the middle (the default), and **Bar**, a progress bar.
 - The days left are worked out again in the visitor’s browser, so the number is right on pages that are served from a cache.
 - Can credit Hardcover with their logo, which is off until you switch it on. The title’s heading level and the accent color can be changed in the block settings.
 

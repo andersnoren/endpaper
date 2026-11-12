@@ -63,8 +63,9 @@ if ( $endpaper_reached ) {
 	$endpaper_counts_days = '' !== $endpaper_status;
 }
 
+// The gauge is the default style, so it is what a block gets unless it has been given the Bar style.
 $endpaper_show_percent = ! empty( $attributes['showPercent'] );
-$endpaper_is_gauge     = ! empty( $attributes['className'] ) && in_array( 'is-style-gauge', preg_split( '/\s+/', $attributes['className'] ), true );
+$endpaper_is_gauge     = empty( $attributes['className'] ) || ! in_array( 'is-style-bar', preg_split( '/\s+/', $attributes['className'] ), true );
 
 // The page may be kept and served for days, so the days left are worked out again in the browser. The text is for until then, and for browsers without scripts.
 $endpaper_status_data = $endpaper_counts_days ? ' data-end="' . esc_attr( $endpaper_goal['end'] ) . '" data-ended="' . esc_attr( get_goal_ended_text( $endpaper_goal ) ) . '"' : '';
@@ -74,6 +75,7 @@ $endpaper_percent_label = sprintf( __( '%s%% of the goal', 'endpaper' ), number_
 
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
+		'class' => $endpaper_is_gauge ? 'endpaper-reading-goal--gauge' : '',
 		'style' => get_accent_color_style( $attributes, 'endpaper/reading-goal' ),
 	)
 );

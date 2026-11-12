@@ -17,13 +17,13 @@
 	"textdomain": "endpaper",
 	"styles": [
 		{
-			"name": "default",
-			"label": "Bar",
+			"name": "gauge",
+			"label": "Gauge",
 			"isDefault": true
 		},
 		{
-			"name": "gauge",
-			"label": "Gauge"
+			"name": "bar",
+			"label": "Bar"
 		}
 	],
 	"attributes": {
