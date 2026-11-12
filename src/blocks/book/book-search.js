@@ -25,19 +25,21 @@ const SEARCH_DELAY = 400;
  * @return {Array|string} Text and <mark> elements.
  */
 function highlight( text, term ) {
-	const words = term
-		.trim()
-		.split( /\s+/ )
-		.filter( ( word ) => word.length > 0 )
-		.map( ( word ) => word.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) );
+	const escape = ( value ) => value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+	const phrase = term.trim().replace( /\s+/g, ' ' );
 
-	if ( ! words.length || getBookUrl( term ) ) {
+	if ( ! phrase || getBookUrl( term ) ) {
 		return text;
 	}
 
+	// The whole phrase if the text has it, otherwise each word on its own.
+	const pattern = new RegExp( escape( phrase ), 'i' ).test( text )
+		? escape( phrase )
+		: phrase.split( ' ' ).map( escape ).join( '|' );
+
 	// A capture group makes split() keep the matches, at odd indexes.
 	return text
-		.split( new RegExp( `(${ words.join( '|' ) })`, 'i' ) )
+		.split( new RegExp( `(${ pattern })`, 'i' ) )
 		.map( ( part, index ) =>
 			index % 2 ? <mark key={ index }>{ part }</mark> : part
 		);
