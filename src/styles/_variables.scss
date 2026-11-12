@@ -31,20 +31,17 @@ $track-color: color-mix(in srgb, currentcolor 20%, transparent);
  *   line beside a quote.
  * - Hover is what links and logos fade to under the pointer.
  * - Accent faded is how much of the accent color the shelf label has as its
- *   background. The Card style has a stronger default, since the label
- *   stands on a tinted background there.
+ *   background.
  */
 $muted-opacity-text: var(--endpaper-muted-text, var(--wp--custom--endpaper--muted-text, 0.75));
 $muted-opacity-element: var(--endpaper-muted-element, var(--wp--custom--endpaper--muted-element, 0.33));
 $hover-opacity: var(--endpaper-hover, var(--wp--custom--endpaper--hover, 0.75));
 $accent-faded-opacity: var(--endpaper-accent-faded, var(--wp--custom--endpaper--accent-faded, 0.15));
-$accent-faded-opacity-card: var(--endpaper-accent-faded, var(--wp--custom--endpaper--accent-faded, 0.25));
 
 $muted-color-text: color-mix(in srgb, currentcolor calc(#{$muted-opacity-text} * 100%), transparent);
 $muted-color-element: color-mix(in srgb, currentcolor calc(#{$muted-opacity-element} * 100%), transparent);
 $hover-color: color-mix(in srgb, currentcolor calc(#{$hover-opacity} * 100%), transparent);
 $accent-faded-color: color-mix(in srgb, #{$accent-color} calc(#{$accent-faded-opacity} * 100%), transparent);
-$accent-faded-color-card: color-mix(in srgb, #{$accent-color} calc(#{$accent-faded-opacity-card} * 100%), transparent);
 
 /* The narrowest a column in the Reading List grid gets. */
 $column-min: var(--endpaper-column-min, var(--wp--custom--endpaper--column-min, 10em));
