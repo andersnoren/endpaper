@@ -874,18 +874,21 @@ function get_default_book_style() {
  *
  * Big text, such as the count in the middle of the gauge, is not a heading, but looks better in the
  * font of the theme's headings. The values come from the global styles, so they follow
- * styles.elements.heading in theme.json and in the Styles screen.
+ * styles.elements.heading in theme.json and in the Styles screen. A theme can change them for one block
+ * under styles.blocks, in elements.heading.typography, which takes precedence.
  *
+ * @param string $block_name Block name, such as "endpaper/reading-goal".
  * @return string Inline style declarations, or an empty string.
  */
-function get_heading_typography_style() {
-	$typography = wp_get_global_styles(
-		array( 'elements', 'heading', 'typography' ),
-		array( 'transforms' => array( 'resolve-variables' ) )
-	);
+function get_heading_typography_style( $block_name ) {
+	$options    = array( 'transforms' => array( 'resolve-variables' ) );
+	$typography = wp_get_global_styles( array( 'elements', 'heading', 'typography' ), $options );
+	$for_block  = wp_get_global_styles( array( 'blocks', $block_name, 'elements', 'heading', 'typography' ), $options );
 
-	if ( ! is_array( $typography ) ) {
-		return '';
+	$typography = is_array( $typography ) ? $typography : array();
+
+	if ( is_array( $for_block ) ) {
+		$typography = array_merge( $typography, $for_block );
 	}
 
 	$properties = array(

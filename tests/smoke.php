@@ -550,6 +550,34 @@ try {
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
 	endpaper_check( 'a goal is a gauge unless it has the Bar style', false !== strpos( $endpaper_html, 'endpaper-reading-goal__gauge' ) && false !== strpos( $endpaper_html, 'endpaper-reading-goal--gauge' ) && false === strpos( $endpaper_html, '<progress' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), '<progress' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), 'endpaper-reading-goal--gauge' ) );
 
+	$endpaper_headings = static function ( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version' => 3,
+				'styles'  => array(
+					'elements' => array(
+						'heading' => array(
+							'typography' => array(
+								'fontFamily'    => '"Playfair Display", serif',
+								'fontWeight'    => '400',
+								'letterSpacing' => '-0.02em',
+							),
+						),
+					),
+				),
+			)
+		);
+	};
+	add_filter( 'wp_theme_json_data_theme', $endpaper_headings );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
+	remove_filter( 'wp_theme_json_data_theme', $endpaper_headings );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	endpaper_check( 'the big number takes the font of the theme\'s headings', false !== strpos( $endpaper_html, '--endpaper-heading-font-family: &quot;Playfair Display&quot;, serif;' ) || false !== strpos( $endpaper_html, '--endpaper-heading-font-family: "Playfair Display", serif;' ) );
+	endpaper_check( 'and its weight and letter spacing', false !== strpos( $endpaper_html, '--endpaper-heading-font-weight: 400;' ) && false !== strpos( $endpaper_html, '--endpaper-heading-letter-spacing: -0.02em;' ) );
+	$endpaper_theme_style = \AndersNoren\Endpaper\get_heading_typography_style();
+	endpaper_check( 'a theme\'s heading font is resolved to the font itself, not a variable', false !== strpos( $endpaper_theme_style, '--endpaper-heading-font-family: ' ) && false === strpos( $endpaper_theme_style, 'var(' ) );
+
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2,"className":"is-style-gauge","showPercent":true} /-->' );
 	endpaper_check( 'the gauge style shows the count big, with the rest under it', false !== strpos( $endpaper_html, 'endpaper-reading-goal__gauge' ) && false !== strpos( $endpaper_html, '__number">10,508</span>' ) && false !== strpos( $endpaper_html, '__label">of 10,000 pages read<' ) && false !== strpos( $endpaper_html, '--endpaper-chars: 6' ) && false === strpos( $endpaper_html, '<progress' ) );
 	endpaper_check( 'the arc of a goal that is beaten is full', false !== strpos( $endpaper_html, 'stroke-dasharray="100 100"' ) && false !== strpos( $endpaper_html, '__percent"><bdi>100%</bdi>' ) );

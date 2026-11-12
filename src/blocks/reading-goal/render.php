@@ -77,7 +77,7 @@ $endpaper_percent_label = sprintf( __( '%s%% of the goal', 'endpaper' ), number_
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
 		'class' => $endpaper_is_gauge ? 'endpaper-reading-goal--gauge' : '',
-		'style' => get_accent_color_style( $attributes, 'endpaper/reading-goal' ) . get_heading_typography_style(),
+		'style' => get_accent_color_style( $attributes, 'endpaper/reading-goal' ) . get_heading_typography_style( 'endpaper/reading-goal' ),
 	)
 );
 
