@@ -431,6 +431,20 @@
 }
 
 /*
+ * Where the browser can trim the text box to the capital letters, the label
+ * is centered on them, whatever the font has above and below its text. The
+ * padding is taller to make up for the trimmed space, which keeps the pill
+ * the same height.
+ */
+@supports (text-box: trim-both cap alphabetic) {
+
+	.endpaper-book__shelf span {
+		padding-block: 0.6em;
+		text-box: trim-both cap alphabetic;
+	}
+}
+
+/*
  * The bottom row: the facts on one side and the credit to Hardcover, if it
  * is switched on, on the other. On a narrow card the credit moves to a line
  * of its own, under the facts. Without facts it sits alone at the far end.
