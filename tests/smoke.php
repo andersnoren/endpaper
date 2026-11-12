@@ -535,11 +535,11 @@ try {
 			)
 		);
 	};
-	add_filter( 'wp_theme_json_data_theme', $endpaper_gap_theme );
+	add_filter( 'wp_theme_json_data_user', $endpaper_gap_theme );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	$endpaper_themed  = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid"} /-->' );
 	$endpaper_own_gap = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid","style":{"spacing":{"blockGap":"10px"}}} /-->' );
-	remove_filter( 'wp_theme_json_data_theme', $endpaper_gap_theme );
+	remove_filter( 'wp_theme_json_data_user', $endpaper_gap_theme );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	endpaper_check( 'a theme can set the gap of the list, and a gap on the block takes precedence', false !== strpos( $endpaper_themed, '--endpaper-gap: 3rem' ) && false !== strpos( $endpaper_own_gap, '--endpaper-gap: 10px' ) && false === strpos( $endpaper_own_gap, '--endpaper-gap: 3rem' ) );
 	endpaper_check( 'the Hardcover logo is left out unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'endpaper-reading-list__attribution' ) );
@@ -588,10 +588,10 @@ try {
 			)
 		);
 	};
-	add_filter( 'wp_theme_json_data_theme', $endpaper_headings );
+	add_filter( 'wp_theme_json_data_user', $endpaper_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
-	remove_filter( 'wp_theme_json_data_theme', $endpaper_headings );
+	remove_filter( 'wp_theme_json_data_user', $endpaper_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	endpaper_check( 'the big number takes the font of the theme\'s headings', false !== strpos( $endpaper_html, '--endpaper-heading-font-family: &quot;Playfair Display&quot;, serif;' ) || false !== strpos( $endpaper_html, '--endpaper-heading-font-family: "Playfair Display", serif;' ) );
 	endpaper_check( 'and its weight and letter spacing', false !== strpos( $endpaper_html, '--endpaper-heading-font-weight: 400;' ) && false !== strpos( $endpaper_html, '--endpaper-heading-letter-spacing: -0.02em;' ) );
@@ -621,16 +621,53 @@ try {
 			)
 		);
 	};
-	add_filter( 'wp_theme_json_data_theme', $endpaper_block_headings );
+	add_filter( 'wp_theme_json_data_user', $endpaper_block_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	$endpaper_block_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
 	$endpaper_other_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/book' );
-	remove_filter( 'wp_theme_json_data_theme', $endpaper_block_headings );
+	remove_filter( 'wp_theme_json_data_user', $endpaper_block_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	endpaper_check( 'a theme can change the heading typography for one block, on top of the global one', false !== strpos( $endpaper_block_style, '--endpaper-heading-font-family: Georgia, serif;' ) && false !== strpos( $endpaper_block_style, '--endpaper-heading-font-weight: 800;' ) && false !== strpos( $endpaper_other_style, '--endpaper-heading-font-weight: 400;' ) );
 
+	// A heading font that is a preset is resolved to the font itself, whatever the theme in use.
+	$endpaper_preset = static function ( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version'  => 3,
+				'settings' => array(
+					'typography' => array(
+						'fontFamilies' => array(
+							array(
+								'slug'       => 'endpaper-test',
+								'name'       => 'Endpaper test',
+								'fontFamily' => '"Playfair Display", serif',
+							),
+						),
+					),
+				),
+			)
+		);
+	};
+	$endpaper_preset_heading = static function ( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version' => 3,
+				'styles'  => array(
+					'elements' => array(
+						'heading' => array( 'typography' => array( 'fontFamily' => 'var:preset|font-family|endpaper-test' ) ),
+					),
+				),
+			)
+		);
+	};
+	add_filter( 'wp_theme_json_data_theme', $endpaper_preset );
+	add_filter( 'wp_theme_json_data_user', $endpaper_preset_heading );
+	WP_Theme_JSON_Resolver::clean_cached_data();
 	$endpaper_theme_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
-	endpaper_check( 'a theme\'s heading font is resolved to the font itself, not a variable', false !== strpos( $endpaper_theme_style, '--endpaper-heading-font-family: ' ) && false === strpos( $endpaper_theme_style, 'var(' ) );
+	remove_filter( 'wp_theme_json_data_theme', $endpaper_preset );
+	remove_filter( 'wp_theme_json_data_user', $endpaper_preset_heading );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	endpaper_check( 'a heading font that is a preset is resolved to the font itself, not a variable', false !== strpos( $endpaper_theme_style, 'Playfair Display' ) && false === strpos( $endpaper_theme_style, 'var(' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2,"className":"is-style-gauge","showPercent":true} /-->' );
 	endpaper_check( 'the gauge style shows the count big, with the rest under it', false !== strpos( $endpaper_html, 'endpaper-reading-goal__gauge' ) && false !== strpos( $endpaper_html, '__number">10,508</span>' ) && false !== strpos( $endpaper_html, '__label">of 10,000 pages read<' ) && false !== strpos( $endpaper_html, '--endpaper-chars: 6' ) && false === strpos( $endpaper_html, '<progress' ) );
