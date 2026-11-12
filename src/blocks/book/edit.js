@@ -495,9 +495,11 @@ export default function Edit( {
 					key={ refreshCount }
 					block={ metadata.name }
 					attributes={ getPreviewAttributes( attributes ) }
-					LoadingResponsePlaceholder={ () => (
-						<CardPlaceholder attributes={ attributes } />
-					) }
+					LoadingResponsePlaceholder={ ( { children } ) =>
+						children || (
+							<CardPlaceholder attributes={ attributes } />
+						)
+					}
 				/>
 			</div>
 		</>
