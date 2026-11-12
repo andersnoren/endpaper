@@ -732,6 +732,7 @@ add_action( 'admin_init', __NAMESPACE__ . '\schedule_cover_pruning' );
 function unschedule_cover_jobs() {
 	wp_clear_scheduled_hook( 'endpaper_prune_covers' );
 	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
+	wp_unschedule_hook( 'endpaper_refresh' );
 }
 
 /**

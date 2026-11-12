@@ -77,6 +77,54 @@ function cache_key( $name ) {
 }
 
 /**
+ * Lets a visitor have the saved copy now, and has Hardcover asked in the background.
+ *
+ * Used when a saved copy has run past the time it counts as fresh. The editor
+ * and WP-Cron get fresh data instead, and so does a site where WP-Cron is
+ * switched off, since a background request would never run there. A request
+ * already waiting for the same thing is not added a second time.
+ *
+ * @param string $kind What to refresh: book, entry or list.
+ * @param array  $args The arguments of the function that fetches it.
+ * @return bool Whether the saved copy should be used for now.
+ */
+function refresh_later( $kind, $args ) {
+	if ( wp_doing_cron() || wp_doing_ajax() || is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) ) {
+		return false;
+	}
+
+	$event = array( $kind, $args );
+
+	if ( ! wp_next_scheduled( 'endpaper_refresh', $event ) ) {
+		wp_schedule_single_event( time(), 'endpaper_refresh', $event );
+	}
+
+	return true;
+}
+
+/**
+ * Fetches something from Hardcover again, in the background, and saves it.
+ *
+ * @param string $kind What to refresh: book, entry or list.
+ * @param array  $args The arguments of the function that fetches it.
+ * @return void
+ */
+function run_refresh( $kind, $args ) {
+	if ( ! is_array( $args ) ) {
+		return;
+	}
+
+	if ( 'book' === $kind ) {
+		get_book( ...$args );
+	} elseif ( 'entry' === $kind ) {
+		get_library_entry( ...$args );
+	} elseif ( 'list' === $kind ) {
+		get_reading_list( ...$args );
+	}
+}
+add_action( 'endpaper_refresh', __NAMESPACE__ . '\run_refresh', 10, 2 );
+
+/**
  * Clears everything Endpaper has fetched from Hardcover, covers included, so that it is fetched again.
  *
  * The API key stays, and so does the note of whether Hardcover accepts it.
@@ -332,6 +380,10 @@ function get_book( $book_id ) {
 	$stale  = is_array( $cached ) && isset( $cached['fetched'], $cached['book'] ) ? $cached['book'] : null;
 
 	if ( $stale && ( time() - (int) $cached['fetched'] ) < WEEK_IN_SECONDS ) {
+		return $stale;
+	}
+
+	if ( $stale && refresh_later( 'book', array( $book_id ) ) ) {
 		return $stale;
 	}
 
@@ -722,6 +774,10 @@ function get_library_entry( $book_id ) {
 		return $stale;
 	}
 
+	if ( null !== $stale && refresh_later( 'entry', array( $book_id ) ) ) {
+		return $stale;
+	}
+
 	// After a failed request, wait a few minutes before asking Hardcover again.
 	$backoff = get_transient( 'endpaper_api_backoff' );
 
@@ -781,6 +837,10 @@ function get_reading_list( $status_id, $limit ) {
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entries'] ) ? $cached['entries'] : null;
 
 	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < HOUR_IN_SECONDS ) {
+		return $stale;
+	}
+
+	if ( null !== $stale && refresh_later( 'list', array( $status_id, $limit ) ) ) {
 		return $stale;
 	}
 

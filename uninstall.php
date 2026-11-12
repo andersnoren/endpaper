@@ -22,6 +22,7 @@ function endpaper_remove_site_data() {
 
 	wp_clear_scheduled_hook( 'endpaper_prune_covers' );
 	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
+	wp_unschedule_hook( 'endpaper_refresh' );
 
 	// The saved covers, and the folder they are in.
 	$uploads = wp_upload_dir( null, false );

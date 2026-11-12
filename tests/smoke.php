@@ -119,6 +119,8 @@ add_filter(
 		$request = json_decode( $args['body'], true );
 		$query   = isset( $request['query'] ) ? $request['query'] : '';
 
+		$GLOBALS['endpaper_api_requests'] = ( isset( $GLOBALS['endpaper_api_requests'] ) ? $GLOBALS['endpaper_api_requests'] : 0 ) + 1;
+
 		if ( false !== strpos( $query, 'EndpaperSearch' ) ) {
 			$GLOBALS['endpaper_search_requests'] = ( isset( $GLOBALS['endpaper_search_requests'] ) ? $GLOBALS['endpaper_search_requests'] : 0 ) + 1;
 		}
@@ -320,6 +322,33 @@ try {
 
 	delete_transient( 'endpaper_search_limit_1' );
 	wp_set_current_user( 0 );
+
+	echo "Refreshing in the background\n";
+	$endpaper_book_key    = AndersNoren\Endpaper\cache_key( 'endpaper_book_42' );
+	AndersNoren\Endpaper\get_book( 42 );
+	$endpaper_book_cached            = get_transient( $endpaper_book_key );
+	$endpaper_book_cached['fetched'] = time() - 2 * WEEK_IN_SECONDS;
+	set_transient( $endpaper_book_key, $endpaper_book_cached, MONTH_IN_SECONDS );
+	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
+
+	$endpaper_old_book = AndersNoren\Endpaper\get_book( 42 );
+	AndersNoren\Endpaper\get_book( 42 );
+	endpaper_check( 'a visitor gets the saved book at once, and a refresh is queued once', is_array( $endpaper_old_book ) && $endpaper_requests === $GLOBALS['endpaper_api_requests'] && false !== wp_next_scheduled( 'endpaper_refresh', array( 'book', array( 42 ) ) ) && 1 === count( array_filter( _get_cron_array(), static function ( $hooks ) { return isset( $hooks['endpaper_refresh'] ); } ) ) );
+
+	add_filter( 'wp_doing_cron', '__return_true' );
+	do_action( 'endpaper_refresh', 'book', array( 42 ) );
+	remove_filter( 'wp_doing_cron', '__return_true' );
+	$endpaper_book_cached = get_transient( $endpaper_book_key );
+	endpaper_check( 'the background job asks Hardcover and saves the book again', $endpaper_requests + 1 === $GLOBALS['endpaper_api_requests'] && time() - $endpaper_book_cached['fetched'] < 60 );
+
+	$endpaper_book_cached['fetched'] = time() - 2 * WEEK_IN_SECONDS;
+	set_transient( $endpaper_book_key, $endpaper_book_cached, MONTH_IN_SECONDS );
+	wp_unschedule_hook( 'endpaper_refresh' );
+	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
+	set_current_screen( 'dashboard' );
+	AndersNoren\Endpaper\get_book( 42 );
+	set_current_screen( 'front' );
+	endpaper_check( 'in the admin, the book is fetched at once and nothing is queued', $endpaper_requests + 1 === $GLOBALS['endpaper_api_requests'] && false === wp_next_scheduled( 'endpaper_refresh', array( 'book', array( 42 ) ) ) );
 
 	echo "The Book block\n";
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showShelf":true,"showProgress":true} /-->' );
