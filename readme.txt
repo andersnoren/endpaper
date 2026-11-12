@@ -16,7 +16,7 @@ Endpaper adds two blocks that show books from [Hardcover](https://hardcover.app)
 
 **Endpaper is an unofficial plugin.** It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Hardcover does not provide support for it: for help, use the plugin’s support forum here on WordPress.org.
 
-**The Book block** shows one book as a card: the cover, title, authors, a short description, the publication year, the page count and the rating on Hardcover. Search by title, author or ISBN, or paste a link to the book’s page on Hardcover. It can also show which of your own shelves the book is on, and how far you have read. The cover is the one of your own edition when the book is in your library, and you can pick the cover of any other edition.
+**The Book block** shows one book as a card: the cover, title, authors, a short description, the publication year, the page count and the rating on Hardcover. Search by title, author or ISBN, or paste a link to the book’s page on Hardcover. It can also show which of your own shelves the book is on, and how far you have read. The cover is the one of your own edition when the book is in your library, and you can pick the cover of any other edition. You can make the cover small, medium or large, put it on the left, on the right or above the text, and align the text left, center or right.
 
 **The Reading List block** shows books from your own Hardcover library: the ones you are reading now, have read, or want to read. Show them as a list or as a grid of covers, with your reading progress, your ratings and the dates you finished.
 
@@ -132,7 +132,7 @@ The format follows WordPress’s own `image_editor_output_format` filter.
 
 = Can I change how the blocks look? =
 
-Yes. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
+Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
 
 = What happens when I delete the plugin? =
 
