@@ -349,6 +349,7 @@ export default function Edit( {
 
 			<RefreshButton
 				request={ { kind: 'entry', book_id: attributes.bookId } }
+				setAttributes={ setAttributes }
 				onRefreshed={ () => setRefreshCount( ( count ) => count + 1 ) }
 			/>
 

@@ -21,6 +21,9 @@
 		}
 	],
 	"attributes": {
+		"refreshedAt": {
+			"type": "integer"
+		},
 		"bookId": {
 			"type": "integer"
 		},

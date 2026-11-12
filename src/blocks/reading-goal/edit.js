@@ -165,6 +165,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 			{ !! goalId && (
 				<RefreshButton
 					request={ { kind: 'goals' } }
+					setAttributes={ setAttributes }
 					onRefreshed={ () =>
 						setRefreshCount( ( count ) => count + 1 )
 					}

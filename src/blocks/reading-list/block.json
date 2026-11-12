@@ -10,6 +10,9 @@
 	"keywords": [ "hardcover", "books", "currently reading", "endpaper" ],
 	"textdomain": "endpaper",
 	"attributes": {
+		"refreshedAt": {
+			"type": "integer"
+		},
 		"status": {
 			"type": "integer",
 			"default": 2

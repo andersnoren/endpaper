@@ -158,6 +158,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 					status_id: attributes.status,
 					limit: attributes.count,
 				} }
+				setAttributes={ setAttributes }
 				onRefreshed={ () => setRefreshCount( ( count ) => count + 1 ) }
 			/>
 

@@ -17,12 +17,21 @@ import { BlockControls } from '@wordpress/block-editor';
  * reading progress. The saved copy on the server is brought up to date, and
  * the block then draws its preview again.
  *
- * @param {Object}     props             Component props.
- * @param {Object}     props.request     What to fetch again: a kind, and the IDs that go with it.
- * @param {() => void} props.onRefreshed Called once the data is fetched, so the preview can be drawn again.
+ * The time of the update is also saved in the block. That marks the post as
+ * changed, so it can be saved at once, which also clears the page caches that
+ * run on saving.
+ *
+ * @param {Object}                       props               Component props.
+ * @param {Object}                       props.request       What to fetch again: a kind, and the IDs that go with it.
+ * @param {(attributes: Object) => void} props.setAttributes Attribute setter of the block.
+ * @param {() => void}                   props.onRefreshed   Called once the data is fetched, so the preview can be drawn again.
  * @return {Element} The toolbar button.
  */
-export default function RefreshButton( { request, onRefreshed } ) {
+export default function RefreshButton( {
+	request,
+	setAttributes,
+	onRefreshed,
+} ) {
 	const [ isBusy, setIsBusy ] = useState( false );
 	const { createErrorNotice, createSuccessNotice } =
 		useDispatch( 'core/notices' );
@@ -36,6 +45,9 @@ export default function RefreshButton( { request, onRefreshed } ) {
 			data: request,
 		} )
 			.then( () => {
+				setAttributes( {
+					refreshedAt: Math.floor( Date.now() / 1000 ),
+				} );
 				onRefreshed();
 				createSuccessNotice(
 					__( 'Updated from Hardcover.', 'endpaper' ),
