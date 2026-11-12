@@ -5,14 +5,13 @@
 $gap: var(--endpaper-gap, 1.5em);
 
 /*
- * In a grid the gap between columns and between rows is 1.5em, but never
- * more than 4% of the width, so a narrow card does not lose much of it. A
- * percentage does not work between rows, since it is a share of the height,
- * which is not known yet. Container units, which are a share of the width, do.
- * The grid has its card as the container for them.
+ * In a grid the gap between rows is 2em. The gap between columns is 1.5em,
+ * but never more than 4% of the width, so a narrow card does not lose much of
+ * it. Each has a variable of its own, and the Block spacing setting, which
+ * sets --endpaper-gap, sets both.
  */
-$column-gap: var(--endpaper-gap, min(1.5em, 4%));
-$row-gap: var(--endpaper-gap, min(1.5em, 4cqw));
+$row-gap: var(--endpaper-row-gap, var(--endpaper-gap, 2em));
+$column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 
 /*
  * Reading List block.
@@ -273,10 +272,6 @@ $row-gap: var(--endpaper-gap, min(1.5em, 4cqw));
 	column-gap: $column-gap;
 	grid-template-columns: repeat(auto-fill, minmax(min(100%, max(#{$column-min}, (100% - (var(--endpaper-columns, 4) - 1) * #{$column-gap}) / var(--endpaper-columns, 4))), 1fr));
 	row-gap: $row-gap;
-}
-
-.endpaper-reading-list--grid .endpaper-reading-list__card {
-	container-type: inline-size;
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__item {
