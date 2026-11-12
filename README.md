@@ -243,6 +243,18 @@ composer install
 | `composer run phpcs` | Checks the PHP against the WordPress coding standards |
 | `composer run phpcbf` | Fixes the PHP issues that can be fixed automatically |
 
+### Tests
+
+`tests/smoke.php` loads the plugin in a real WordPress and goes through its main paths: the blocks, the caching and background fetches, the covers, the settings screen and the editor routes. Hardcover is never contacted, its answers are faked in the test. Any PHP notice, warning or deprecation counts as a failure, so it is also a good way to check the oldest PHP version the plugin supports.
+
+Run it with WP-CLI, with the plugin active:
+
+```sh
+wp eval-file wp-content/plugins/endpaper/tests/smoke.php
+```
+
+If you use [WordPress Studio](https://wordpress.studio/), run it with `studio wp` in place of `wp`. Use a site made for testing: the test removes the plugin’s API key and its cache.
+
 The code is organized like this:
 
 - `endpaper.php` is the main plugin file.
