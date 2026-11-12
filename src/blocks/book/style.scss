@@ -89,8 +89,22 @@
  * Text alignment moves everything in the card's text column: the header, the
  * rating and progress, and the facts row. Above the text, the cover follows.
  */
+
+/*
+ * When the card is narrow enough to wrap, the cover has a line of its own and
+ * lines up with the text. In a row the text fills the line, so this does
+ * nothing. Without an alignment set, the cover stays on its own side.
+ */
+.endpaper-book--align-start .endpaper-book__card {
+	justify-content: start;
+}
+
 .endpaper-book--align-center {
 	text-align: center;
+
+	.endpaper-book__card {
+		justify-content: center;
+	}
 
 	.endpaper-book__main {
 		align-items: center;
@@ -109,6 +123,10 @@
 
 .endpaper-book--align-end {
 	text-align: end;
+
+	.endpaper-book__card {
+		justify-content: end;
+	}
 
 	.endpaper-book__main {
 		align-items: flex-end;
