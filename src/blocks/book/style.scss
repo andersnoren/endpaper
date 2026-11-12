@@ -468,7 +468,7 @@
  * The logo fades by color, not by opacity. Safari moves an element that
  * changes opacity to a layer of its own, which makes the logo shift a little.
  */
-.endpaper-book__credit:hover {
+.wp-block-endpaper-book .endpaper-book__credit:hover {
 	color: $logo-hover-color;
 }
 

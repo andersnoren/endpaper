@@ -244,7 +244,7 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
  * The logo fades by color, not by opacity. Safari moves an element that
  * changes opacity to a layer of its own, which makes the logo shift a little.
  */
-.endpaper-reading-list__credit:hover {
+.wp-block-endpaper-reading-list .endpaper-reading-list__credit:hover {
 	color: $logo-hover-color;
 }
 
