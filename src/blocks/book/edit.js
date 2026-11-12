@@ -32,7 +32,6 @@ import BookSearch from './book-search';
 import EditionPicker from './edition-picker';
 import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
-import { bookIcon } from '../../components/icons';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
 import metadata from './block.json';
 import './editor.scss';
@@ -112,7 +111,6 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 		return (
 			<div { ...blockProps }>
 				<Placeholder
-					icon={ bookIcon }
 					label={ __( 'Book', 'endpaper' ) }
 					instructions={ __(
 						'Search Hardcover for a book, or paste a link to its Hardcover page.',
