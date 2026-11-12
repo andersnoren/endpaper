@@ -340,7 +340,7 @@ export default function Edit( {
 						isBlock
 						label={ __( 'Text', 'endpaper' ) }
 						help={ __(
-							'My review shows your review of the book, if you have written one and it is public on Hardcover. Otherwise the description is shown.',
+							'Review shows your public review from Hardcover. Without one, the description is shown.',
 							'endpaper'
 						) }
 						value={ getTextMode( attributes ) }
@@ -361,7 +361,7 @@ export default function Edit( {
 						/>
 						<ToggleGroupControlOption
 							value="review"
-							label={ __( 'My review', 'endpaper' ) }
+							label={ __( 'Review', 'endpaper' ) }
 						/>
 					</ToggleGroupControl>
 
