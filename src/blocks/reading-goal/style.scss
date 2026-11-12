@@ -100,7 +100,7 @@
 }
 
 /*
- * The bar takes the whole width. The track is 1em tall and the fill sits
+ * The bar takes the whole width. The track is 0.75em tall and the fill sits
  * inside it, with a gap of 1/8em all around: a border that is see-through,
  * so the track shows behind it. The track is a faded accent, which is the
  * text color when no accent is set. The negative margin takes the space
@@ -115,7 +115,7 @@
 	box-sizing: border-box;
 	display: block;
 	font-size: inherit;
-	height: 1em;
+	height: 0.75em;
 	overflow: hidden;
 	width: 100%;
 }
