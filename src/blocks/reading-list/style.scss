@@ -5,6 +5,13 @@
 $gap: var(--endpaper-gap, 1.5em);
 
 /*
+ * Between the columns of a grid the gap is 1em, but never more than 4% of the
+ * width, so a narrow card does not lose much of it. A percentage does not
+ * work between rows, which is why those keep $gap.
+ */
+$column-gap: var(--endpaper-gap, min(1em, 4%));
+
+/*
  * Reading List block.
  *
  * Every size is in em, relative to the block's font size. The block itself
@@ -260,7 +267,8 @@ $gap: var(--endpaper-gap, 1.5em);
  * the card itself.
  */
 .wp-block-endpaper-reading-list.endpaper-reading-list--grid .endpaper-reading-list__items {
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, max(#{$column-min}, (100% - (var(--endpaper-columns, 4) - 1) * #{$gap}) / var(--endpaper-columns, 4))), 1fr));
+	column-gap: $column-gap;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, max(#{$column-min}, (100% - (var(--endpaper-columns, 4) - 1) * #{$column-gap}) / var(--endpaper-columns, 4))), 1fr));
 }
 
 .endpaper-reading-list--grid .endpaper-reading-list__item {
