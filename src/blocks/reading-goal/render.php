@@ -43,7 +43,7 @@ if ( ! $endpaper_goal ) {
 	return;
 }
 
-$endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 0 );
+$endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 2 );
 $endpaper_title   = '' !== $endpaper_goal['title'] ? $endpaper_goal['title'] : __( 'Reading goal', 'endpaper' );
 $endpaper_amount  = get_goal_amount_text( $endpaper_goal );
 $endpaper_reached = $endpaper_goal['progress'] >= $endpaper_goal['target'];
