@@ -256,9 +256,9 @@
 	margin-top: 0.5em;
 }
 
-/* The gauge style has no gap between its parts, so the credit has more. */
+/* The gauge style has no gap between its parts, so the credit has its own. */
 .wp-block-endpaper-reading-goal.is-style-gauge .endpaper-reading-goal__attribution {
-	margin-top: 1.5em;
+	margin-top: 1em;
 }
 
 /*
