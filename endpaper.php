@@ -61,6 +61,38 @@ function register_blocks() {
 add_action( 'init', __NAMESPACE__ . '\register_blocks' );
 
 /**
+ * Registers the Card style of the Book block.
+ *
+ * The style comes with its settings as data, so they show in the site
+ * editor under Styles, Blocks, Book, and a theme can change them there or in
+ * its own style variation file. Themes that cannot use these settings get the
+ * same values from the block's stylesheet, so keep the two in step.
+ *
+ * @return void
+ */
+function register_block_styles() {
+	register_block_style(
+		'endpaper/book',
+		array(
+			'name'       => 'card',
+			'label'      => __( 'Card', 'endpaper' ),
+			'style_data' => array(
+				'color'   => array(
+					'background' => 'color-mix(in srgb, currentcolor 6%, transparent)',
+				),
+				'border'  => array(
+					'radius' => '0.75em',
+				),
+				'spacing' => array(
+					'padding' => '1.5em',
+				),
+			),
+		)
+	);
+}
+add_action( 'init', __NAMESPACE__ . '\register_block_styles', 11 );
+
+/**
  * Tells a block's editor script whether the API key works.
  *
  * The block shows a message with a link to the settings, instead of a search

@@ -723,6 +723,15 @@ try {
 
 restore_error_handler();
 
+$endpaper_card      = WP_Block_Styles_Registry::get_instance()->get_registered( 'endpaper/book', 'card' );
+$endpaper_card_dupe = array_filter(
+	WP_Block_Type_Registry::get_instance()->get_registered( 'endpaper/book' )->styles,
+	static fn( $style ) => 'card' === $style['name']
+);
+
+endpaper_check( 'the Card style is registered with its settings as data', is_array( $endpaper_card ) && '0.75em' === $endpaper_card['style_data']['border']['radius'] && '1.5em' === $endpaper_card['style_data']['spacing']['padding'] );
+endpaper_check( 'the Card style is not also listed in block.json, so the editor does not show it twice', ! $endpaper_card_dupe );
+
 if ( $GLOBALS['endpaper_failures'] ) {
 	echo "\n" . count( $GLOBALS['endpaper_failures'] ) . " check(s) failed.\n";
 	exit( 1 );

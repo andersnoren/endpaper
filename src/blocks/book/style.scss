@@ -46,6 +46,10 @@
 	padding: 1.5em;
 }
 
+/*
+ * The Card style is registered in endpaper.php with these same values as data,
+ * for the site editor. This is for themes that do not use them.
+ */
 :where(.wp-block-endpaper-book.is-style-card .endpaper-book__card) {
 	background: $card-color;
 	border-radius: 0.75em;
