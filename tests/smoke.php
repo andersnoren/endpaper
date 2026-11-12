@@ -472,7 +472,7 @@ try {
 	endpaper_check( 'the title and the days can be left out', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showTitle":false,"showDays":false} /-->' ), 'endpaper-reading-goal__title' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"showDays":false} /-->' ), 'days left' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2} /-->' );
-	endpaper_check( 'a goal that is beaten shows the real percentage, with a full bar', false !== strpos( $endpaper_html, '10,508 of 10,000 pages read' ) && false !== strpos( $endpaper_html, 'Goal reached' ) && false === strpos( $endpaper_html, 'days left' ) && false !== strpos( $endpaper_html, '105%' ) && false !== strpos( $endpaper_html, 'value="100"' ) );
+	endpaper_check( 'a goal that is beaten stops at 100%, like the bar', false !== strpos( $endpaper_html, '10,508 of 10,000 pages read' ) && false !== strpos( $endpaper_html, 'Goal reached' ) && false === strpos( $endpaper_html, 'days left' ) && false === strpos( $endpaper_html, '105%' ) && false !== strpos( $endpaper_html, '(100%)' ) && false !== strpos( $endpaper_html, 'value="100"' ) );
 
 	endpaper_check( 'days are counted to the end date', 'Ends today' === get_goal_days_text( array( 'end' => current_datetime()->format( 'Y-m-d' ) ) ) && '1 day left' === get_goal_days_text( array( 'end' => current_datetime()->modify( '+1 day' )->format( 'Y-m-d' ) ) ) );
 	endpaper_check( 'a goal that has ended says so', 0 === strpos( get_goal_days_text( array( 'end' => '2020-01-01' ) ), 'Ended' ) );
