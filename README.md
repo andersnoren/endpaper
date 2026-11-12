@@ -164,14 +164,14 @@ define( 'ENDPAPER_HARDCOVER_TOKEN', 'your-api-key' );
 
 ### Permissions for the API key
 
-The button on the settings screen asks for these permissions and nothing else. A key cannot be changed after it is created, which is why the last two are included now.
+The button on the settings screen asks for these permissions and nothing else. A key cannot be changed after it is created, which is why the last one is included now, before there is a block that uses it.
 
 | Permission | Used for |
 | --- | --- |
 | `read:catalog` | Looking up and searching for books. |
 | `read:library:public` | Your reading lists, shelves and progress. Public entries only. |
 | `read:me:content` | Your username, to confirm whose key it is. |
-| `read:goals:public` | Your reading goals, for a block to come. |
+| `read:goals:public` | Your reading goals, for the Reading Goal block. |
 | `read:lists:public` | Your lists, for a block to come. |
 
 None of these let Endpaper change anything on Hardcover, or read anything you haven’t made public.

@@ -81,7 +81,7 @@ Yes. The plugin reads from Hardcover with an API key from your own account. Acco
 
 = Which permissions does the API key need? =
 
-`read:catalog`, `read:library:public` and `read:me:content`. The settings screen also suggests `read:goals:public` and `read:lists:public`, for blocks that are planned, because a key cannot be changed once it is created. None of these let the plugin change anything on Hardcover, or read anything you have not made public.
+`read:catalog`, `read:library:public` and `read:me:content`, and `read:goals:public` for the Reading Goal block. The settings screen also suggests `read:lists:public`, for a block that is planned, because a key cannot be changed once it is created. None of these let the plugin change anything on Hardcover, or read anything you have not made public.
 
 = Is my API key safe? =
 

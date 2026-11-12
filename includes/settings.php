@@ -704,7 +704,7 @@ function get_key_scopes() {
 		'read:catalog'        => __( 'Looking up and searching for books.', 'endpaper' ),
 		'read:library:public' => __( 'Your reading lists, shelves and progress. Public entries only.', 'endpaper' ),
 		'read:me:content'     => __( 'Your username, to confirm whose key it is.', 'endpaper' ),
-		'read:goals:public'   => __( 'Your reading goals, for a block to come.', 'endpaper' ),
+		'read:goals:public'   => __( 'Your reading goals, for the Reading Goal block.', 'endpaper' ),
 		'read:lists:public'   => __( 'Your lists, for a block to come.', 'endpaper' ),
 	);
 }
