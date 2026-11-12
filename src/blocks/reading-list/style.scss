@@ -156,7 +156,8 @@ $gap: var(--endpaper-gap, 1.5em);
 .endpaper-reading-list__progress span,
 .endpaper-reading-list__finished {
 	font-size: $small-font-size;
-	opacity: $muted-opacity;
+
+	@include muted-text;
 }
 
 /* The rating and the date finished, side by side. */

@@ -147,7 +147,8 @@
 
 .endpaper-book__progress span {
 	font-size: $small-font-size;
-	opacity: $muted-opacity;
+
+	@include muted-text;
 }
 
 /*
@@ -243,7 +244,8 @@
 	font-size: 0.857em;
 	font-weight: 400;
 	margin-inline-start: 0.3em;
-	opacity: $muted-opacity;
+
+	@include muted-text;
 }
 
 /*

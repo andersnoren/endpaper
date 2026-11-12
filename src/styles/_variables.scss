@@ -25,6 +25,42 @@ $dot-color: color-mix(in srgb, currentcolor 33%, transparent);
 $muted-opacity: 0.75;
 
 /*
+ * How light the text color is, from 0 (black) to 1 (white). It is worked out
+ * from the color itself, which browsers allow in relative colors.
+ */
+$text-lightness: "(0.2126 * r + 0.7152 * g + 0.0722 * b) / 255";
+
+/*
+ * Secondary text, faded only as far as the text color can take.
+ *
+ * Text that is nearly black or nearly white stands on a background at the
+ * other end, so it stays readable at 75%. The closer the text color is to a
+ * middle tone, the less contrast it has to spare, and the less it is faded:
+ * a mid-gray is not faded at all. With black text on white, or white on
+ * black, that keeps the faded text above a contrast of 4.5 to 1 for as long
+ * as the text color itself is.
+ *
+ * Browsers that cannot work with the text color this way fade all secondary
+ * text to 75%, as before.
+ *
+ * The color is set as the fill of the text, not as its color. An element
+ * whose own color is worked out from the color it inherits is not updated by
+ * Chrome when that color changes, as it does in the editor.
+ */
+@mixin muted-text {
+	opacity: $muted-opacity;
+
+	/* There is no text-fill-color without the prefix. */
+	/* stylelint-disable property-no-vendor-prefix */
+	@supports (-webkit-text-fill-color: rgb(from currentcolor r g b / 0.5)) {
+		-webkit-text-fill-color: #{"rgb(from currentcolor r g b / clamp(#{$muted-opacity}, min(0.6 / (1.001 - #{$text-lightness}), 0.6 / (#{$text-lightness} + 0.001)), 1))"};
+		opacity: 1;
+	}
+
+	/* stylelint-enable property-no-vendor-prefix */
+}
+
+/*
  * An inline icon from the WordPress icon library. The icons have empty space
  * around the shape, so the box is larger than the text and pulled in with
  * negative margins, which makes the shape itself match the text.

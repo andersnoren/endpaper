@@ -20,7 +20,8 @@
 
 .endpaper-notice .endpaper-notice__private {
 	margin-top: 0.25em;
-	opacity: $muted-opacity;
+
+	@include muted-text;
 }
 
 /* Below a book, with some room between them. */
