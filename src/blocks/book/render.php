@@ -130,10 +130,10 @@ if ( '' !== $endpaper_review_html ) {
 
 	if ( $endpaper_reviewed ) {
 		$endpaper_review_parts[] = sprintf(
-			'<time class="endpaper-book__review-part" datetime="%1$s">%2$s</time>',
+			'<time class="endpaper-book__review-part" datetime="%1$s"><span class="screen-reader-text">%2$s</span>%3$s</time>',
 			esc_attr( $endpaper_entry['reviewed'] ),
-			/* translators: %s: A date. */
-			esc_html( sprintf( __( 'Reviewed %s', 'endpaper' ), $endpaper_reviewed ) )
+			esc_html__( 'Reviewed', 'endpaper' ) . ' ',
+			esc_html( $endpaper_reviewed )
 		);
 	}
 
