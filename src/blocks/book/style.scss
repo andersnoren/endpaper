@@ -324,6 +324,16 @@
 	@include muted-text;
 }
 
+/*
+ * The link to the review takes the color of the text around it, so it looks
+ * the same as the date before it, and keeps it on hover whatever the theme
+ * does to links.
+ */
+.wp-block-endpaper-book a.endpaper-book__review-part,
+.wp-block-endpaper-book a.endpaper-book__review-part:hover {
+	color: inherit;
+}
+
 .wp-block-endpaper-book a.endpaper-book__review-part:hover {
 	text-decoration: none;
 }
