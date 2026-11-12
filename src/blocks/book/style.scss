@@ -177,6 +177,13 @@
 	gap: 1em;
 }
 
+/* Long words and links break, so they never stick out of the card. */
+.endpaper-book__authors,
+.endpaper-book__description {
+	max-width: 100%;
+	overflow-wrap: anywhere;
+}
+
 .endpaper-book__header {
 	display: flex;
 	flex-direction: column;
