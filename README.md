@@ -67,9 +67,7 @@ If Hardcover stops accepting the key, administrators get a notice in the admin, 
 
 Endpaper is made to be restyled. The blocks have very little styling of their own, take their fonts and colors from your theme, and are built on the standard color, typography, spacing, border and shadow settings, so most of the work can be done in `theme.json`, without a line of CSS or an override fighting the plugin. A theme can style them like any core block, under `styles.blocks` with `endpaper/book`, `endpaper/reading-list` and `endpaper/reading-goal`.
 
-For what `theme.json` can’t express, such as the opacity of muted text or the accent color, there are a few Endpaper settings, listed below.
-
-A few settings are specific to Endpaper. A theme sets their defaults under `settings.custom`:
+A few things `theme.json` has no setting for, such as the accent color and the opacity of muted text, are specific to Endpaper. A theme sets their defaults under `settings.custom`:
 
 ```json
 {
