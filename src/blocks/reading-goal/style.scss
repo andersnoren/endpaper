@@ -68,29 +68,37 @@
 }
 
 /*
- * How far along the goal is, with the percentage next to it, and what is
- * left of the time at the far end, on one line when there is room.
+ * The count with the percentage after it, and what is left of the time at the
+ * far end. On a short line the percentage moves down first, then the days
+ * left. The figures have no set width, so they give way to the days left,
+ * but never narrower than the count itself.
  */
 .endpaper-reading-goal__summary {
 	align-items: baseline;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25em 0;
+	gap: 0.25em 1em;
+}
+
+.endpaper-reading-goal__figures {
+	flex: 1 1 0;
+	min-width: min-content;
 }
 
 /* How far along the goal is, in bold, with a space before the percentage. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__amount {
+	display: inline;
 	font-weight: 700;
-	margin-inline-end: 0.25em;
+	white-space: nowrap;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__percent {
+	display: inline;
 	white-space: nowrap;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__status {
-	margin-inline-start: auto;
-	padding-inline-start: 1em;
+	text-align: end;
 }
 
 /*
