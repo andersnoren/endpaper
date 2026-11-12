@@ -55,7 +55,7 @@ $endpaper_percent = (int) floor( $endpaper_goal['progress'] / $endpaper_goal['ta
 $endpaper_counts_days = false;
 
 if ( $endpaper_reached ) {
-	$endpaper_status = __( 'Goal reached', 'endpaper' );
+	$endpaper_status = __( 'Goal reached!', 'endpaper' );
 } else {
 	$endpaper_status     = ! empty( $attributes['showDays'] ) ? get_goal_days_text( $endpaper_goal ) : '';
 	$endpaper_counts_days = '' !== $endpaper_status;
@@ -86,7 +86,7 @@ $endpaper_card_style = get_card_style( $attributes );
 
 		<div class="endpaper-reading-goal__summary">
 			<p class="endpaper-reading-goal__amount"><?php echo esc_html( $endpaper_amount ); ?></p>
-			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( number_format_i18n( $endpaper_percent ) . '%' ); ?></bdi></p>
+			<p class="endpaper-reading-goal__percent"><bdi><?php echo esc_html( '(' . number_format_i18n( $endpaper_percent ) . '%)' ); ?></bdi></p>
 			<?php if ( $endpaper_status ) : ?>
 				<?php
 				// The page may be kept and served for days, so the days left are worked out again in the browser. The text here is for until then, and for browsers without scripts.

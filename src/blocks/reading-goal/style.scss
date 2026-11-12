@@ -75,12 +75,13 @@
 	align-items: baseline;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25em 1em;
+	gap: 0.25em 0;
 }
 
-/* How far along the goal is, all in bold. */
+/* How far along the goal is, in bold, with a space before the percentage. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__amount {
 	font-weight: 700;
+	margin-inline-end: 0.25em;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__percent {
@@ -89,6 +90,7 @@
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__status {
 	margin-inline-start: auto;
+	padding-inline-start: 1em;
 }
 
 /*
