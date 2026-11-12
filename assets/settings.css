@@ -147,6 +147,28 @@
 	width: 1%;
 }
 
+/* The list of blocks: each name next to what the block shows. */
+.endpaper-blocks {
+	border-top: 1px solid #dcdcde;
+	margin: 16px 0;
+}
+
+.endpaper-blocks > div {
+	border-bottom: 1px solid #dcdcde;
+	display: grid;
+	gap: 4px 24px;
+	grid-template-columns: 120px 1fr;
+	padding: 12px 0;
+}
+
+.endpaper-blocks dt {
+	font-weight: 600;
+}
+
+.endpaper-blocks dd {
+	margin: 0;
+}
+
 /* The invitation to review the plugin: the words on one side, the button on the other. */
 .endpaper-review {
 	align-items: center;
@@ -164,6 +186,10 @@
 }
 
 @media (max-width: 600px) {
+
+	.endpaper-blocks > div {
+		grid-template-columns: 1fr;
+	}
 
 	.endpaper-card {
 		padding: 16px;

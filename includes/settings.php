@@ -504,6 +504,7 @@ function get_new_key_url() {
  * The screen is in the order people need it. Without a key, how to create
  * one comes first, and the questions about what the key allows and how it is
  * kept are open. With a key, those fold away and the cache gets its section.
+ * With a working key the screen also lists the blocks, as the next step.
  * Help holds the questions, and About Endpaper the credit and the links out.
  *
  * @return void
@@ -603,6 +604,34 @@ function render_settings_page() {
 			</section>
 
 			<?php if ( ! $key_trouble ) : ?>
+				<section class="endpaper-card" aria-labelledby="endpaper-blocks-title">
+					<h2 id="endpaper-blocks-title"><?php esc_html_e( 'Blocks', 'endpaper' ); ?></h2>
+
+					<p><?php esc_html_e( 'You are all set. Add these blocks to any post, page or template:', 'endpaper' ); ?></p>
+
+					<dl class="endpaper-blocks">
+						<div>
+							<dt><?php esc_html_e( 'Book', 'endpaper' ); ?></dt>
+							<dd><?php esc_html_e( 'One book, with its cover, description and rating on Hardcover, and your own shelf, rating and reading progress.', 'endpaper' ); ?></dd>
+						</div>
+						<div>
+							<dt><?php esc_html_e( 'Reading List', 'endpaper' ); ?></dt>
+							<dd><?php esc_html_e( 'The books you are currently reading, want to read or have read, as a list or a grid.', 'endpaper' ); ?></dd>
+						</div>
+					</dl>
+
+					<p class="description">
+						<?php
+						printf(
+							/* translators: 1: What to type for the Book block, 2: What to type for the Reading List block. */
+							esc_html__( 'In the editor, type %1$s or %2$s on an empty line, or search for the blocks by name in the block inserter.', 'endpaper' ),
+							'<code>/book</code>',
+							'<code>/reading list</code>'
+						);
+						?>
+					</p>
+				</section>
+
 				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">
 					<h2 id="endpaper-cache-title"><?php esc_html_e( 'Cache', 'endpaper' ); ?></h2>
 
