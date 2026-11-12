@@ -35,8 +35,11 @@
 
 .endpaper-book-search .endpaper-book-search__heading {
 	color: color-mix(in srgb, currentcolor 70%, transparent);
+	font-family: inherit;
 	font-size: 0.8em;
+	font-weight: 500;
 	letter-spacing: 0.04em;
+	line-height: inherit;
 	margin: 1.5em 0 0.25em;
 	text-transform: uppercase;
 }

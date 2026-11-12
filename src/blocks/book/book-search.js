@@ -395,9 +395,9 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 			{ showRecent && (
 				<>
-					<p className="endpaper-book-search__heading">
+					<h3 className="endpaper-book-search__heading">
 						{ __( 'Recent books', 'endpaper' ) }
-					</p>
+					</h3>
 					<ResultList books={ recent } term="" onPick={ pick } />
 				</>
 			) }
