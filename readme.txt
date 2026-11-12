@@ -20,7 +20,7 @@ Endpaper adds two blocks that show books from [Hardcover](https://hardcover.app)
 
 **The Reading List block** shows books from your own Hardcover library: the ones you are reading now, have read, or want to read. Show them as a list or as a grid of covers, with your reading progress, your ratings and the dates you finished.
 
-Two patterns get you started: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the covers of the books you last finished. You find them in the block inserter, under Patterns, in the Endpaper category.
+Two patterns get you started: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the books you last finished. You find them in the block inserter, under Patterns, in the Endpaper category.
 
 The blocks are made to fit your theme:
 

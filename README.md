@@ -30,7 +30,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 ## Patterns
 
-Two patterns are included, in the Endpaper category of the block inserter: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the covers of the books you last finished.
+Two patterns are included, in the Endpaper category of the block inserter: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the books you last finished. Both are lists of three.
 
 ## For theme authors
 

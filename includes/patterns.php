@@ -39,12 +39,11 @@ function register_patterns() {
 		),
 		'recently-read'     => array(
 			'title'       => __( 'Recently read', 'endpaper' ),
-			'description' => __( 'A heading and the covers of the books you last finished, with your ratings.', 'endpaper' ),
+			'description' => __( 'A heading and the books you last finished, with your ratings.', 'endpaper' ),
 			'heading'     => __( 'Recently read', 'endpaper' ),
 			'list'        => array(
 				'status'     => 3,
-				'count'      => 4,
-				'layout'     => 'grid',
+				'count'      => 3,
 				'titleLevel' => 3,
 			),
 		),
