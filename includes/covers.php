@@ -631,6 +631,36 @@ function queue_cover( $url = '' ) {
 }
 
 /**
+ * Tells how many covers are waiting to be saved, and whether they seem stuck.
+ *
+ * The job that saves them is queued the moment a cover is first needed. When it
+ * is still waiting ten minutes later, WordPress's scheduled tasks are not running.
+ *
+ * @return array The number of covers waiting, and whether the job is overdue.
+ */
+function get_cover_queue_status() {
+	$queue = get_option( ENDPAPER_COVER_QUEUE_OPTION, array() );
+	$queue = is_array( $queue ) ? $queue : array();
+
+	// A cover the editor has saved or given up on in the meantime is not waiting.
+	$records = cover_records();
+	$waiting = 0;
+
+	foreach ( array_keys( $queue ) as $key ) {
+		if ( empty( $records[ $key ]['files'] ) && empty( $records[ $key ]['failed'] ) ) {
+			++$waiting;
+		}
+	}
+
+	$next = wp_next_scheduled( 'endpaper_save_queued_covers' );
+
+	return array(
+		'waiting' => $waiting,
+		'stuck'   => $waiting > 0 && $next && $next < time() - 10 * MINUTE_IN_SECONDS,
+	);
+}
+
+/**
  * Saves the covers that are waiting, for up to twenty seconds, and comes back for the rest.
  *
  * @return void

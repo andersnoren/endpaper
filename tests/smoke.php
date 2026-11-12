@@ -25,6 +25,7 @@ use function AndersNoren\Endpaper\get_cover;
 use function AndersNoren\Endpaper\get_cover_dir;
 use function AndersNoren\Endpaper\get_cover_key;
 use function AndersNoren\Endpaper\get_cover_stats;
+use function AndersNoren\Endpaper\get_cover_queue_status;
 use function AndersNoren\Endpaper\get_covers_site_health_result;
 use function AndersNoren\Endpaper\import_cover;
 use function AndersNoren\Endpaper\prune_covers;
@@ -476,6 +477,46 @@ try {
 	endpaper_check( 'the two patterns are registered, in a category of their own', $endpaper_patterns->is_registered( 'endpaper/currently-reading' ) && $endpaper_patterns->is_registered( 'endpaper/recently-read' ) && WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'endpaper' ) );
 	$endpaper_html = do_blocks( $endpaper_patterns->get_registered( 'endpaper/recently-read' )['content'] );
 	endpaper_check( 'a pattern renders a heading and a list, with the titles one level down', false !== strpos( $endpaper_html, '<h2 class="wp-block-heading">Recently read</h2>' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list--list' ) && false !== strpos( $endpaper_html, '<h3' ) );
+
+	echo "Covers waiting for scheduled tasks\n";
+	$endpaper_had_import = has_filter( 'endpaper_import_covers', '__return_false' );
+	$endpaper_had_remote = has_filter( 'endpaper_allow_remote_covers', '__return_false' );
+	remove_filter( 'endpaper_import_covers', '__return_false' );
+	remove_filter( 'endpaper_allow_remote_covers', '__return_false' );
+	wp_set_current_user( 1 );
+	update_option( 'endpaper_cover_queue', array( 'waitkey' => 'https://assets.hardcover.app/mock/wait.png' ), false );
+	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
+
+	wp_schedule_single_event( time(), 'endpaper_save_queued_covers' );
+	$endpaper_queue = get_cover_queue_status();
+	endpaper_check( 'a cover that was queued just now is waiting, not stuck', 1 === $endpaper_queue['waiting'] && ! $endpaper_queue['stuck'] );
+
+	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
+	wp_schedule_single_event( time() - 20 * MINUTE_IN_SECONDS, 'endpaper_save_queued_covers' );
+	$endpaper_queue = get_cover_queue_status();
+	endpaper_check( 'a job that is twenty minutes late means the scheduled tasks are not running', $endpaper_queue['stuck'] );
+
+	if ( can_store_covers() ) {
+		$endpaper_health = get_covers_site_health_result();
+		ob_start();
+		render_settings_page();
+		$endpaper_html = ob_get_clean();
+		endpaper_check( 'Site Health recommends looking into it, and the settings screen says so', 'recommended' === $endpaper_health['status'] && false !== strpos( $endpaper_health['description'], 'scheduled tasks' ) && false !== strpos( $endpaper_html, 'notice-warning' ) );
+	}
+
+	delete_option( 'endpaper_cover_queue' );
+	wp_clear_scheduled_hook( 'endpaper_save_queued_covers' );
+	endpaper_check( 'with nothing waiting, nothing is reported', ! get_cover_queue_status()['stuck'] );
+
+	if ( $endpaper_had_import ) {
+		add_filter( 'endpaper_import_covers', '__return_false' );
+	}
+
+	if ( $endpaper_had_remote ) {
+		add_filter( 'endpaper_allow_remote_covers', '__return_false' );
+	}
+
+	wp_set_current_user( 0 );
 
 	echo "Clearing the cache\n";
 	do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );

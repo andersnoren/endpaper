@@ -332,6 +332,26 @@ function get_site_health_result() {
 }
 
 /**
+ * Returns the text that says covers are waiting for scheduled tasks to run.
+ *
+ * @param int $waiting The number of covers waiting.
+ * @return string The text, not escaped.
+ */
+function get_cover_wait_text( $waiting ) {
+	$text = sprintf(
+		/* translators: %s: A number of book covers. */
+		_n( '%s book cover is waiting to be saved, but this site’s scheduled tasks do not seem to be running. Until they do, it is shown as a gray box.', '%s book covers are waiting to be saved, but this site’s scheduled tasks do not seem to be running. Until they do, they are shown as gray boxes.', $waiting, 'endpaper' ),
+		number_format_i18n( $waiting )
+	);
+
+	if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
+		$text .= ' ' . __( 'WP-Cron is switched off on this site, so a job on the server has to run wp-cron.php at regular intervals.', 'endpaper' );
+	}
+
+	return $text;
+}
+
+/**
  * Reports in Site Health whether book covers can be saved on the site.
  *
  * When they cannot, they are loaded from Hardcover by each visitor's
@@ -375,6 +395,20 @@ function get_covers_site_health_result() {
 			esc_html__( 'The folder %s cannot be created or written to. Until it can, covers are loaded from Hardcover by your visitors’ browsers, so Hardcover sees their IP address and browser details.', 'endpaper' ),
 			'<code>' . esc_html( '' !== $dir['path'] ? $dir['path'] : 'wp-content/uploads/endpaper/covers' ) . '</code>'
 		) . '</p>';
+	}
+
+	$queue = get_cover_queue_status();
+
+	if ( 'good' === $result['status'] && $queue['stuck'] ) {
+		$result['label']       = __( 'Endpaper is waiting for scheduled tasks to run', 'endpaper' );
+		$result['status']      = 'recommended';
+		$result['description'] = '<p>' . esc_html( get_cover_wait_text( $queue['waiting'] ) ) . '</p>';
+		$result['actions']     = sprintf(
+			'<p><a href="%s" target="_blank" rel="noopener noreferrer">%s<span class="screen-reader-text"> %s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></p>',
+			esc_url( 'https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/' ),
+			esc_html__( 'How to run scheduled tasks from the server', 'endpaper' ),
+			esc_html__( '(opens in a new tab)', 'endpaper' )
+		);
 	}
 
 	return $result;
@@ -638,6 +672,7 @@ function render_settings_page() {
 	$key_rejected = 'rejected' === get_token_trouble();
 
 	$cover_stats = get_cover_stats();
+	$cover_queue = get_cover_queue_status();
 	$cover_dir   = get_cover_dir();
 
 	// The covers' folder as it is best recognized: from the site's own folder on.
@@ -782,6 +817,12 @@ function render_settings_page() {
 						}
 						?>
 					</p>
+
+					<?php if ( $cover_queue['stuck'] ) : ?>
+						<div class="notice notice-warning inline">
+							<p><?php echo esc_html( get_cover_wait_text( $cover_queue['waiting'] ) ); ?></p>
+						</div>
+					<?php endif; ?>
 
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<input type="hidden" name="action" value="endpaper_clear_cache" />
