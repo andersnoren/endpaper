@@ -40,6 +40,14 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1.5em;
+
+	/*
+	 * When the card is narrow enough to wrap, the cover has a line of its own
+	 * and lines up with the text, which is aligned to the start unless the
+	 * block says otherwise. In a row the text fills the line, so this does
+	 * nothing.
+	 */
+	justify-content: start;
 }
 
 /*
@@ -89,15 +97,6 @@
  * Text alignment moves everything in the card's text column: the header, the
  * rating and progress, and the facts row. Above the text, the cover follows.
  */
-
-/*
- * When the card is narrow enough to wrap, the cover has a line of its own and
- * lines up with the text. In a row the text fills the line, so this does
- * nothing. Without an alignment set, the cover stays on its own side.
- */
-.endpaper-book--align-start .endpaper-book__card {
-	justify-content: start;
-}
 
 .endpaper-book--align-center {
 	text-align: center;
