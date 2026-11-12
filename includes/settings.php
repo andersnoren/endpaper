@@ -899,11 +899,11 @@ function render_settings_page() {
 						$endpaper_styles = array(
 							'default' => array(
 								'label'       => __( 'Plain', 'endpaper' ),
-								'description' => __( 'The book sits in the page, with no frame around it.', 'endpaper' ),
+								'description' => __( 'The book sits directly on the page, with no background or frame.', 'endpaper' ),
 							),
 							'card'    => array(
 								'label'       => __( 'Card', 'endpaper' ),
-								'description' => __( 'The book sits on a light background, with rounded corners.', 'endpaper' ),
+								'description' => __( 'The book sits on a light background with rounded corners.', 'endpaper' ),
 							),
 						);
 						?>
