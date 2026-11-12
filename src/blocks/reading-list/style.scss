@@ -5,12 +5,12 @@
 $gap: var(--endpaper-gap, 1.5em);
 
 /*
- * In a grid the gap between rows is 2em. The gap between columns is 1.5em,
- * but never more than 4% of the width, so a narrow card does not lose much of
- * it. Each has a variable of its own, and the Block spacing setting, which
- * sets --endpaper-gap, sets both.
+ * In a grid both gaps are 1.5em, but the one between columns is never more
+ * than 4% of the width, so a narrow card does not lose much of it. Each has a
+ * variable of its own, and the Block spacing setting, which sets
+ * --endpaper-gap, sets both.
  */
-$row-gap: var(--endpaper-row-gap, var(--endpaper-gap, 2em));
+$row-gap: var(--endpaper-row-gap, var(--endpaper-gap, 1.5em));
 $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 
 /*
