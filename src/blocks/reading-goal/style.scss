@@ -53,7 +53,7 @@
 
 /*
  * A title that is a heading takes its weight from the theme's headings. A
- * plain one is not bold, so the numbers stand out.
+ * plain one is not bold, so the count under it stands out.
  */
 .wp-block-endpaper-reading-goal p.endpaper-reading-goal__title {
 	font-weight: 400;
@@ -80,11 +80,9 @@
 	gap: 0.25em 0.8125em;
 }
 
-/* The number done is the largest thing in the block. */
-.endpaper-reading-goal__done {
-	font-size: 2em;
+/* How far along the goal is, all in bold. */
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__amount {
 	font-weight: 700;
-	line-height: 1;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__percent {
