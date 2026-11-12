@@ -14,23 +14,9 @@ import { store as blockEditorStore } from '@wordpress/block-editor';
  * Internal dependencies
  */
 import Edit from './edit';
+import getBookUrl from '../../utils/book-url';
 import metadata from './block.json';
 import './style.scss';
-
-const BOOK_URL =
-	/^https?:\/\/(?:www\.)?hardcover\.app\/books\/[a-z0-9_-]+(?:[/?#]\S*)?$/i;
-
-/**
- * Returns the link to a book on Hardcover that a piece of text is, or an empty string.
- *
- * @param {string} text The text.
- * @return {string} The link, or an empty string.
- */
-function getBookUrl( text ) {
-	const url = ( text || '' ).trim();
-
-	return BOOK_URL.test( url ) ? url : '';
-}
 
 // The block is dynamic: it is rendered on the server by render.php, so there is no save function.
 registerBlockType( metadata.name, {

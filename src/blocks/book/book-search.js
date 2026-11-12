@@ -8,6 +8,11 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
 /**
+ * Internal dependencies
+ */
+import getBookUrl from '../../utils/book-url';
+
+/**
  * How long to wait after the last keystroke before searching, in milliseconds.
  */
 const SEARCH_DELAY = 400;
@@ -74,8 +79,62 @@ export default function BookSearch( { onSelect } ) {
 		return () => clearTimeout( timer );
 	}, [ term ] );
 
+	// Enter on a link to a book on Hardcover picks that book at once, without waiting for it to be listed.
+	const pickLink = ( event ) => {
+		const url = getBookUrl( term );
+
+		if ( 'Enter' !== event.key || ! url ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		// A search still under way is dropped.
+		const requestId = ++latestRequest.current;
+		setResults( [] );
+		setStatus( 'loading' );
+
+		apiFetch( {
+			path: addQueryArgs( '/endpaper/v1/search', { q: url } ),
+		} )
+			.then( ( books ) => {
+				if ( requestId !== latestRequest.current ) {
+					return;
+				}
+
+				if ( Array.isArray( books ) && books[ 0 ]?.id ) {
+					onSelect( books[ 0 ].id );
+					return;
+				}
+
+				setMessage(
+					__(
+						'That book could not be found on Hardcover.',
+						'endpaper'
+					)
+				);
+				setStatus( 'error' );
+			} )
+			.catch( ( error ) => {
+				if ( requestId !== latestRequest.current ) {
+					return;
+				}
+
+				setMessage(
+					error?.message ||
+						__(
+							'Something went wrong while searching.',
+							'endpaper'
+						)
+				);
+				setStatus( 'error' );
+			} );
+	};
+
 	return (
-		<div className="endpaper-book-search">
+		// The key press comes from the search field inside.
+		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
+		<div className="endpaper-book-search" onKeyDown={ pickLink }>
 			<SearchControl
 				__nextHasNoMarginBottom
 				label={ __( 'Search for a book', 'endpaper' ) }
