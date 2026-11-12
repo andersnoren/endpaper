@@ -80,7 +80,7 @@ A few settings are specific to Endpaper. A theme sets their defaults under `sett
 - `mutedText` is the opacity of secondary text, such as the date of a review. The default is 0.75.
 - `mutedElement` is the opacity of small marks, such as the dots between facts and the line beside a quote. The default is 0.33.
 - `hover` is the opacity links and logos fade to under the pointer. The default is 0.75.
-- `columnMin` is the narrowest a column in the Reading List grid gets. The default is 11em. A narrow card gets fewer columns, down to one.
+- `columnMin` is the narrowest a column in the Reading List grid gets. The default is 10em. A narrow card gets fewer columns, down to one.
 
 The same values can be set as CSS variables, `--endpaper-muted-text`, `--endpaper-muted-element`, `--endpaper-hover` and `--endpaper-column-min`, on the block or anywhere above it.
 
