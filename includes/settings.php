@@ -492,7 +492,7 @@ function get_new_key_url() {
  * without giving away the key or its length.
  *
  * The screen is in the order people need it. Without a key, how to create
- * one comes first, and the explanations of what the key allows and how it is
+ * one comes first, and the questions about what the key allows and how it is
  * kept are open. With a key, those fold away and the cache gets its section.
  *
  * @return void
@@ -603,11 +603,13 @@ function render_settings_page() {
 				</section>
 			<?php endif; ?>
 
-			<section class="endpaper-card" aria-labelledby="endpaper-key-title">
-				<h2 id="endpaper-key-title"><?php esc_html_e( 'About your key', 'endpaper' ); ?></h2>
+			<section class="endpaper-card" aria-labelledby="endpaper-faq-title">
+				<h2 id="endpaper-faq-title"><?php esc_html_e( 'Frequently asked questions', 'endpaper' ); ?></h2>
+
+				<h3><?php esc_html_e( 'About your key', 'endpaper' ); ?></h3>
 
 				<details class="endpaper-disclosure"<?php echo $has_token ? '' : ' open'; ?>>
-					<summary><?php esc_html_e( 'What the key allows', 'endpaper' ); ?></summary>
+					<summary><?php esc_html_e( 'What does the key allow?', 'endpaper' ); ?></summary>
 
 					<p><?php esc_html_e( 'The button for creating a key asks for these permissions and nothing else:', 'endpaper' ); ?></p>
 
@@ -628,7 +630,7 @@ function render_settings_page() {
 				</details>
 
 				<details class="endpaper-disclosure"<?php echo $has_token ? '' : ' open'; ?>>
-					<summary><?php esc_html_e( 'How your key is kept safe', 'endpaper' ); ?></summary>
+					<summary><?php esc_html_e( 'How is my key kept safe?', 'endpaper' ); ?></summary>
 
 					<ul class="ul-disc">
 						<li><?php esc_html_e( 'It is only sent to Hardcover. Your server makes all the requests, so the key never reaches your visitors’ browsers, the page source or the editor.', 'endpaper' ); ?></li>
