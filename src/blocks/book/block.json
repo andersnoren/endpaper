@@ -27,6 +27,10 @@
 			"enum": [ "left", "right", "top" ],
 			"default": "left"
 		},
+		"textAlign": {
+			"type": "string",
+			"enum": [ "left", "center", "right" ]
+		},
 		"coverSize": {
 			"type": "string",
 			"enum": [ "small", "medium", "large" ],

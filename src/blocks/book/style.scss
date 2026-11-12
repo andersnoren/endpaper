@@ -85,6 +85,46 @@
 	flex: none;
 }
 
+/*
+ * Text alignment moves everything in the card's text column: the header, the
+ * rating and progress, and the facts row. Above the text, the cover follows.
+ */
+.endpaper-book--align-center {
+	text-align: center;
+
+	.endpaper-book__main {
+		align-items: center;
+	}
+
+	.endpaper-book__mine,
+	.endpaper-book__meta,
+	.endpaper-book__footer {
+		justify-content: center;
+	}
+
+	&.endpaper-book--cover-top .endpaper-book__card {
+		align-items: center;
+	}
+}
+
+.endpaper-book--align-end {
+	text-align: end;
+
+	.endpaper-book__main {
+		align-items: flex-end;
+	}
+
+	.endpaper-book__mine,
+	.endpaper-book__meta,
+	.endpaper-book__footer {
+		justify-content: flex-end;
+	}
+
+	&.endpaper-book--cover-top .endpaper-book__card {
+		align-items: flex-end;
+	}
+}
+
 .endpaper-book__cover img,
 .endpaper-book__cover .endpaper-cover-placeholder {
 

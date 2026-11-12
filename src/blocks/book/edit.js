@@ -3,7 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 import {
 	BlockControls,
 	HeadingLevelDropdown,
@@ -224,56 +224,84 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 					/>
 				</PanelBody>
 
-				{ attributes.showCover && (
-					<PanelBody title={ __( 'Layout', 'endpaper' ) }>
-						<ToggleGroupControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							isBlock
-							label={ __( 'Cover position', 'endpaper' ) }
-							value={ attributes.coverPosition || 'left' }
-							onChange={ ( coverPosition ) =>
-								setAttributes( { coverPosition } )
-							}
-						>
-							<ToggleGroupControlOption
-								value="left"
-								label={ __( 'Left', 'endpaper' ) }
-							/>
-							<ToggleGroupControlOption
-								value="right"
-								label={ __( 'Right', 'endpaper' ) }
-							/>
-							<ToggleGroupControlOption
-								value="top"
-								label={ __( 'Top', 'endpaper' ) }
-							/>
-						</ToggleGroupControl>
-						<ToggleGroupControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							isBlock
-							label={ __( 'Cover size', 'endpaper' ) }
-							value={ attributes.coverSize || 'medium' }
-							onChange={ ( coverSize ) =>
-								setAttributes( { coverSize } )
-							}
-						>
-							<ToggleGroupControlOption
-								value="small"
-								label={ __( 'Small', 'endpaper' ) }
-							/>
-							<ToggleGroupControlOption
-								value="medium"
-								label={ __( 'Medium', 'endpaper' ) }
-							/>
-							<ToggleGroupControlOption
-								value="large"
-								label={ __( 'Large', 'endpaper' ) }
-							/>
-						</ToggleGroupControl>
-					</PanelBody>
-				) }
+				<PanelBody title={ __( 'Layout', 'endpaper' ) }>
+					{ attributes.showCover && (
+						<>
+							<ToggleGroupControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								isBlock
+								label={ __( 'Cover position', 'endpaper' ) }
+								value={ attributes.coverPosition || 'left' }
+								onChange={ ( coverPosition ) =>
+									setAttributes( { coverPosition } )
+								}
+							>
+								<ToggleGroupControlOption
+									value="left"
+									label={ __( 'Left', 'endpaper' ) }
+								/>
+								<ToggleGroupControlOption
+									value="right"
+									label={ __( 'Right', 'endpaper' ) }
+								/>
+								<ToggleGroupControlOption
+									value="top"
+									label={ __( 'Top', 'endpaper' ) }
+								/>
+							</ToggleGroupControl>
+							<ToggleGroupControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								isBlock
+								label={ __( 'Cover size', 'endpaper' ) }
+								value={ attributes.coverSize || 'medium' }
+								onChange={ ( coverSize ) =>
+									setAttributes( { coverSize } )
+								}
+							>
+								<ToggleGroupControlOption
+									value="small"
+									label={ __( 'Small', 'endpaper' ) }
+								/>
+								<ToggleGroupControlOption
+									value="medium"
+									label={ __( 'Medium', 'endpaper' ) }
+								/>
+								<ToggleGroupControlOption
+									value="large"
+									label={ __( 'Large', 'endpaper' ) }
+								/>
+							</ToggleGroupControl>
+						</>
+					) }
+					<ToggleGroupControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						isBlock
+						label={ __( 'Text alignment', 'endpaper' ) }
+						value={
+							attributes.textAlign ||
+							( isRTL() ? 'right' : 'left' )
+						}
+						onChange={ ( textAlign ) =>
+							setAttributes( { textAlign } )
+						}
+					>
+						<ToggleGroupControlOption
+							value="left"
+							label={ __( 'Left', 'endpaper' ) }
+						/>
+						<ToggleGroupControlOption
+							value="center"
+							label={ __( 'Center', 'endpaper' ) }
+						/>
+						<ToggleGroupControlOption
+							value="right"
+							label={ __( 'Right', 'endpaper' ) }
+						/>
+					</ToggleGroupControl>
+				</PanelBody>
 
 				{ attributes.showCover && (
 					<PanelBody

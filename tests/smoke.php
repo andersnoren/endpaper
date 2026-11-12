@@ -329,6 +329,8 @@ try {
 
 	endpaper_check( 'the cover can be put on the right, and on top', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"coverPosition":"right"} /-->' ), 'endpaper-book--cover-right' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"coverPosition":"top"} /-->' ), 'endpaper-book--cover-top' ) && false !== strpos( $endpaper_html, 'endpaper-book--cover-left' ) );
 
+	endpaper_check( 'the text can be centered or aligned to the end, and bad values are ignored', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"textAlign":"center"} /-->' ), 'endpaper-book--align-center' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"textAlign":"right"} /-->' ), 'endpaper-book--align-end' ) && false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"textAlign":"bogus"} /-->' ), 'endpaper-book--align-' ) && false === strpos( $endpaper_html, 'endpaper-book--align-' ) );
+
 	echo "Edition covers\n";
 	$endpaper_editions = get_editions( 42 );
 	endpaper_check( 'editions without a cover, or with one already listed, are left out', is_array( $endpaper_editions ) && array( 101, 103 ) === wp_list_pluck( $endpaper_editions, 'id' ) );

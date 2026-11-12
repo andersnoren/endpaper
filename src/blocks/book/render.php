@@ -129,6 +129,13 @@ $endpaper_cover_sizes    = array(
 	'large'  => '(max-width: 600px) 40vw, 256px',
 );
 
+// Text alignment is set as left, center or right, and kept as start, center or end so it follows the direction of the site.
+$endpaper_text_align = isset( $attributes['textAlign'] ) ? $attributes['textAlign'] : '';
+if ( 'left' === $endpaper_text_align || 'right' === $endpaper_text_align ) {
+	$endpaper_text_align = ( is_rtl() === ( 'left' === $endpaper_text_align ) ) ? 'end' : 'start';
+}
+$endpaper_text_align = in_array( $endpaper_text_align, array( 'start', 'center', 'end' ), true ) ? $endpaper_text_align : '';
+
 // Above the text, the cover keeps its width however narrow the card is.
 if ( 'top' === $endpaper_cover_position ) {
 	$endpaper_cover_sizes = array(
@@ -140,7 +147,7 @@ if ( 'top' === $endpaper_cover_position ) {
 
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'endpaper-book--cover-' . $endpaper_cover_position . ' endpaper-book--cover-' . $endpaper_cover_size,
+		'class' => 'endpaper-book--cover-' . $endpaper_cover_position . ' endpaper-book--cover-' . $endpaper_cover_size . ( $endpaper_text_align ? ' endpaper-book--align-' . $endpaper_text_align : '' ),
 		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ),
 	)
 );
