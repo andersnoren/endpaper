@@ -53,7 +53,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'showShelf',
 		label: __( 'Your shelf', 'endpaper' ),
 		help: __(
-			'Your shelf for the book on Hardcover, such as Read. Only if the book is public there.',
+			'Your shelf for the book on Hardcover, such as Read. Only if your activity on the book is public.',
 			'endpaper'
 		),
 	},
@@ -61,7 +61,7 @@ const DISPLAY_TOGGLES = [
 		attribute: 'showUserRating',
 		label: __( 'Your rating', 'endpaper' ),
 		help: __(
-			'The stars you gave the book. Only if the book is public on Hardcover.',
+			'The stars you gave the book on Hardcover. Only if your activity on the book is public.',
 			'endpaper'
 		),
 	},

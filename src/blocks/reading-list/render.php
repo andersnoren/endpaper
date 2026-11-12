@@ -40,7 +40,7 @@ if ( is_wp_error( $endpaper_entries ) ) {
 }
 
 if ( ! $endpaper_entries ) {
-	the_editor_notice( __( 'No public books with this status were found in your Hardcover library.', 'endpaper' ) );
+	the_editor_notice( __( 'No books with this status were found in your Hardcover library. Only books where your activity is public are shown.', 'endpaper' ) );
 
 	return;
 }
