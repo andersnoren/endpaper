@@ -112,6 +112,11 @@
 	overflow-wrap: anywhere;
 }
 
+/* Beside a small cover the title is a step smaller, to keep the proportions. */
+.wp-block-endpaper-book.endpaper-book--cover-small .endpaper-book__title {
+	font-size: 1.5em;
+}
+
 /*
  * What the site's owner made of the book: their rating, and their progress
  * or shelf, side by side.
