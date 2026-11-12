@@ -31,7 +31,7 @@
 }
 
 /* Spacing inside the block is set with gaps, not with the theme's margins. */
-.wp-block-endpaper-reading-goal p,
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__card p,
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__title {
 	margin: 0;
 }
@@ -148,10 +148,10 @@
 	text-align: center;
 }
 
-.endpaper-reading-goal__gauge {
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__gauge {
 	aspect-ratio: 256 / 134;
 	container-type: inline-size;
-	margin-block: 1em -0.375em;
+	margin: 1em 0 -0.375em;
 	position: relative;
 	width: min(100%, 16em);
 }
@@ -177,12 +177,14 @@
 }
 
 /* The bottom of the count is on the line the arc starts and ends on. */
-.wp-block-endpaper-reading-goal .endpaper-reading-goal__count {
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__gauge .endpaper-reading-goal__count {
 	bottom: 4.48%;
 	font-size: min(26.5cqw, calc(86cqw / var(--endpaper-chars, 2)));
 	font-weight: 700;
 	inset-inline: 0;
 	line-height: 1.2;
+	margin: 0;
+	padding: 0;
 	position: absolute;
 	text-align: center;
 	white-space: nowrap;
@@ -196,13 +198,13 @@
 	font-weight: 700;
 }
 
-.endpaper-reading-goal__meta {
+.wp-block-endpaper-reading-goal .endpaper-reading-goal__meta {
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.25em 0.5em;
 	justify-content: center;
-	margin-block-start: -0.5em;
+	margin: -0.5em 0 0;
 }
 
 /* The days left in the default style sit apart, here they are centered. */

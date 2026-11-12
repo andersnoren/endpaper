@@ -134,10 +134,14 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 			</Placeholder>
 		);
 	} else {
+		const previewAttributes = getPreviewAttributes( attributes );
+
+		// A new style has different markup, so the preview starts over. The preview debounces changes and drops one if the editor draws again within half a second, which a change of style does.
 		body = (
 			<ServerSideRender
+				key={ previewAttributes.className || 'default' }
 				block={ metadata.name }
-				attributes={ getPreviewAttributes( attributes ) }
+				attributes={ previewAttributes }
 			/>
 		);
 	}
