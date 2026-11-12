@@ -160,7 +160,7 @@ None of these let Endpaper change anything on Hardcover, or read anything you ha
 - **Your API key is only sent to Hardcover.** All requests to Hardcover are made from PHP. The key is never sent to the browser, and the settings screen never shows a saved key. It is stored in the site’s database as it is, not encrypted, or you can define it as `ENDPAPER_HARDCOVER_TOKEN` in `wp-config.php` to keep it out of the database. Deleting the plugin removes the key and everything it has cached.
 - **Requests are cached.** A book is fetched once and stored for a week, and a reading list is refreshed at most once an hour, so showing either doesn’t call Hardcover on every page view. Search requests are only made while you are searching in the editor.
 - **It keeps working if Hardcover can’t be reached.** If a request fails, the block shows the last copy it has.
-- **Cover images are loaded from Hardcover.** They are not copied to your media library.
+- **Cover images are saved on your site.** Each cover is downloaded from Hardcover once and shown from your own site after that. See “Book covers” above.
 
 ## Development
 
