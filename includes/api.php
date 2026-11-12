@@ -18,6 +18,9 @@ defined( 'ABSPATH' ) || exit;
  */
 define( 'ENDPAPER_BOOK_FIELDS', 'id title slug description pages release_year rating ratings_count image { url } cached_contributors' );
 
+// How many searches a person can make in a minute that are not answered from the cache.
+define( 'ENDPAPER_SEARCH_LIMIT', 20 );
+
 /**
  * Tidies up an API key: removes a leading "Bearer " and surrounding space.
  *
@@ -544,6 +547,28 @@ function search_books( $term ) {
 		);
 	}
 
+	// The same search, typed again within the hour, is answered from the cache.
+	$cache_key = cache_key( 'endpaper_search_' . md5( strtolower( $term ) ) );
+	$cached    = get_transient( $cache_key );
+
+	if ( is_array( $cached ) ) {
+		return $cached;
+	}
+
+	// Anyone who can edit posts can search with the site's key, so the searches that reach Hardcover are limited for each person.
+	$user_id = get_current_user_id();
+
+	if ( $user_id ) {
+		$limit_key = 'endpaper_search_limit_' . $user_id;
+		$searches  = (int) get_transient( $limit_key );
+
+		if ( $searches >= ENDPAPER_SEARCH_LIMIT ) {
+			return new WP_Error( 'endpaper_search_limit', __( 'Too many searches. Wait a minute and try again.', 'endpaper' ), array( 'status' => 429 ) );
+		}
+
+		set_transient( $limit_key, $searches + 1, MINUTE_IN_SECONDS );
+	}
+
 	$data = api_request(
 		'query EndpaperSearch($query: String!) { search(query: $query, query_type: "Book", per_page: 8, page: 1) { results } }',
 		array( 'query' => $term )
@@ -580,6 +605,8 @@ function search_books( $term ) {
 			'cover'   => isset( $document['image']['url'] ) ? esc_url_raw( $document['image']['url'] ) : '',
 		);
 	}
+
+	set_transient( $cache_key, $books, HOUR_IN_SECONDS );
 
 	return $books;
 }

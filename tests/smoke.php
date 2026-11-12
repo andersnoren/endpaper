@@ -119,6 +119,10 @@ add_filter(
 		$request = json_decode( $args['body'], true );
 		$query   = isset( $request['query'] ) ? $request['query'] : '';
 
+		if ( false !== strpos( $query, 'EndpaperSearch' ) ) {
+			$GLOBALS['endpaper_search_requests'] = ( isset( $GLOBALS['endpaper_search_requests'] ) ? $GLOBALS['endpaper_search_requests'] : 0 ) + 1;
+		}
+
 		if ( 'Bearer smoke-test-key' !== $auth ) {
 			return $respond( 401, array( 'error' => 'Unauthorized' ) );
 		}
@@ -301,6 +305,21 @@ try {
 
 	$endpaper_results = search_books( 'the stand' );
 	endpaper_check( 'the search returns a book', is_array( $endpaper_results ) && 1 === count( $endpaper_results ) );
+
+	search_books( 'The Stand' );
+	endpaper_check( 'the same search again is answered from the cache', 1 === $GLOBALS['endpaper_search_requests'] );
+
+	wp_set_current_user( 1 );
+	$endpaper_limited = null;
+
+	for ( $endpaper_i = 0; $endpaper_i <= ENDPAPER_SEARCH_LIMIT; $endpaper_i++ ) {
+		$endpaper_limited = search_books( 'limit test ' . $endpaper_i );
+	}
+
+	endpaper_check( 'a person who searches too much is asked to wait, and the request is not sent', is_wp_error( $endpaper_limited ) && 'endpaper_search_limit' === $endpaper_limited->get_error_code() && 1 + ENDPAPER_SEARCH_LIMIT === $GLOBALS['endpaper_search_requests'] );
+
+	delete_transient( 'endpaper_search_limit_1' );
+	wp_set_current_user( 0 );
 
 	echo "The Book block\n";
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showShelf":true,"showProgress":true} /-->' );
