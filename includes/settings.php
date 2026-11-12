@@ -25,9 +25,9 @@ define( 'ENDPAPER_NEW_KEY_URL', 'https://hardcover.app/account/api/keys/new' );
 define( 'ENDPAPER_SUPPORT_URL', 'https://wordpress.org/support/plugin/endpaper/' );
 
 /**
- * The plugin's page in the WordPress.org plugin directory.
+ * Where to review the plugin on WordPress.org.
  */
-define( 'ENDPAPER_DIRECTORY_URL', 'https://wordpress.org/plugins/endpaper/' );
+define( 'ENDPAPER_REVIEW_URL', 'https://wordpress.org/support/plugin/endpaper/reviews/#new-post' );
 
 /**
  * Where feature requests go: the issues of the plugin's repository.
@@ -774,7 +774,7 @@ function render_settings_page() {
 
 				<div class="endpaper-review">
 					<p><strong><?php esc_html_e( 'Enjoying Endpaper?', 'endpaper' ); ?></strong> <?php esc_html_e( 'A review on WordPress.org helps other readers find it.', 'endpaper' ); ?></p>
-					<a class="button button-secondary" href="<?php echo esc_url( ENDPAPER_DIRECTORY_URL ); ?>"><?php esc_html_e( 'Leave a review', 'endpaper' ); ?></a>
+					<a class="button button-secondary" href="<?php echo esc_url( ENDPAPER_REVIEW_URL ); ?>"><?php esc_html_e( 'Leave a review', 'endpaper' ); ?></a>
 				</div>
 			</section>
 
