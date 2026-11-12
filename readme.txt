@@ -153,7 +153,7 @@ The format follows WordPress’s own `image_editor_output_format` filter.
 
 = Can I change how the blocks look? =
 
-Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text, and a Reading List block can be a list or a grid. The Book block comes in two styles, Plain and Card. The Reading Goal block comes as a bar or a gauge. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
+Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text, and a Reading List block can be a list or a grid. The Book block comes in two styles, Plain and Card, and you choose which one new Book blocks start with under Settings, Endpaper. The Reading Goal block comes as a bar or a gauge. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
 
 = What happens when I delete the plugin? =
 
