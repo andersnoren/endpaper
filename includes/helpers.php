@@ -443,3 +443,24 @@ function the_editor_notice( $message, $link_to_settings = false ) {
 		esc_html__( 'Only people who can edit this site see this message.', 'endpaper' )
 	);
 }
+
+/**
+ * Returns the path of one of the plugin's own icons.
+ *
+ * The paths are kept in assets/icons.json, which the editor reads as well, so
+ * a block has the same icon in both places. They are drawn on a 20 by 20 grid.
+ *
+ * @param string $name The icon's name.
+ * @return string The SVG path data, or an empty string if there is no such icon.
+ */
+function get_icon_path( $name ) {
+	static $icons = null;
+
+	if ( null === $icons ) {
+		$file  = ENDPAPER_DIR . 'assets/icons.json';
+		$icons = is_readable( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : array(); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- A file in the plugin, not a remote address.
+		$icons = is_array( $icons ) ? $icons : array();
+	}
+
+	return isset( $icons[ $name ] ) && is_string( $icons[ $name ] ) ? $icons[ $name ] : '';
+}
