@@ -156,26 +156,70 @@
 	font-size: 12px;
 }
 
-/* The list of blocks: each name next to what the block shows. */
-.endpaper-blocks {
-	border-top: 1px solid #dcdcde;
-	margin: 16px 0;
+/* The blocks: a box for each, with its icon, what it shows and how to add it. */
+.endpaper-block-grid {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	list-style: none;
+	margin: 16px 0 0;
+	padding: 0;
 }
 
-.endpaper-blocks > div {
+.endpaper-block-box {
+	border: 1px solid #dcdcde;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 16px;
+}
+
+.endpaper-block-box .dashicons {
+	color: #1d2327;
+	font-size: 28px;
+	height: 28px;
+	width: 28px;
+}
+
+.endpaper-card .endpaper-block-box h3 {
+	color: #1d2327;
+	font-size: 14px;
+	letter-spacing: 0;
+	margin: 0;
+	text-transform: none;
+}
+
+.endpaper-block-box p {
+	margin: 0;
+}
+
+/* The shortcut on one side and the Copy block button on the other, at the foot of the box. */
+.endpaper-block-box__footer {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 12px;
+	justify-content: space-between;
+	margin-top: auto;
+	padding-top: 8px;
+}
+
+/* The ready-made patterns: each name next to what it gives you. */
+.endpaper-patterns {
+	border-top: 1px solid #dcdcde;
+	list-style: none;
+	margin: 16px 0 0;
+	padding: 0;
+}
+
+.endpaper-patterns li {
 	border-bottom: 1px solid #dcdcde;
 	display: grid;
 	gap: 4px 24px;
-	grid-template-columns: 120px 1fr;
-	padding: 12px 0;
-}
-
-.endpaper-blocks dt {
-	font-weight: 600;
-}
-
-.endpaper-blocks dd {
+	grid-template-columns: 160px 1fr;
 	margin: 0;
+	padding: 12px 0;
 }
 
 /* The invitation to review the plugin: the words on one side, the button on the other. */
@@ -196,7 +240,7 @@
 
 @media (max-width: 600px) {
 
-	.endpaper-blocks > div {
+	.endpaper-patterns li {
 		grid-template-columns: 1fr;
 	}
 

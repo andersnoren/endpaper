@@ -533,6 +533,7 @@ try {
 	render_settings_page();
 	$endpaper_html = ob_get_clean();
 	endpaper_check( 'it renders for an administrator', false !== strpos( $endpaper_html, 'endpaper-token' ) && false !== strpos( $endpaper_html, 'read:library:public' ) );
+	endpaper_check( 'it lists both blocks with their copy markup, and the patterns', false !== strpos( $endpaper_html, 'data-copy="&lt;!-- wp:endpaper/book /--&gt;"' ) && false !== strpos( $endpaper_html, 'data-copy="&lt;!-- wp:endpaper/reading-list /--&gt;"' ) && false !== strpos( $endpaper_html, '/reading list' ) && false !== strpos( $endpaper_html, 'Currently reading' ) && false !== strpos( $endpaper_html, 'Recently read' ) );
 	endpaper_check( 'it never outputs the saved key', false === strpos( $endpaper_html, 'smoke-test-key' ) );
 	endpaper_check( 'the suggested privacy text says that covers are loaded from Hardcover, when they are', false !== strpos( get_privacy_policy_text(), 'receives your IP address' ) );
 	remove_filter( 'endpaper_import_covers', '__return_false' );

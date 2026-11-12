@@ -559,6 +559,55 @@ function add_settings_link( $links ) {
 add_filter( 'plugin_action_links_' . plugin_basename( ENDPAPER_DIR . 'endpaper.php' ), __NAMESPACE__ . '\add_settings_link' );
 
 /**
+ * Returns the blocks to list on the settings screen.
+ *
+ * The icons are the ones the blocks have in the editor.
+ *
+ * @return array The blocks, each with a name, icon, title, description and shortcut.
+ */
+function get_settings_blocks() {
+	return array(
+		array(
+			'name'        => 'endpaper/book',
+			'icon'        => 'book',
+			'title'       => __( 'Book', 'endpaper' ),
+			'description' => __( 'One book, with its cover, description and rating on Hardcover, and your own shelf, rating and reading progress.', 'endpaper' ),
+			'shortcut'    => '/book',
+		),
+		array(
+			'name'        => 'endpaper/reading-list',
+			'icon'        => 'book-alt',
+			'title'       => __( 'Reading List', 'endpaper' ),
+			'description' => __( 'The books you are currently reading, want to read or have read, as a list or a grid.', 'endpaper' ),
+			'shortcut'    => '/reading list',
+		),
+	);
+}
+
+/**
+ * Returns the patterns to list on the settings screen, with the titles and descriptions they are registered with.
+ *
+ * @return array The patterns, each with a title and a description.
+ */
+function get_settings_patterns() {
+	$registry = \WP_Block_Patterns_Registry::get_instance();
+	$patterns = array();
+
+	foreach ( array( 'endpaper/currently-reading', 'endpaper/recently-read' ) as $name ) {
+		$pattern = $registry->get_registered( $name );
+
+		if ( $pattern ) {
+			$patterns[] = array(
+				'title'       => $pattern['title'],
+				'description' => isset( $pattern['description'] ) ? $pattern['description'] : '',
+			);
+		}
+	}
+
+	return $patterns;
+}
+
+/**
  * Loads the styles for the settings screen.
  *
  * @param string $hook_suffix The current admin screen.
@@ -570,6 +619,7 @@ function enqueue_settings_styles( $hook_suffix ) {
 	}
 
 	wp_enqueue_style( 'endpaper-settings', plugins_url( 'assets/settings.css', ENDPAPER_DIR . 'endpaper.php' ), array(), ENDPAPER_VERSION );
+	wp_enqueue_script( 'endpaper-settings', plugins_url( 'assets/settings.js', ENDPAPER_DIR . 'endpaper.php' ), array(), ENDPAPER_VERSION, array( 'in_footer' => true ) );
 }
 add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_settings_styles' );
 
@@ -763,31 +813,42 @@ function render_settings_page() {
 				<section class="endpaper-card" aria-labelledby="endpaper-blocks-title">
 					<h2 id="endpaper-blocks-title"><?php esc_html_e( 'Blocks', 'endpaper' ); ?></h2>
 
-					<p><?php esc_html_e( 'Add these blocks to any post, page or template:', 'endpaper' ); ?></p>
+					<p><?php esc_html_e( 'Add these blocks to any post, page or template. Type the shortcut on an empty line in the editor, search for the block by name, or copy it here and paste it in.', 'endpaper' ); ?></p>
 
-					<dl class="endpaper-blocks">
-						<div>
-							<dt><?php esc_html_e( 'Book', 'endpaper' ); ?></dt>
-							<dd><?php esc_html_e( 'One book, with its cover, description and rating on Hardcover, and your own shelf, rating and reading progress.', 'endpaper' ); ?></dd>
-						</div>
-						<div>
-							<dt><?php esc_html_e( 'Reading List', 'endpaper' ); ?></dt>
-							<dd><?php esc_html_e( 'The books you are currently reading, want to read or have read, as a list or a grid.', 'endpaper' ); ?></dd>
-						</div>
-					</dl>
+					<ul class="endpaper-block-grid">
+						<?php foreach ( get_settings_blocks() as $endpaper_block ) : ?>
+							<li class="endpaper-block-box">
+								<span class="dashicons dashicons-<?php echo esc_attr( $endpaper_block['icon'] ); ?>" aria-hidden="true"></span>
+								<h3><?php echo esc_html( $endpaper_block['title'] ); ?></h3>
+								<p><?php echo esc_html( $endpaper_block['description'] ); ?></p>
+								<div class="endpaper-block-box__footer">
+									<code><?php echo esc_html( $endpaper_block['shortcut'] ); ?></code>
+									<button type="button" class="button endpaper-copy" data-copy="<?php echo esc_attr( '<!-- wp:' . $endpaper_block['name'] . ' /-->' ); ?>" data-copied="<?php esc_attr_e( 'Copied', 'endpaper' ); ?>" hidden>
+										<span class="endpaper-copy__label"><?php esc_html_e( 'Copy block', 'endpaper' ); ?></span>
+										<span class="screen-reader-text">
+											<?php
+											/* translators: %s: The name of a block. */
+											echo esc_html( sprintf( __( '(%s)', 'endpaper' ), $endpaper_block['title'] ) );
+											?>
+										</span>
+									</button>
+								</div>
+							</li>
+						<?php endforeach; ?>
+					</ul>
 
-					<p class="description">
-						<?php
-						printf(
-							/* translators: 1: What to type for the Book block, 2: What to type for the Reading List block. */
-							esc_html__( 'In the editor, type %1$s or %2$s on an empty line, or search for the blocks by name in the block inserter.', 'endpaper' ),
-							'<code>/book</code>',
-							'<code>/reading list</code>'
-						);
-						?>
-					</p>
+					<h3><?php esc_html_e( 'Patterns', 'endpaper' ); ?></h3>
 
-					<p class="description"><?php esc_html_e( 'The inserter also has two ready-made patterns, under “Endpaper”: Currently reading and Recently read.', 'endpaper' ); ?></p>
+					<p><?php esc_html_e( 'Ready-made starting points. Find them in the block inserter, under Patterns, in the Endpaper category.', 'endpaper' ); ?></p>
+
+					<ul class="endpaper-patterns">
+						<?php foreach ( get_settings_patterns() as $endpaper_pattern ) : ?>
+							<li>
+								<strong><?php echo esc_html( $endpaper_pattern['title'] ); ?></strong>
+								<span><?php echo esc_html( $endpaper_pattern['description'] ); ?></span>
+							</li>
+						<?php endforeach; ?>
+					</ul>
 				</section>
 
 				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">
