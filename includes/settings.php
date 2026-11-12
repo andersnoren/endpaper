@@ -849,8 +849,14 @@ function render_settings_page() {
 
 						<?php
 						$endpaper_styles = array(
-							'default' => __( 'Plain', 'endpaper' ),
-							'card'    => __( 'Card', 'endpaper' ),
+							'default' => array(
+								'label'       => __( 'Plain', 'endpaper' ),
+								'description' => __( 'The book sits in the page, with no frame around it.', 'endpaper' ),
+							),
+							'card'    => array(
+								'label'       => __( 'Card', 'endpaper' ),
+								'description' => __( 'The book sits on a light background, with rounded corners.', 'endpaper' ),
+							),
 						);
 						?>
 
@@ -858,16 +864,17 @@ function render_settings_page() {
 							<legend class="endpaper-field__label"><?php esc_html_e( 'Default Book style', 'endpaper' ); ?></legend>
 
 							<div class="endpaper-style-choice__options">
-								<?php foreach ( $endpaper_styles as $endpaper_style => $endpaper_style_label ) : ?>
+								<?php foreach ( $endpaper_styles as $endpaper_style => $endpaper_style_data ) : ?>
 									<label class="endpaper-style-choice__option">
 										<span class="endpaper-style-choice__name">
 											<input type="radio" name="<?php echo esc_attr( ENDPAPER_DEFAULT_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $endpaper_style ); ?>"<?php checked( get_default_book_style(), $endpaper_style ); ?> />
-											<?php echo esc_html( $endpaper_style_label ); ?>
+											<?php echo esc_html( $endpaper_style_data['label'] ); ?>
 										</span>
 										<span class="endpaper-style-choice__preview endpaper-style-choice__preview--<?php echo esc_attr( $endpaper_style ); ?>" aria-hidden="true">
 											<span class="endpaper-style-choice__cover"></span>
 											<span class="endpaper-style-choice__lines"><span></span><span></span><span></span></span>
 										</span>
+										<span class="endpaper-style-choice__text"><?php echo esc_html( $endpaper_style_data['description'] ); ?></span>
 									</label>
 								<?php endforeach; ?>
 							</div>

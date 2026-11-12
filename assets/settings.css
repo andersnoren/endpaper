@@ -306,6 +306,12 @@
 	border-radius: 6px;
 }
 
+.endpaper-style-choice__text {
+	color: #646970;
+	display: block;
+	margin-top: 8px;
+}
+
 .endpaper-style-choice__cover {
 	background: #a7aaad;
 	border-radius: 2px;
