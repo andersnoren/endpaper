@@ -152,6 +152,14 @@ Returning `false` from both `endpaper_import_covers` and `endpaper_allow_remote_
 
 The format follows WordPress’s own `image_editor_output_format` filter, so a site that saves its images as AVIF gets AVIF covers.
 
+## Hooks for developers
+
+| Filter | What it does |
+| --- | --- |
+| `endpaper_cache_lifetime` | How long saved data from Hardcover counts as fresh, in seconds, never less than a minute. Receives the default and the kind: `book`, `edition` (a week each), `entry` (shelf, rating and progress), `list` or `goals` (an hour each). After that, visitors still get the saved copy while a new one is fetched in the background. |
+
+The filters for book covers are listed under [Book covers](#book-covers).
+
 ## Performance
 
 - **Visitors don’t wait for Hardcover.** Everything fetched from Hardcover is saved on your site, and a saved copy that has gone old is shown while a new one is fetched in the background. Something that isn’t saved yet is fetched in the background too, so that one visit shows nothing in its place instead of waiting. See “How it uses the Hardcover API” below.

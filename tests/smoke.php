@@ -759,6 +759,18 @@ $endpaper_card_dupe = array_filter(
 );
 
 endpaper_check( 'the Card style is registered with its settings as data', is_array( $endpaper_card ) && '0.75em' === $endpaper_card['style_data']['border']['radius'] && '1.5em' === $endpaper_card['style_data']['spacing']['padding'] );
+$endpaper_lifetime = static fn( $kind ) => \AndersNoren\Endpaper\get_cache_lifetime( $kind );
+$endpaper_short    = static fn() => 5;
+$endpaper_two_days = static fn() => 2 * DAY_IN_SECONDS;
+$endpaper_default  = array( $endpaper_lifetime( 'book' ), $endpaper_lifetime( 'list' ) );
+add_filter( 'endpaper_cache_lifetime', $endpaper_short );
+$endpaper_floor = $endpaper_lifetime( 'list' );
+remove_filter( 'endpaper_cache_lifetime', $endpaper_short );
+add_filter( 'endpaper_cache_lifetime', $endpaper_two_days );
+$endpaper_long = $endpaper_lifetime( 'goals' );
+remove_filter( 'endpaper_cache_lifetime', $endpaper_two_days );
+
+endpaper_check( 'how long saved data counts as fresh can be filtered, and never goes under a minute', array( WEEK_IN_SECONDS, HOUR_IN_SECONDS ) === $endpaper_default && MINUTE_IN_SECONDS === $endpaper_floor && 2 * DAY_IN_SECONDS === $endpaper_long );
 endpaper_check( 'the Card style is not also listed in block.json, so the editor does not show it twice', ! $endpaper_card_dupe );
 
 if ( $GLOBALS['endpaper_failures'] ) {

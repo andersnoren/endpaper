@@ -461,6 +461,34 @@ function normalize_book( $raw ) {
 }
 
 /**
+ * Returns how long a saved copy counts as fresh, in seconds.
+ *
+ * After that, visitors still get the saved copy, and a new one is fetched in the background.
+ *
+ * @param string $kind What is saved: book, edition, entry, list or goals.
+ * @return int Seconds, at least a minute.
+ */
+function get_cache_lifetime( $kind ) {
+	$defaults = array(
+		'book'    => WEEK_IN_SECONDS,
+		'edition' => WEEK_IN_SECONDS,
+		'entry'   => HOUR_IN_SECONDS,
+		'list'    => HOUR_IN_SECONDS,
+		'goals'   => HOUR_IN_SECONDS,
+	);
+
+	$default = isset( $defaults[ $kind ] ) ? $defaults[ $kind ] : HOUR_IN_SECONDS;
+
+	/**
+	 * Filters how long a saved copy of Hardcover data counts as fresh.
+	 *
+	 * @param int    $seconds Default: a week for books and editions, an hour for the rest.
+	 * @param string $kind    book, edition, entry (shelf, rating and progress), list or goals.
+	 */
+	return max( MINUTE_IN_SECONDS, absint( apply_filters( 'endpaper_cache_lifetime', $default, $kind ) ) );
+}
+
+/**
  * Stores a normalized book in the cache.
  *
  * The transient lives for a month, but a book counts as fresh for a week only.
@@ -514,7 +542,7 @@ function get_book( $book_id ) {
 	$cached = get_transient( cache_key( 'endpaper_book_' . $book_id ) );
 	$stale  = is_array( $cached ) && isset( $cached['fetched'], $cached['book'] ) ? $cached['book'] : null;
 
-	if ( $stale && ( time() - (int) $cached['fetched'] ) < WEEK_IN_SECONDS ) {
+	if ( $stale && ( time() - (int) $cached['fetched'] ) < get_cache_lifetime( 'book' ) ) {
 		return $stale;
 	}
 
@@ -643,7 +671,7 @@ function get_edition( $edition_id ) {
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['edition'] ) ? $cached['edition'] : null;
 
-	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < WEEK_IN_SECONDS ) {
+	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < get_cache_lifetime( 'edition' ) ) {
 		return $stale;
 	}
 
@@ -918,7 +946,7 @@ function get_library_entry( $book_id ) {
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
 
-	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < HOUR_IN_SECONDS ) {
+	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < get_cache_lifetime( 'entry' ) ) {
 		return $stale;
 	}
 
@@ -989,7 +1017,7 @@ function get_reading_list( $status_id, $limit ) {
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entries'] ) ? $cached['entries'] : null;
 
-	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < HOUR_IN_SECONDS ) {
+	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < get_cache_lifetime( 'list' ) ) {
 		return $stale;
 	}
 
@@ -1092,7 +1120,7 @@ function get_goals() {
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['goals'] ) ? $cached['goals'] : null;
 
-	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < HOUR_IN_SECONDS ) {
+	if ( null !== $stale && ( time() - (int) $cached['fetched'] ) < get_cache_lifetime( 'goals' ) ) {
 		return $stale;
 	}
 
