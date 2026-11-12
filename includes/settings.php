@@ -561,15 +561,18 @@ add_filter( 'plugin_action_links_' . plugin_basename( ENDPAPER_DIR . 'endpaper.p
 /**
  * Returns the blocks to list on the settings screen.
  *
- * The icons are the ones the blocks have in the editor.
+ * The icons are the ones the blocks have in the editor: a block with an
+ * icon_path is drawn from that SVG path on a 20 by 20 grid, and any other
+ * falls back to the Dashicon named in icon.
  *
- * @return array The blocks, each with a name, icon, title, description and shortcut.
+ * @return array The blocks, each with a name, icon, title, description and shortcut, and an icon_path if it has its own icon.
  */
 function get_settings_blocks() {
 	return array(
 		array(
 			'name'        => 'endpaper/book',
 			'icon'        => 'book',
+			'icon_path'   => 'M14.943 1C15.5268 1.00002 16 1.44809 16 2.00071V14.1422C16 14.1467 15.9998 14.1512 15.9998 14.1557L16 17.9993C16 18.552 15.5268 19 14.943 19H5.11377C3.94639 19 3 18.104 3 16.9988V3.00122C3 1.89601 3.94641 1.00004 5.11377 1H14.943ZM5.65814 15.1429C4.90813 15.1429 4.30015 15.7186 4.30018 16.4286C4.3002 17.1387 4.90815 17.7143 5.65814 17.7143H14.7V15.1429H5.65814Z',
 			'title'       => __( 'Book', 'endpaper' ),
 			'description' => __( 'One book, with its cover, description and rating on Hardcover, and your own shelf, rating and reading progress.', 'endpaper' ),
 			'shortcut'    => '/book',
@@ -818,7 +821,11 @@ function render_settings_page() {
 					<ul class="endpaper-block-grid">
 						<?php foreach ( get_settings_blocks() as $endpaper_block ) : ?>
 							<li class="endpaper-block-box">
-								<span class="dashicons dashicons-<?php echo esc_attr( $endpaper_block['icon'] ); ?>" aria-hidden="true"></span>
+								<?php if ( ! empty( $endpaper_block['icon_path'] ) ) : ?>
+									<svg class="endpaper-block-box__icon" width="28" height="28" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="<?php echo esc_attr( $endpaper_block['icon_path'] ); ?>" /></svg>
+								<?php else : ?>
+									<span class="dashicons dashicons-<?php echo esc_attr( $endpaper_block['icon'] ); ?>" aria-hidden="true"></span>
+								<?php endif; ?>
 								<h3><?php echo esc_html( $endpaper_block['title'] ); ?></h3>
 								<p><?php echo esc_html( $endpaper_block['description'] ); ?></p>
 								<div class="endpaper-block-box__footer">
