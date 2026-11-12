@@ -408,13 +408,13 @@ function get_goal_amount_html( $goal ) {
 
 	if ( 'page' === $goal['metric'] ) {
 		/* translators: 1: Pages read so far, 2: The goal, in pages. */
-		$text = _n( '%1$s of %2$s page', '%1$s of %2$s pages', $count, 'endpaper' );
+		$text = _n( '%1$s of %2$s page read', '%1$s of %2$s pages read', $count, 'endpaper' );
 	} elseif ( 'hour' === $goal['metric'] ) {
 		/* translators: 1: Hours listened so far, 2: The goal, in hours. */
-		$text = _n( '%1$s of %2$s hour', '%1$s of %2$s hours', $count, 'endpaper' );
+		$text = _n( '%1$s of %2$s hour listened', '%1$s of %2$s hours listened', $count, 'endpaper' );
 	} else {
 		/* translators: 1: Books read so far, 2: The goal, in books. */
-		$text = _n( '%1$s of %2$s book', '%1$s of %2$s books', $count, 'endpaper' );
+		$text = _n( '%1$s of %2$s book read', '%1$s of %2$s books read', $count, 'endpaper' );
 	}
 
 	return wp_kses( sprintf( $text, $progress, $target ), array( 'strong' => array( 'class' => true ) ) );
