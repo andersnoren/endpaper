@@ -263,7 +263,8 @@
 
 .wp-block-endpaper-book .endpaper-book__description--review blockquote {
 	border-inline-start: 2px solid $dot-color;
-	padding-inline-start: 1em;
+	font-style: italic;
+	padding-inline-start: 0.75em;
 }
 
 /* The link is a little smaller than the text, and muted like the rest. */
