@@ -26,6 +26,10 @@
 			"enum": [ "list", "grid" ],
 			"default": "list"
 		},
+		"columns": {
+			"type": "integer",
+			"default": 4
+		},
 		"accentColor": {
 			"type": "string"
 		},

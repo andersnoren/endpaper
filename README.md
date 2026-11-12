@@ -26,7 +26,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 - Shows books from your own Hardcover library: the ones you are currently reading, have read, or want to read.
 - Comes with ready-made Currently Reading, Recently Read and Want to Read variations in the block inserter.
-- Can be shown as a list or as a grid of covers.
+- Can be shown as a list or as a grid of covers, with up to six columns.
 - Shows the cover of your edition, the title, authors and your rating for each book, and your reading progress for books you are currently reading. Each part can be switched on or off.
 - Only shows books that are public on Hardcover, so a book you keep private there never appears on your site.
 

@@ -77,18 +77,10 @@ const DISPLAY_TOGGLES = [
 	{
 		attribute: 'linkToHardcover',
 		label: __( 'Link to Hardcover', 'endpaper' ),
-		help: __(
-			'Links the title and cover to the book on Hardcover.',
-			'endpaper'
-		),
 	},
 	{
 		attribute: 'showCredit',
 		label: __( 'Hardcover logo', 'endpaper' ),
-		help: __(
-			'Credits Hardcover with their logo, under the list.',
-			'endpaper'
-		),
 	},
 ];
 
@@ -192,16 +184,6 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 				</PanelBody>
 
 				<PanelBody title={ __( 'Display', 'endpaper' ) }>
-					<SelectControl
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
-						label={ __( 'Layout', 'endpaper' ) }
-						value={ attributes.layout }
-						options={ LAYOUT_OPTIONS }
-						onChange={ ( value ) =>
-							setAttributes( { layout: value } )
-						}
-					/>
 					{ DISPLAY_TOGGLES.filter(
 						( { onlyForStatus } ) =>
 							! onlyForStatus ||
@@ -218,6 +200,39 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 							}
 						/>
 					) ) }
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Layout', 'endpaper' ) }
+					initialOpen={ false }
+				>
+					<SelectControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						label={ __( 'Layout', 'endpaper' ) }
+						value={ attributes.layout }
+						options={ LAYOUT_OPTIONS }
+						onChange={ ( value ) =>
+							setAttributes( { layout: value } )
+						}
+					/>
+					{ 'grid' === attributes.layout && (
+						<RangeControl
+							__nextHasNoMarginBottom
+							__next40pxDefaultSize
+							label={ __( 'Maximum columns', 'endpaper' ) }
+							help={ __(
+								'Columns stay wide enough to read, so narrow screens get fewer.',
+								'endpaper'
+							) }
+							min={ 1 }
+							max={ 6 }
+							value={ attributes.columns }
+							onChange={ ( value ) =>
+								setAttributes( { columns: value || 4 } )
+							}
+						/>
+					) }
 				</PanelBody>
 			</InspectorControls>
 

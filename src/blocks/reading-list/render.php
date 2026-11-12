@@ -30,11 +30,21 @@ defined( 'ABSPATH' ) || exit;
 $endpaper_status  = isset( $attributes['status'] ) ? absint( $attributes['status'] ) : 2;
 $endpaper_count   = isset( $attributes['count'] ) ? absint( $attributes['count'] ) : 5;
 $endpaper_layout  = isset( $attributes['layout'] ) && 'grid' === $attributes['layout'] ? 'grid' : 'list';
+$endpaper_columns = isset( $attributes['columns'] ) ? min( 6, max( 1, absint( $attributes['columns'] ) ) ) : 4;
 $endpaper_tag     = get_title_tag( isset( $attributes['titleLevel'] ) ? $attributes['titleLevel'] : null, 0 );
 $endpaper_entries = get_reading_list( $endpaper_status, $endpaper_count );
 
-// How wide a cover is shown, roughly, so the browser can pick the right file: a thumbnail in a list, up to four across in a grid.
-$endpaper_cover_sizes = 'grid' === $endpaper_layout ? '(max-width: 600px) 45vw, (max-width: 1200px) 25vw, 300px' : '72px';
+// How wide a cover is shown, roughly, so the browser can pick the right file: a thumbnail in a list, or a share of the width in a grid, which is the whole width at most on a phone and never more than a few hundred pixels on a large screen.
+$endpaper_cover_sizes = '72px';
+
+if ( 'grid' === $endpaper_layout ) {
+	$endpaper_cover_sizes = sprintf(
+		'(max-width: 600px) %1$dvw, (max-width: 1200px) %2$dvw, %3$dpx',
+		1 === $endpaper_columns ? 100 : 45,
+		(int) round( 100 / $endpaper_columns ),
+		$endpaper_columns >= 4 ? 300 : 640
+	);
+}
 
 // Visitors see nothing if the list fails or is empty. People who can edit see why.
 if ( is_wp_error( $endpaper_entries ) ) {
@@ -57,7 +67,7 @@ $endpaper_with_date     = 3 === $endpaper_status && ! empty( $attributes['showDa
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
 		'class' => 'endpaper-reading-list--' . $endpaper_layout . ( ! empty( $attributes['showCover'] ) ? ' endpaper-reading-list--has-covers' : '' ),
-		'style' => get_cover_radius_style( $attributes ) . get_block_gap_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/reading-list' ),
+		'style' => ( 'grid' === $endpaper_layout ? '--endpaper-columns:' . $endpaper_columns . ';' : '' ) . get_cover_radius_style( $attributes ) . get_block_gap_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/reading-list' ),
 	)
 );
 
