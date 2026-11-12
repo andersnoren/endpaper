@@ -210,13 +210,15 @@ add_filter(
 							array(
 								'user_books' => array(
 									array(
-										'status_id'       => 2,
-										'rating'          => 3.5,
-										'edition'         => array(
+										'status_id'           => 2,
+										'rating'              => 3.5,
+										'review_raw'          => 'A quiet, sharp book. The ending stayed with me.',
+										'review_has_spoilers' => ! empty( $GLOBALS['endpaper_review_spoilers'] ),
+										'edition'             => array(
 											'image'    => array( 'url' => 'https://assets.hardcover.app/edition-entry.jpg' ),
 											'language' => array( 'language' => 'Swedish' ),
 										),
-										'user_book_reads' => array( array( 'progress' => 68.4 ) ),
+										'user_book_reads'     => array( array( 'progress' => 68.4 ) ),
 									),
 								),
 							),
@@ -402,6 +404,20 @@ try {
 	endpaper_check( 'the owner’s rating can be switched off', false === strpos( $endpaper_html_plain, 'endpaper-book__my-rating' ) );
 	endpaper_check( 'it uses the cover of the edition in the library', false !== strpos( $endpaper_html, 'edition-entry.jpg' ) && false === strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 	endpaper_check( 'it leaves out the Hardcover logo unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'Powered by Hardcover' ) );
+
+	endpaper_check( 'the review is not shown unless it is switched on', false === strpos( $endpaper_html, 'A quiet, sharp book' ) );
+
+	$endpaper_html_review = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
+	endpaper_check( 'the review can take the place of the description', false !== strpos( $endpaper_html_review, 'A quiet, sharp book' ) && false !== strpos( $endpaper_html_review, 'endpaper-book__description--review' ) && false === strpos( $endpaper_html_review, '<details' ) );
+	endpaper_check( 'the review is hidden along with the description', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"showDescription":false} /-->' ), 'A quiet, sharp book' ) );
+
+	$GLOBALS['endpaper_review_spoilers'] = true;
+	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v4_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
+	$endpaper_html_spoilers = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
+	endpaper_check( 'a review with spoilers is closed behind a summary', false !== strpos( $endpaper_html_spoilers, '<details class="endpaper-book__spoilers">' ) && false !== strpos( $endpaper_html_spoilers, 'This review contains spoilers' ) );
+	endpaper_check( 'the description is not put behind a summary when the review is off', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), '<details' ) );
+	$GLOBALS['endpaper_review_spoilers'] = false;
+	delete_transient( AndersNoren\Endpaper\cache_key( 'endpaper_entry_v4_' . substr( md5( AndersNoren\Endpaper\get_token() ), 0, 10 ) . '_42' ) );
 
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCredit":true} /-->' );
 	endpaper_check( 'it credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );

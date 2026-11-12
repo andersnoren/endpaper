@@ -94,12 +94,20 @@ if ( $endpaper_show_progress ) {
 }
 
 $endpaper_description = '';
+$endpaper_is_review   = false;
+$endpaper_spoilers    = false;
 
 if ( ! empty( $attributes['showDescription'] ) ) {
-	$endpaper_description = trim_to_sentence(
-		$endpaper_book['description'],
-		isset( $attributes['descriptionLength'] ) ? absint( $attributes['descriptionLength'] ) : 160
-	);
+	$endpaper_length = isset( $attributes['descriptionLength'] ) ? absint( $attributes['descriptionLength'] ) : 160;
+
+	// The owner's own review can take the place of the description, if there is one. Otherwise the description is shown.
+	if ( ! empty( $attributes['showReview'] ) && ! empty( $endpaper_entry['review'] ) ) {
+		$endpaper_description = trim_to_sentence( $endpaper_entry['review'], $endpaper_length );
+		$endpaper_is_review   = true;
+		$endpaper_spoilers    = ! empty( $endpaper_entry['spoilers'] );
+	} else {
+		$endpaper_description = trim_to_sentence( $endpaper_book['description'], $endpaper_length );
+	}
 }
 
 // The facts shown in the row at the bottom of the card.
@@ -209,8 +217,14 @@ $endpaper_card_style = get_card_style( $attributes );
 					</div>
 				<?php endif; ?>
 
-				<?php if ( $endpaper_description ) : ?>
-					<p class="endpaper-book__description"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+				<?php if ( $endpaper_description && $endpaper_spoilers ) : ?>
+					<?php // A review with spoilers stays closed until the visitor opens it. This works without JavaScript. ?>
+					<details class="endpaper-book__spoilers">
+						<summary><?php esc_html_e( 'This review contains spoilers', 'endpaper' ); ?></summary>
+						<p class="endpaper-book__description endpaper-book__description--review"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+					</details>
+				<?php elseif ( $endpaper_description ) : ?>
+					<p class="endpaper-book__description<?php echo $endpaper_is_review ? ' endpaper-book__description--review' : ''; ?>"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
 				<?php endif; ?>
 
 			</div>

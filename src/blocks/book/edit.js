@@ -320,6 +320,21 @@ export default function Edit( {
 					) ) }
 
 					{ attributes.showDescription && (
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={ __( 'Show my review instead', 'endpaper' ) }
+							help={ __(
+								'Shows your review of the book in place of the description, if you have written one and it is public on Hardcover.',
+								'endpaper'
+							) }
+							checked={ !! attributes.showReview }
+							onChange={ ( value ) =>
+								setAttributes( { showReview: value } )
+							}
+						/>
+					) }
+
+					{ attributes.showDescription && (
 						<RangeControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize

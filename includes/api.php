@@ -727,6 +727,9 @@ function normalize_library_entry( $raw ) {
 		'rating'    => isset( $raw['rating'] ) && is_numeric( $raw['rating'] ) ? (float) $raw['rating'] : 0.0,
 		'progress'  => $progress,
 		'finished'  => $finished,
+		// The owner's own review, as plain text. Hardcover keeps no line breaks in it. The spoiler flag is the owner's own and is not always set.
+		'review'    => isset( $raw['review_raw'] ) && is_string( $raw['review_raw'] ) ? trim( wp_strip_all_tags( $raw['review_raw'] ) ) : '',
+		'spoilers'  => ! empty( $raw['review_has_spoilers'] ),
 		// The cover of the edition the entry is for, which can differ from the cover Hardcover shows for the book.
 		'cover'     => isset( $raw['edition']['image']['url'] ) && is_string( $raw['edition']['image']['url'] ) ? esc_url_raw( $raw['edition']['image']['url'] ) : '',
 		// The language of that edition, as Hardcover names it. The cover picker lists it first.
@@ -769,7 +772,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	// The token is part of the key, so switching to another account starts fresh. The version changes when the stored shape does.
-	$cache_key = cache_key( 'endpaper_entry_v3_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id );
+	$cache_key = cache_key( 'endpaper_entry_v4_' . substr( md5( get_token() ), 0, 10 ) . '_' . $book_id );
 	$cached    = get_transient( $cache_key );
 	$stale     = is_array( $cached ) && isset( $cached['fetched'], $cached['entry'] ) ? $cached['entry'] : null;
 
@@ -789,7 +792,7 @@ function get_library_entry( $book_id ) {
 	}
 
 	$data = api_request(
-		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating edition { image { url } language { language } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
+		'query EndpaperLibraryEntry($book_id: Int!) { me { user_books(where: {book_id: {_eq: $book_id}, privacy_setting_id: {_eq: 1}}, limit: 1) { status_id rating review_raw review_has_spoilers edition { image { url } language { language } } user_book_reads(order_by: {id: desc}, limit: 1) { progress } } } }',
 		array( 'book_id' => $book_id )
 	);
 

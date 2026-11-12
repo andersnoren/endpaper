@@ -178,7 +178,7 @@ function forget_account( $token ) {
 		return;
 	}
 
-	foreach ( array( 'endpaper_list_v3_' . $hash . '_', 'endpaper_entry_v3_' . $hash . '_' ) as $prefix ) {
+	foreach ( array( 'endpaper_list_v3_' . $hash . '_', 'endpaper_entry_v4_' . $hash . '_' ) as $prefix ) {
 		foreach ( array( '_transient_', '_transient_timeout_' ) as $kind ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients cannot be deleted by prefix any other way.
 			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( $kind . $prefix ) . '%' ) );

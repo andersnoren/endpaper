@@ -86,6 +86,10 @@
 			"type": "boolean",
 			"default": true
 		},
+		"showReview": {
+			"type": "boolean",
+			"default": false
+		},
 		"descriptionLength": {
 			"type": "integer",
 			"default": 160

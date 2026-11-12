@@ -219,6 +219,25 @@
 	max-width: min(100%, 40em);
 }
 
+/*
+ * A review with spoilers is closed until it is opened. The text comes from
+ * the block, so the summary only gets a small marker and a muted colour.
+ */
+.wp-block-endpaper-book .endpaper-book__spoilers {
+	max-width: min(100%, 40em);
+}
+
+.wp-block-endpaper-book .endpaper-book__spoilers summary {
+	color: color-mix(in srgb, currentcolor 70%, transparent);
+	cursor: pointer;
+	font-size: 0.875em;
+	list-style-position: inside;
+}
+
+.wp-block-endpaper-book .endpaper-book__spoilers[open] summary {
+	margin-block-end: 0.5em;
+}
+
 .endpaper-book__header {
 	display: flex;
 	flex-direction: column;
