@@ -120,17 +120,27 @@ if ( ! empty( $attributes['showMeta'] ) ) {
 
 $endpaper_show_rating = ! empty( $attributes['showRating'] ) && $endpaper_book['rating'] > 0;
 
-// How large the cover is: a class for the styles, and its width for the browser to pick a file by.
-$endpaper_cover_size  = isset( $attributes['coverSize'] ) && in_array( $attributes['coverSize'], array( 'small', 'large' ), true ) ? $attributes['coverSize'] : 'medium';
-$endpaper_cover_sizes = array(
+// Where the cover is, and how large: classes for the styles, and its width for the browser to pick a file by.
+$endpaper_cover_position = isset( $attributes['coverPosition'] ) && in_array( $attributes['coverPosition'], array( 'right', 'top' ), true ) ? $attributes['coverPosition'] : 'left';
+$endpaper_cover_size     = isset( $attributes['coverSize'] ) && in_array( $attributes['coverSize'], array( 'small', 'large' ), true ) ? $attributes['coverSize'] : 'medium';
+$endpaper_cover_sizes    = array(
 	'small'  => '(max-width: 600px) 18vw, 96px',
 	'medium' => '(max-width: 600px) 30vw, 192px',
 	'large'  => '(max-width: 600px) 40vw, 256px',
 );
 
+// Above the text, the cover keeps its width however narrow the card is.
+if ( 'top' === $endpaper_cover_position ) {
+	$endpaper_cover_sizes = array(
+		'small'  => '96px',
+		'medium' => '192px',
+		'large'  => '256px',
+	);
+}
+
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'endpaper-book--cover-' . $endpaper_cover_size,
+		'class' => 'endpaper-book--cover-' . $endpaper_cover_position . ' endpaper-book--cover-' . $endpaper_cover_size,
 		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ),
 	)
 );

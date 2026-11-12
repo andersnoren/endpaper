@@ -22,6 +22,11 @@
 		"coverRadius": {
 			"type": [ "string", "object" ]
 		},
+		"coverPosition": {
+			"type": "string",
+			"enum": [ "left", "right", "top" ],
+			"default": "left"
+		},
 		"coverSize": {
 			"type": "string",
 			"enum": [ "small", "medium", "large" ],

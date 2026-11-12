@@ -230,6 +230,29 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 							isBlock
+							label={ __( 'Cover position', 'endpaper' ) }
+							value={ attributes.coverPosition || 'left' }
+							onChange={ ( coverPosition ) =>
+								setAttributes( { coverPosition } )
+							}
+						>
+							<ToggleGroupControlOption
+								value="left"
+								label={ __( 'Left', 'endpaper' ) }
+							/>
+							<ToggleGroupControlOption
+								value="right"
+								label={ __( 'Right', 'endpaper' ) }
+							/>
+							<ToggleGroupControlOption
+								value="top"
+								label={ __( 'Top', 'endpaper' ) }
+							/>
+						</ToggleGroupControl>
+						<ToggleGroupControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							isBlock
 							label={ __( 'Cover size', 'endpaper' ) }
 							value={ attributes.coverSize || 'medium' }
 							onChange={ ( coverSize ) =>

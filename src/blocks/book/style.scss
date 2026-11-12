@@ -61,6 +61,30 @@
 	--endpaper-cover-share: 40%;
 }
 
+/* The cover on the other side of the text. */
+.endpaper-book--cover-right .endpaper-book__card {
+	flex-direction: row-reverse;
+}
+
+/*
+ * The cover above the text. It keeps the width its size gives it, and is
+ * never wider than the card.
+ */
+.endpaper-book--cover-top .endpaper-book__card {
+	flex-direction: column;
+	flex-wrap: nowrap;
+}
+
+.endpaper-book--cover-top .endpaper-book__cover {
+	flex: none;
+	max-width: 100%;
+	width: var(--endpaper-cover-width, 12em);
+}
+
+.endpaper-book--cover-top .endpaper-book__content {
+	flex: none;
+}
+
 .endpaper-book__cover img,
 .endpaper-book__cover .endpaper-cover-placeholder {
 
