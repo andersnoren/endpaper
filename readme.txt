@@ -16,6 +16,8 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 
 **Endpaper is an unofficial plugin.** It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Hardcover does not provide support for it: for help, use the plugin’s support forum here on WordPress.org.
 
+In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
+
 = Show off the books you love =
 
 * **Embed any book.** Search Hardcover by title, author or ISBN, or paste a link to the book’s page on a line of its own, and it becomes a Book block. You get the cover, title, authors, a description, the year, the page count and the Hardcover rating.
@@ -36,21 +38,19 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 
 = Fast, and respectful of your visitors =
 
-* **Nobody waits for Hardcover.** What the plugin fetches is saved on your site and refreshed in the background, so your pages load as fast as any other page.
+* **Nobody waits for Hardcover.** What the plugin fetches is saved on your site and refreshed in the background, so pages with Endpaper blocks load as fast as any other page.
 * **Covers from your own site.** They are saved in the right sizes and loaded lazily, and your visitors’ browsers never contact Hardcover. The plugin sets no cookies.
 * **Only what is public.** A book you keep private on Hardcover never appears on your site.
 * **Your key stays on your server.** It is only ever sent to Hardcover, and the permissions it needs can only read.
 
 = Blocks and shortcodes =
 
-* **Not on the block editor?** Every block also has a shortcode, for classic themes, widgets and templates: `[endpaper_book url="https://hardcover.app/books/…"]`, `[endpaper_reading_list status="currently-reading"]` and `[endpaper_reading_goal]`. They choose what to show, and your theme decides how it looks.
+* **Not on the block editor?** Every block also has a shortcode, for classic themes, widgets and templates: `[endpaper_book url="https://hardcover.app/books/…"]`, `[endpaper_reading_list status="currently-reading"]` and `[endpaper_reading_goal]`. They choose what to show, and your theme decides how it looks. The options for each shortcode are explained under Settings, Endpaper, in the Help section.
 
 = For developers =
 
 * **Style it in `theme.json`.** Set the accent color, the corner radius of covers and how faded secondary text is, for all blocks or for one block, along with the gap of a reading list and the typography of the reading goal number.
 * **Filters for covers.** Change the sizes and quality covers are saved in, or switch saving off.
-
-In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
 
 == External services ==
 
@@ -77,7 +77,7 @@ There are two exceptions. If your site cannot save files, or a developer has swi
 
 The title and cover of a book link to its page on Hardcover. You can switch that off for each block. Each block can also show the Hardcover logo, linked to Hardcover, as a credit. The logo is off until you switch it on.
 
-The service is provided by Hardcover: [terms of service](https://hardcover.app/pages/terms-of-service), [privacy policy](https://hardcover.app/pages/privacy-policy-2).
+The API is provided by Hardcover, which is not the author of this plugin. Hardcover’s [terms of service](https://hardcover.app/pages/terms-of-service) and [privacy policy](https://hardcover.app/pages/privacy-policy-2) apply to your use of it.
 
 == Installation ==
 
