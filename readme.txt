@@ -173,7 +173,7 @@ Hardcover keys can have an end date. When Hardcover stops accepting the key, the
 
 1. The Book block.
 2. The Book block, in the Card style, with different colors, fonts and covers.
-3. Searching Hardcover for a book in the editor.
+3. Searching Hardcover for a book or an author in the editor.
 4. The Reading List block, as a list.
 5. The Reading List block, as a grid.
 6. The Reading Goal block, as a gauge.
