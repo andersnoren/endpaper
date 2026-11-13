@@ -71,7 +71,7 @@ If Hardcover stops accepting the key, administrators get a notice in the admin, 
 
 Endpaper is made to be restyled. The blocks have very little styling of their own, take their fonts and colors from your theme, and are built on the standard color, typography, spacing, border and shadow settings, so most of the work can be done in `theme.json`, without a line of CSS or an override fighting the plugin. A theme can style them like any core block, under `styles.blocks` with `endpaper/book`, `endpaper/reading-list` and `endpaper/reading-goal`.
 
-A few things `theme.json` has no setting for, such as the accent color and the opacity of muted text, are specific to Endpaper. A theme sets their defaults under `settings.custom`:
+A few things `theme.json` has no setting for, such as the accent color and the opacity of muted text, are specific to Endpaper. A theme sets their defaults under `settings.custom`. This example lists all of them, with their default values except for the accent color:
 
 ```json
 {
@@ -80,21 +80,28 @@ A few things `theme.json` has no setting for, such as the accent color and the o
 			"endpaper": {
 				"accent": "var(--wp--preset--color--primary)",
 				"coverRadius": "4px",
-				"mutedText": 0.8
+				"mutedText": 0.8,
+				"mutedElement": 0.4,
+				"hover": 0.75,
+				"logoHover": 0.5,
+				"accentFaded": 0.15,
+				"columnMin": "10em"
 			}
 		}
 	}
 }
 ```
 
-- `accent` is the accent color, used for the reading progress bar, the rating stars and the shelf label. Without it, the blocks pick one from the theme’s palette: the first of `accent`, `accent-1` to `accent-6` and `primary` that stands out from the background, with a contrast of at least 3:1. If none does, or the theme has no accent colors, they use the text color.
-- `coverRadius` is the corner radius of book covers. Without it, the radius is 4px.
-- `mutedText` is the opacity of secondary text, such as the date of a review. The default is 0.8.
-- `mutedElement` is the opacity of small marks, such as the dots between facts and the line beside a quote. The default is 0.4.
-- `hover` is the opacity links and covers fade to under the pointer. The default is 0.75.
-- `logoHover` is the opacity the Hardcover logo fades to under the pointer. The default is 0.5.
-- `accentFaded` is how strong the accent color is as the background of the shelf label. The default is 0.15.
-- `columnMin` is the narrowest a column in the Reading List grid gets. The default is 10em. A narrow card gets fewer columns, down to one.
+| Setting | Default | What it sets |
+| --- | --- | --- |
+| `accent` | From the palette | The accent color, used for the reading progress bar, the rating stars and the shelf label. Without it, the blocks pick one from the theme’s palette: the first of `accent`, `accent-1` to `accent-6` and `primary` that stands out from the background, with a contrast of at least 3:1. If none does, or the theme has no accent colors, they use the text color. |
+| `coverRadius` | `4px` | The corner radius of book covers. |
+| `mutedText` | `0.8` | The opacity of secondary text, such as the date of a review. |
+| `mutedElement` | `0.4` | The opacity of small marks, such as the dots between facts and the line beside a quote. |
+| `hover` | `0.75` | The opacity links and covers fade to under the pointer. |
+| `logoHover` | `0.5` | The opacity the Hardcover logo fades to under the pointer. |
+| `accentFaded` | `0.15` | How strong the accent color is as the background of the shelf label. |
+| `columnMin` | `10em` | The narrowest a column in the Reading List grid gets. A narrow space gets fewer columns, down to one. |
 
 To set any of them for one block only, put the same `custom` settings under `settings.blocks`:
 
