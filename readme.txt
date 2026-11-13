@@ -14,9 +14,9 @@ Show books from Hardcover on your site: a single book, your reading lists or a r
 
 Endpaper brings your reading life from [Hardcover](https://hardcover.app), the book tracking site, to your WordPress site. Put a book in a post, show what you are reading right now, or share how far along you are on your reading goal. Everything is a block, and everything looks like it belongs on your site.
 
-**Endpaper is an unofficial plugin.** It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Hardcover does not provide support for it: for help, use the plugin’s support forum here on WordPress.org.
-
 In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
+
+**Endpaper is an unofficial plugin.** It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Hardcover does not provide support for it: for help, use the plugin’s support forum here on WordPress.org.
 
 = Show off the books you love =
 
