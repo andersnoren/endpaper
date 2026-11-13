@@ -2,7 +2,13 @@
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { Button, Notice, SearchControl } from '@wordpress/components';
+import {
+	Button,
+	Notice,
+	Path,
+	SearchControl,
+	SVG,
+} from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -26,6 +32,22 @@ const SEARCH_DELAY = 400;
  * How many pages of results can be loaded, the same as the server allows.
  */
 const MAX_PAGES = 10;
+
+/**
+ * The REST path for a page of results: a search, or the books of an author.
+ *
+ * @param {Object}      args        What to ask for.
+ * @param {string}      args.term   What was typed in the search field.
+ * @param {Object|null} args.author The author whose books are listed, if one was picked.
+ * @param {number}      args.page   Which page of results.
+ * @return {string} The path.
+ */
+function getSearchPath( { term, author, page = 1 } ) {
+	return addQueryArgs(
+		'/endpaper/v1/search',
+		author ? { author: author.id, page } : { q: term, page }
+	);
+}
 
 /**
  * Wraps each match of the search words in <mark>, without using HTML strings.
@@ -164,9 +186,14 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 	const [ message, setMessage ] = useState( '' );
 	const [ hasMore, setHasMore ] = useState( false );
 	const [ loadingMore, setLoadingMore ] = useState( false );
+	// The author a search term is the name of, and the author whose books are listed instead of the search.
+	const [ authorMatch, setAuthorMatch ] = useState( null );
+	const [ author, setAuthor ] = useState( null );
 	const latestRequest = useRef( 0 );
 	const loadedPages = useRef( 1 );
 	const focusAfterLoad = useRef( null );
+	const focusAfterSwitch = useRef( null );
+	const savedSearch = useRef( null );
 	const wrapper = useRef( null );
 	// A full page of results means there may be more, and is also how many
 	// placeholder rows to show, so the list does not change height.
@@ -193,6 +220,9 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		const requestId = ++latestRequest.current;
 
 		loadedPages.current = 1;
+		savedSearch.current = null;
+		setAuthor( null );
+		setAuthorMatch( null );
 		setHasMore( false );
 		setLoadingMore( false );
 
@@ -205,10 +235,21 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		const timer = setTimeout( () => {
 			setStatus( 'loading' );
 
-			apiFetch( {
-				path: addQueryArgs( '/endpaper/v1/search', { q: query } ),
-			} )
-				.then( ( books ) => {
+			// A name of two words or more may be an author, which is asked about at the same time, so the list does not move when it arrives.
+			const mayBeAuthor =
+				query.split( /\s+/ ).length > 1 && ! getBookUrl( query );
+
+			Promise.all( [
+				apiFetch( { path: getSearchPath( { term: query } ) } ),
+				mayBeAuthor
+					? apiFetch( {
+							path: addQueryArgs( '/endpaper/v1/authors', {
+								q: query,
+							} ),
+						} ).catch( () => null )
+					: null,
+			] )
+				.then( ( [ books, found ] ) => {
 					// Ignore responses to searches that have since been replaced.
 					if ( requestId !== latestRequest.current ) {
 						return;
@@ -216,6 +257,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 					const list = Array.isArray( books ) ? books : [];
 
+					setAuthorMatch( found?.id ? found : null );
 					setResults( list );
 					setHasMore( list.length >= searchResults );
 					setStatus( 'done' );
@@ -278,10 +320,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		setLoadingMore( true );
 
 		apiFetch( {
-			path: addQueryArgs( '/endpaper/v1/search', {
-				q: term.trim(),
-				page,
-			} ),
+			path: getSearchPath( { term: term.trim(), author, page } ),
 		} )
 			.then( ( books ) => {
 				// Ignore the response if the search has since changed.
@@ -325,6 +364,81 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 			} );
 	};
 
+	// Lists the books by the author a search found, in place of the search results.
+	const openAuthor = ( match ) => {
+		const requestId = ++latestRequest.current;
+
+		savedSearch.current = {
+			results,
+			hasMore,
+			pages: loadedPages.current,
+		};
+		loadedPages.current = 1;
+		focusAfterSwitch.current = '.endpaper-book-search__back';
+
+		setAuthor( match );
+		setResults( [] );
+		setHasMore( false );
+		setLoadingMore( false );
+		setStatus( 'loading' );
+
+		apiFetch( {
+			path: getSearchPath( { term: term.trim(), author: match } ),
+		} )
+			.then( ( books ) => {
+				if ( requestId !== latestRequest.current ) {
+					return;
+				}
+
+				const list = Array.isArray( books ) ? books : [];
+
+				setResults( list );
+				setHasMore( list.length >= searchResults );
+				setStatus( 'done' );
+			} )
+			.catch( ( error ) => {
+				if ( requestId !== latestRequest.current ) {
+					return;
+				}
+
+				setMessage(
+					error?.message ||
+						__(
+							'Something went wrong while searching.',
+							'endpaper'
+						)
+				);
+				setStatus( 'error' );
+			} );
+	};
+
+	// Goes back from an author's books to the search results they were found in.
+	const closeAuthor = () => {
+		const saved = savedSearch.current;
+
+		// A request for the author's books that has not arrived is dropped.
+		latestRequest.current++;
+		savedSearch.current = null;
+		focusAfterSwitch.current = '.endpaper-book-search__author';
+
+		setAuthor( null );
+		setLoadingMore( false );
+		setResults( saved ? saved.results : [] );
+		setHasMore( saved ? saved.hasMore : false );
+		loadedPages.current = saved ? saved.pages : 1;
+		setStatus( 'done' );
+	};
+
+	// After switching between the search and an author's books, focus goes to the control for going the other way.
+	useEffect( () => {
+		if ( ! focusAfterSwitch.current || 'loading' === status ) {
+			return;
+		}
+
+		wrapper.current?.querySelector( focusAfterSwitch.current )?.focus();
+		focusAfterSwitch.current = null;
+	}, [ author, status ] );
+
 	// Moves focus to the first book that was just added, if the list asked for it.
 	useEffect( () => {
 		const index = focusAfterLoad.current;
@@ -350,7 +464,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 		const items = Array.from(
 			wrapper.current?.querySelectorAll(
-				'.endpaper-book-search__results:not(.endpaper-book-search__results--loading) button, .endpaper-book-search__more'
+				'.endpaper-book-search__back, .endpaper-book-search__author, .endpaper-book-search__results:not(.endpaper-book-search__results--loading) button, .endpaper-book-search__more'
 			) || []
 		);
 
@@ -448,6 +562,70 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 				onChange={ setTerm }
 			/>
 
+			{ author && (
+				<div className="endpaper-book-search__scope">
+					<Button
+						variant="tertiary"
+						className="endpaper-book-search__back"
+						onClick={ closeAuthor }
+					>
+						{ __( 'Back to results', 'endpaper' ) }
+					</Button>
+					<h3 className="endpaper-book-search__heading">
+						{ sprintf(
+							/* translators: %s: an author's name. */
+							__( 'Books by %s', 'endpaper' ),
+							author.name
+						) }
+					</h3>
+				</div>
+			) }
+
+			{ ! author && 'done' === status && authorMatch && (
+				<Button
+					className="endpaper-book-search__result endpaper-book-search__author"
+					onClick={ () => openAuthor( authorMatch ) }
+				>
+					<span className="endpaper-book-search__text">
+						<span>
+							{ sprintf(
+								/* translators: %s: an author's name. */
+								__( 'Books by %s', 'endpaper' ),
+								authorMatch.name
+							) }
+						</span>
+						<span className="endpaper-book-search__details">
+							{ authorMatch.books
+								? sprintf(
+										/* translators: %s: number of books. */
+										_n(
+											'Author · %s book',
+											'Author · %s books',
+											authorMatch.books,
+											'endpaper'
+										),
+										authorMatch.books.toLocaleString(
+											document.documentElement.lang ||
+												undefined
+										)
+									)
+								: __( 'Author', 'endpaper' ) }
+						</span>
+					</span>
+					<SVG
+						className="endpaper-book-search__chevron"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						width="24"
+						height="24"
+						aria-hidden="true"
+						focusable="false"
+					>
+						<Path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1L16 12z" />
+					</SVG>
+				</Button>
+			) }
+
 			{ 'loading' === status && (
 				<ul
 					className="endpaper-book-search__results endpaper-book-search__results--loading"
@@ -476,15 +654,21 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 			{ 'done' === status && 0 === results.length && (
 				<p className="endpaper-book-search__empty">
-					{ __(
-						'No books found. Try the author’s name or an ISBN, or paste a link to the book’s Hardcover page.',
-						'endpaper'
-					) }
+					{ author
+						? __( 'No books found for this author.', 'endpaper' )
+						: __(
+								'No books found. Try the author’s name or an ISBN, or paste a link to the book’s Hardcover page.',
+								'endpaper'
+							) }
 				</p>
 			) }
 
 			{ 'loading' !== status && results.length > 0 && (
-				<ResultList books={ results } term={ term } onPick={ pick } />
+				<ResultList
+					books={ results }
+					term={ author ? '' : term }
+					onPick={ pick }
+				/>
 			) }
 
 			{ 'loading' !== status && results.length > 0 && hasMore && (

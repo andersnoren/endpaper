@@ -37,6 +37,7 @@ use function Endpaper\queue_cover;
 use function Endpaper\save_queued_covers;
 use function Endpaper\get_book_end_time;
 use function Endpaper\get_connection_status;
+use function Endpaper\get_author_books;
 use function Endpaper\get_editions;
 use function Endpaper\get_key_problem_message;
 use function Endpaper\get_privacy_policy_text;
@@ -49,6 +50,7 @@ use function Endpaper\is_token_rejected;
 use function Endpaper\render_settings_page;
 use function Endpaper\sanitize_default_style_setting;
 use function Endpaper\sanitize_token_setting;
+use function Endpaper\search_author;
 use function Endpaper\search_books;
 use function Endpaper\the_key_notice;
 use function Endpaper\trim_to_sentence;
@@ -157,6 +159,25 @@ add_filter(
 
 		if ( false !== strpos( $query, 'EndpaperConnection' ) ) {
 			return $respond( 200, array( 'data' => array( 'me' => array( array( 'username' => 'smoke' ) ) ) ) );
+		}
+
+		if ( false !== strpos( $query, 'EndpaperAuthorSearch' ) ) {
+			// Two authors with the name's words in them; only the first is the one that was typed.
+			$GLOBALS['endpaper_author_requests'] = ( isset( $GLOBALS['endpaper_author_requests'] ) ? $GLOBALS['endpaper_author_requests'] : 0 ) + 1;
+
+			$hits = array(
+				array( 'document' => array( 'id' => '7', 'name' => 'Stephen King', 'books_count' => 312 ) ),
+				array( 'document' => array( 'id' => '8', 'name' => 'Stephen Kings Jr.', 'books_count' => 2 ) ),
+			);
+
+			return $respond( 200, array( 'data' => array( 'search' => array( 'results' => array( 'hits' => $hits ) ) ) ) );
+		}
+
+		if ( false !== strpos( $query, 'EndpaperAuthorBooks' ) ) {
+			$GLOBALS['endpaper_author_book_requests'] = ( isset( $GLOBALS['endpaper_author_book_requests'] ) ? $GLOBALS['endpaper_author_book_requests'] : 0 ) + 1;
+			$GLOBALS['endpaper_author_book_offset']   = json_decode( $args['body'], true )['variables']['offset'];
+
+			return $respond( 200, array( 'data' => array( 'books' => array( $book ) ) ) );
 		}
 
 		if ( false !== strpos( $query, 'EndpaperSearch' ) ) {
@@ -394,6 +415,27 @@ try {
 	endpaper_check( 'a later page is answered from the cache too', 2 === $GLOBALS['endpaper_search_requests'] );
 
 	endpaper_check( 'a link to a book has no second page', array() === search_books( 'https://hardcover.app/books/the-stand', 2 ) && 2 === $GLOBALS['endpaper_search_requests'] );
+
+	echo "Author search\n";
+	$endpaper_author = search_author( 'Stephen King' );
+	endpaper_check( 'a name finds the author, not another with the same words', is_array( $endpaper_author ) && 7 === $endpaper_author['id'] && 'Stephen King' === $endpaper_author['name'] && 312 === $endpaper_author['books'] );
+
+	search_author( 'stephen  KING' );
+	endpaper_check( 'the same name typed differently is answered from the cache', 1 === $GLOBALS['endpaper_author_requests'] );
+
+	endpaper_check( 'one word is never an author search, and nothing is sent', array() === search_author( 'king' ) && 1 === $GLOBALS['endpaper_author_requests'] );
+	endpaper_check( 'a name with other words in it is not an author', array() === search_author( 'stephen king novels' ) );
+	endpaper_check( 'a link is not an author search', array() === search_author( 'https://hardcover.app/books/the-stand' ) && 2 === $GLOBALS['endpaper_author_requests'] );
+
+	$endpaper_author_books = get_author_books( 7 );
+	endpaper_check( 'an author\'s books are listed like a search', is_array( $endpaper_author_books ) && 1 === count( $endpaper_author_books ) && array( 'Stephen King' ) === $endpaper_author_books[0]['authors'] && 0 === $GLOBALS['endpaper_author_book_offset'] );
+
+	get_author_books( 7, 2 );
+	endpaper_check( 'a later page starts after the earlier ones', 8 === $GLOBALS['endpaper_author_book_offset'] );
+
+	get_author_books( 7, 2 );
+	endpaper_check( 'a page of an author\'s books is answered from the cache', 2 === $GLOBALS['endpaper_author_book_requests'] );
+	endpaper_check( 'no author is an error', is_wp_error( get_author_books( 0 ) ) );
 
 	$endpaper_before_limit = $GLOBALS['endpaper_search_requests'];
 

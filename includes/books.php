@@ -17,7 +17,8 @@ defined( 'ABSPATH' ) || exit;
 define( 'ENDPAPER_BOOK_FIELDS', 'id title slug description pages release_year rating ratings_count image { url } cached_contributors' );
 
 // How many searches a person can make in a minute that are not answered from the cache.
-define( 'ENDPAPER_SEARCH_LIMIT', 20 );
+// A search for a name can send two requests, one for books and one for the author.
+define( 'ENDPAPER_SEARCH_LIMIT', 30 );
 
 /**
  * Picks the main authors from a book's contributors.
@@ -457,6 +458,33 @@ function get_book_id_by_slug( $slug ) {
 }
 
 /**
+ * Counts a search that is sent to Hardcover against the person's allowance.
+ *
+ * Anyone who can edit posts can search with the site's key, so the searches
+ * that reach Hardcover are limited for each person.
+ *
+ * @return WP_Error|null An error if the person has searched too much, otherwise null.
+ */
+function use_search_allowance() {
+	$user_id = get_current_user_id();
+
+	if ( ! $user_id ) {
+		return null;
+	}
+
+	$limit_key = 'endpaper_search_limit_' . $user_id;
+	$searches  = (int) get_transient( $limit_key );
+
+	if ( $searches >= ENDPAPER_SEARCH_LIMIT ) {
+		return new WP_Error( 'endpaper_search_limit', __( 'Too many searches. Wait a minute and try again.', 'endpaper' ), array( 'status' => 429 ) );
+	}
+
+	set_transient( $limit_key, $searches + 1, MINUTE_IN_SECONDS );
+
+	return null;
+}
+
+/**
  * Searches Hardcover for books.
  *
  * Accepts a free-text search term or a hardcover.app book URL.
@@ -501,18 +529,10 @@ function search_books( $term, $page = 1 ) {
 		return $cached;
 	}
 
-	// Anyone who can edit posts can search with the site's key, so the searches that reach Hardcover are limited for each person.
-	$user_id = get_current_user_id();
+	$limited = use_search_allowance();
 
-	if ( $user_id ) {
-		$limit_key = 'endpaper_search_limit_' . $user_id;
-		$searches  = (int) get_transient( $limit_key );
-
-		if ( $searches >= ENDPAPER_SEARCH_LIMIT ) {
-			return new WP_Error( 'endpaper_search_limit', __( 'Too many searches. Wait a minute and try again.', 'endpaper' ), array( 'status' => 429 ) );
-		}
-
-		set_transient( $limit_key, $searches + 1, MINUTE_IN_SECONDS );
+	if ( is_wp_error( $limited ) ) {
+		return $limited;
 	}
 
 	$data = api_request(
@@ -559,6 +579,167 @@ function search_books( $term, $page = 1 ) {
 			'year'    => isset( $document['release_year'] ) ? absint( $document['release_year'] ) : 0,
 			'pages'   => isset( $document['pages'] ) ? absint( $document['pages'] ) : 0,
 			'cover'   => isset( $document['image']['url'] ) ? esc_url_raw( $document['image']['url'] ) : '',
+		);
+	}
+
+	set_transient( $cache_key, $books, HOUR_IN_SECONDS );
+
+	return $books;
+}
+
+/**
+ * Turns a name into lowercase words, to compare what was typed with an author's name.
+ *
+ * @param string $name A name, or a search term.
+ * @return string[] The words, without accents or punctuation.
+ */
+function get_name_words( $name ) {
+	$name = remove_accents( function_exists( 'mb_strtolower' ) ? mb_strtolower( (string) $name ) : strtolower( (string) $name ) );
+	$name = preg_replace( '/[^\p{L}\p{N}\s]+/u', ' ', $name );
+
+	return array_values( array_filter( preg_split( '/\s+/', (string) $name ) ) );
+}
+
+/**
+ * Finds the author a search term is the name of.
+ *
+ * Only a name of two words or more counts, and every word of it has to be in
+ * the author's name (or a pen name), so "Stephen King" finds the author but
+ * "stephen king novels" and "king" do not. Anything else is a book search.
+ *
+ * @param string $term What was typed in the search field.
+ * @return array|WP_Error The author (id, name, books), or an empty array if the term is not an author's name, or an error.
+ */
+function search_author( $term ) {
+	$term  = trim( (string) $term );
+	$words = get_name_words( $term );
+
+	if ( count( $words ) < 2 || preg_match( '#hardcover\.app/#i', $term ) ) {
+		return array();
+	}
+
+	$cache_key = cache_key( 'endpaper_author_' . md5( implode( ' ', $words ) ) );
+	$cached    = get_transient( $cache_key );
+
+	if ( is_array( $cached ) ) {
+		return $cached;
+	}
+
+	$limited = use_search_allowance();
+
+	if ( is_wp_error( $limited ) ) {
+		return $limited;
+	}
+
+	$data = api_request(
+		'query EndpaperAuthorSearch($query: String!) { search(query: $query, query_type: "Author", per_page: 5, page: 1) { results } }',
+		array( 'query' => $term )
+	);
+
+	if ( is_wp_error( $data ) ) {
+		return $data;
+	}
+
+	$results = isset( $data['search']['results'] ) ? $data['search']['results'] : array();
+
+	if ( is_string( $results ) ) {
+		$results = json_decode( $results, true );
+	}
+
+	$hits   = isset( $results['hits'] ) && is_array( $results['hits'] ) ? $results['hits'] : array();
+	$author = array();
+
+	foreach ( $hits as $hit ) {
+		$document  = isset( $hit['document'] ) && is_array( $hit['document'] ) ? $hit['document'] : $hit;
+		$author_id = isset( $document['id'] ) ? absint( $document['id'] ) : 0;
+		$name      = isset( $document['name'] ) ? sanitize_text_field( $document['name'] ) : '';
+
+		if ( ! $author_id || '' === $name ) {
+			continue;
+		}
+
+		$names = array( $name );
+
+		if ( isset( $document['alternate_names'] ) && is_array( $document['alternate_names'] ) ) {
+			$names = array_merge( $names, array_filter( $document['alternate_names'], 'is_string' ) );
+		}
+
+		foreach ( $names as $candidate ) {
+			if ( ! array_diff( $words, get_name_words( $candidate ) ) ) {
+				$author = array(
+					'id'    => $author_id,
+					'name'  => $name,
+					'books' => isset( $document['books_count'] ) ? absint( $document['books_count'] ) : 0,
+				);
+
+				break 2;
+			}
+		}
+	}
+
+	set_transient( $cache_key, $author, HOUR_IN_SECONDS );
+
+	return $author;
+}
+
+/**
+ * Lists the books by an author, the ones most readers have first.
+ *
+ * @param int $author_id Hardcover author ID.
+ * @param int $page      Which page of books to return, from 1 to 10.
+ * @return array|WP_Error List of book summaries, in the same shape as a search, or an error.
+ */
+function get_author_books( $author_id, $page = 1 ) {
+	$author_id = absint( $author_id );
+	$page      = max( 1, min( 10, absint( $page ) ) );
+
+	if ( ! $author_id ) {
+		return new WP_Error( 'endpaper_invalid_author', __( 'No author selected.', 'endpaper' ), array( 'status' => 400 ) );
+	}
+
+	$per_page  = get_search_results_count();
+	$cache_key = cache_key( 'endpaper_author_books_' . $per_page . '_' . $page . '_' . $author_id );
+	$cached    = get_transient( $cache_key );
+
+	if ( is_array( $cached ) ) {
+		return $cached;
+	}
+
+	$limited = use_search_allowance();
+
+	if ( is_wp_error( $limited ) ) {
+		return $limited;
+	}
+
+	$data = api_request(
+		'query EndpaperAuthorBooks($author: Int!, $limit: Int!, $offset: Int!) { books(where: {compilation: {_eq: false}, contributions: {author: {id: {_eq: $author}}}}, order_by: {users_count: desc}, limit: $limit, offset: $offset) { id title release_year pages image { url } cached_contributors } }',
+		array(
+			'author' => $author_id,
+			'limit'  => $per_page,
+			'offset' => ( $page - 1 ) * $per_page,
+		)
+	);
+
+	if ( is_wp_error( $data ) ) {
+		return $data;
+	}
+
+	$books = array();
+
+	foreach ( isset( $data['books'] ) && is_array( $data['books'] ) ? $data['books'] : array() as $raw ) {
+		$book = normalize_book( $raw );
+
+		if ( ! $book['id'] ) {
+			continue;
+		}
+
+		$books[] = array(
+			'id'      => $book['id'],
+			'title'   => $book['title'],
+			'authors' => $book['authors'],
+			'year'    => $book['year'],
+			'pages'   => $book['pages'],
+			'cover'   => $book['cover'],
 		);
 	}
 

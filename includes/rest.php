@@ -31,15 +31,37 @@ function register_rest_routes() {
 			'callback'            => __NAMESPACE__ . '\rest_search',
 			'permission_callback' => __NAMESPACE__ . '\rest_permission',
 			'args'                => array(
-				'q'    => array(
+				'q'      => array(
 					'type'              => 'string',
-					'required'          => true,
+					'default'           => '',
 					'sanitize_callback' => 'sanitize_text_field',
 				),
-				'page' => array(
+				'author' => array(
+					'type'              => 'integer',
+					'default'           => 0,
+					'sanitize_callback' => 'absint',
+				),
+				'page'   => array(
 					'type'              => 'integer',
 					'default'           => 1,
 					'sanitize_callback' => 'absint',
+				),
+			),
+		)
+	);
+
+	register_rest_route(
+		'endpaper/v1',
+		'/authors',
+		array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => __NAMESPACE__ . '\rest_author',
+			'permission_callback' => __NAMESPACE__ . '\rest_permission',
+			'args'                => array(
+				'q' => array(
+					'type'              => 'string',
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_text_field',
 				),
 			),
 		)
@@ -136,6 +158,11 @@ function rest_permission() {
  * @return WP_REST_Response|WP_Error Search results, or an error.
  */
 function rest_search( $request ) {
+	// An author's books, or a search.
+	if ( $request->get_param( 'author' ) ) {
+		return rest_ensure_response( get_author_books( $request->get_param( 'author' ), $request->get_param( 'page' ) ) );
+	}
+
 	$term = (string) $request->get_param( 'q' );
 
 	if ( strlen( trim( $term ) ) < 3 ) {
@@ -143,6 +170,16 @@ function rest_search( $request ) {
 	}
 
 	return rest_ensure_response( search_books( $term, $request->get_param( 'page' ) ) );
+}
+
+/**
+ * Handles a request for the author a search term is the name of.
+ *
+ * @param WP_REST_Request $request The request.
+ * @return WP_REST_Response|WP_Error The author, or an empty list if there is none, or an error.
+ */
+function rest_author( $request ) {
+	return rest_ensure_response( search_author( (string) $request->get_param( 'q' ) ) );
 }
 
 /**

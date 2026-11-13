@@ -87,6 +87,24 @@
 	width: 100%;
 }
 
+.endpaper-book-search__result.endpaper-book-search__author {
+	justify-content: space-between;
+	margin-top: 1em;
+}
+
+.endpaper-book-search__chevron {
+	fill: currentcolor;
+	flex: 0 0 auto;
+}
+
+.endpaper-book-search__back.components-button {
+	margin-top: 0.75em;
+}
+
+.endpaper-book-search .endpaper-book-search__scope .endpaper-book-search__heading {
+	margin-top: 0.75em;
+}
+
 .endpaper-book-search__cover {
 	background: color-mix(in srgb, currentcolor 10%, transparent);
 	border-radius: 2px;
