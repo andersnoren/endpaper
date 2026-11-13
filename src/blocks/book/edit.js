@@ -39,6 +39,7 @@ import CoverRadiusPanel from '../../components/cover-radius-panel';
 import RefreshButton from '../../components/refresh-button';
 import getEditorData from '../../utils/editor-data';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
+import hasFrame from '../../utils/has-frame';
 import useKeepImages from '../../utils/use-keep-images';
 import metadata from './block.json';
 import './editor.scss';
@@ -109,7 +110,13 @@ export default function Edit( {
 	const [ refreshCount, setRefreshCount ] = useState( 0 );
 	const blockProps = useBlockProps( {
 		ref: wrapper,
-		className: justPicked ? 'endpaper-is-new' : undefined,
+		className:
+			[
+				justPicked ? 'endpaper-is-new' : '',
+				hasFrame( attributes ) ? 'endpaper-book--framed' : '',
+			]
+				.filter( Boolean )
+				.join( ' ' ) || undefined,
 		onAnimationEnd: () => setJustPicked( false ),
 	} );
 	useKeepImages( wrapper );
@@ -525,7 +532,7 @@ export default function Edit( {
 				<ServerSideRender
 					key={ refreshCount }
 					block={ metadata.name }
-					attributes={ getPreviewAttributes( attributes ) }
+					attributes={ getPreviewAttributes( attributes, false ) }
 					LoadingResponsePlaceholder={ ( { children } ) =>
 						children || (
 							<CardPlaceholder attributes={ attributes } />

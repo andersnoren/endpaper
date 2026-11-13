@@ -2,8 +2,8 @@
 /**
  * Server-side rendering of the Book block.
  *
- * The block is a card with the book in it. The border, padding, background
- * and shadow settings apply to the card, not to the block as a whole.
+ * The block is a card with the book in it: the block itself has the border,
+ * padding, background and shadow, like a core block.
  *
  * @package Endpaper
  *
@@ -17,7 +17,6 @@ use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
 use function AndersNoren\Endpaper\get_book;
 use function AndersNoren\Endpaper\get_book_end_time;
-use function AndersNoren\Endpaper\get_card_style;
 use function AndersNoren\Endpaper\has_card_frame;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_edition;
@@ -196,136 +195,132 @@ if ( 'top' === $endpaper_cover_position ) {
 
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'endpaper-book--cover-' . $endpaper_cover_position . ' endpaper-book--cover-' . $endpaper_cover_size . ( $endpaper_text_align ? ' endpaper-book--align-' . $endpaper_text_align : '' ),
+		'class' => 'endpaper-book--cover-' . $endpaper_cover_position . ' endpaper-book--cover-' . $endpaper_cover_size . ( $endpaper_text_align ? ' endpaper-book--align-' . $endpaper_text_align : '' ) . ( has_card_frame( $attributes ) ? ' endpaper-book--framed' : '' ),
 		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ),
 	)
 );
 
-$endpaper_card_style = get_card_style( $attributes );
 ?>
 <div <?php echo $endpaper_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<div class="endpaper-book__card<?php echo has_card_frame( $attributes ) ? ' endpaper-book__card--framed' : ''; ?>"<?php echo $endpaper_card_style ? ' style="' . esc_attr( $endpaper_card_style ) . '"' : ''; ?>>
 
-		<?php if ( ! empty( $attributes['showCover'] ) ) : ?>
-			<figure class="endpaper-book__cover">
-				<?php if ( $endpaper_link ) : ?>
-					<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
-				<?php endif; ?>
-				<?php the_cover_image( $endpaper_cover, $endpaper_cover_sizes[ $endpaper_cover_size ] ); ?>
-				<?php if ( $endpaper_link ) : ?>
-					</a>
-				<?php endif; ?>
-			</figure>
-		<?php endif; ?>
+	<?php if ( ! empty( $attributes['showCover'] ) ) : ?>
+		<figure class="endpaper-book__cover">
+			<?php if ( $endpaper_link ) : ?>
+				<a href="<?php echo esc_url( $endpaper_link ); ?>" tabindex="-1" aria-hidden="true">
+			<?php endif; ?>
+			<?php the_cover_image( $endpaper_cover, $endpaper_cover_sizes[ $endpaper_cover_size ] ); ?>
+			<?php if ( $endpaper_link ) : ?>
+				</a>
+			<?php endif; ?>
+		</figure>
+	<?php endif; ?>
 
-		<div class="endpaper-book__content">
-			<div class="endpaper-book__main">
+	<div class="endpaper-book__content">
+		<div class="endpaper-book__main">
 
-				<div class="endpaper-book__header">
-					<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-book__title">
-						<?php if ( $endpaper_link ) : ?>
-							<a href="<?php echo esc_url( $endpaper_link ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
-						<?php else : ?>
-							<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
-						<?php endif; ?>
-					</<?php echo tag_escape( $endpaper_tag ); ?>>
-
-					<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
-						<p class="endpaper-book__authors">
-							<?php
-							/* translators: %s: List of author names. */
-							echo esc_html( sprintf( __( 'by %s', 'endpaper' ), wp_sprintf( '%l', $endpaper_book['authors'] ) ) );
-							?>
-						</p>
+			<div class="endpaper-book__header">
+				<<?php echo tag_escape( $endpaper_tag ); ?> class="endpaper-book__title">
+					<?php if ( $endpaper_link ) : ?>
+						<a href="<?php echo esc_url( $endpaper_link ); ?>"><?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></a>
+					<?php else : ?>
+						<?php echo format_text( $endpaper_book['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?>
 					<?php endif; ?>
-				</div>
+				</<?php echo tag_escape( $endpaper_tag ); ?>>
 
-				<?php if ( $endpaper_my_rating || $endpaper_show_progress || $endpaper_show_shelf ) : ?>
-					<div class="endpaper-book__mine">
-						<?php // The shelf comes first and the progress last, with the rating between them. Only one of the two is ever shown. ?>
-						<?php if ( $endpaper_show_shelf ) : ?>
-							<p class="endpaper-book__shelf"><span><?php echo esc_html( $endpaper_shelf ); ?></span></p>
-						<?php endif; ?>
-
-						<?php if ( $endpaper_my_rating ) : ?>
-							<?php the_star_rating( $endpaper_my_rating, 'endpaper-book__my-rating' ); ?>
-						<?php endif; ?>
-
-						<?php if ( $endpaper_show_progress ) : ?>
-							<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
-						<?php endif; ?>
-					</div>
-				<?php endif; ?>
-
-				<?php if ( $endpaper_description || $endpaper_review_html ) : ?>
-					<?php if ( $endpaper_spoilers ) : ?>
-						<?php // A review with spoilers stays closed until the visitor opens it. This works without JavaScript. ?>
-						<details class="endpaper-book__spoilers">
-							<summary><?php esc_html_e( 'This review contains spoilers', 'endpaper' ); ?></summary>
-					<?php endif; ?>
-
-					<div class="endpaper-book__text">
-						<?php if ( $endpaper_review_html ) : ?>
-							<div class="endpaper-book__description endpaper-book__description--review"><?php echo $endpaper_review_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered in markdown_to_html(), and escaped in format_text(). ?></div>
-						<?php else : ?>
-							<p class="endpaper-book__description"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
-						<?php endif; ?>
-						<?php echo $endpaper_review_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when it is built. ?>
-					</div>
-
-					<?php if ( $endpaper_spoilers ) : ?>
-						</details>
-					<?php endif; ?>
-				<?php endif; ?>
-
-			</div>
-
-			<?php if ( $endpaper_facts || $endpaper_show_rating || $endpaper_show_credit ) : ?>
-			<div class="endpaper-book__footer">
-				<?php if ( $endpaper_facts || $endpaper_show_rating ) : ?>
-					<p class="endpaper-book__meta">
-						<?php foreach ( $endpaper_facts as $endpaper_fact ) : ?>
-							<span class="endpaper-book__fact"><bdi><?php echo esc_html( $endpaper_fact ); ?></bdi></span>
-						<?php endforeach; ?>
-
-						<?php if ( $endpaper_show_rating ) : ?>
-							<span class="endpaper-book__fact endpaper-book__rating">
-								<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?><?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?></span>
-								<span class="endpaper-book__rating-count" aria-hidden="true"><bdi>
-									<?php
-									echo esc_html(
-										sprintf(
-											/* translators: %s: Number of ratings. */
-											_n( '(%s rating)', '(%s ratings)', $endpaper_book['ratings_count'], 'endpaper' ),
-											number_format_i18n( $endpaper_book['ratings_count'] )
-										)
-									);
-									?>
-								</bdi></span>
-								<span class="screen-reader-text">
-									<?php
-									echo esc_html(
-										sprintf(
-											/* translators: 1: Average rating, 2: Number of ratings. */
-											_n( 'Rated %1$s out of 5 on Hardcover, from %2$s rating', 'Rated %1$s out of 5 on Hardcover, from %2$s ratings', $endpaper_book['ratings_count'], 'endpaper' ),
-											number_format_i18n( $endpaper_book['rating'], 1 ),
-											number_format_i18n( $endpaper_book['ratings_count'] )
-										)
-									);
-									?>
-								</span>
-							</span>
-						<?php endif; ?>
+				<?php if ( ! empty( $attributes['showAuthors'] ) && $endpaper_book['authors'] ) : ?>
+					<p class="endpaper-book__authors">
+						<?php
+						/* translators: %s: List of author names. */
+						echo esc_html( sprintf( __( 'by %s', 'endpaper' ), wp_sprintf( '%l', $endpaper_book['authors'] ) ) );
+						?>
 					</p>
 				<?php endif; ?>
-
-				<?php if ( $endpaper_show_credit ) : ?>
-					<?php the_hardcover_credit( $endpaper_url, 'endpaper-book__credit' ); ?>
-				<?php endif; ?>
 			</div>
+
+			<?php if ( $endpaper_my_rating || $endpaper_show_progress || $endpaper_show_shelf ) : ?>
+				<div class="endpaper-book__mine">
+					<?php // The shelf comes first and the progress last, with the rating between them. Only one of the two is ever shown. ?>
+					<?php if ( $endpaper_show_shelf ) : ?>
+						<p class="endpaper-book__shelf"><span><?php echo esc_html( $endpaper_shelf ); ?></span></p>
+					<?php endif; ?>
+
+					<?php if ( $endpaper_my_rating ) : ?>
+						<?php the_star_rating( $endpaper_my_rating, 'endpaper-book__my-rating' ); ?>
+					<?php endif; ?>
+
+					<?php if ( $endpaper_show_progress ) : ?>
+						<?php the_progress_bar( $endpaper_entry['progress'], 'endpaper-book__progress' ); ?>
+					<?php endif; ?>
+				</div>
 			<?php endif; ?>
+
+			<?php if ( $endpaper_description || $endpaper_review_html ) : ?>
+				<?php if ( $endpaper_spoilers ) : ?>
+					<?php // A review with spoilers stays closed until the visitor opens it. This works without JavaScript. ?>
+					<details class="endpaper-book__spoilers">
+						<summary><?php esc_html_e( 'This review contains spoilers', 'endpaper' ); ?></summary>
+				<?php endif; ?>
+
+				<div class="endpaper-book__text">
+					<?php if ( $endpaper_review_html ) : ?>
+						<div class="endpaper-book__description endpaper-book__description--review"><?php echo $endpaper_review_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered in markdown_to_html(), and escaped in format_text(). ?></div>
+					<?php else : ?>
+						<p class="endpaper-book__description"><?php echo format_text( $endpaper_description ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in format_text(). ?></p>
+					<?php endif; ?>
+					<?php echo $endpaper_review_link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when it is built. ?>
+				</div>
+
+				<?php if ( $endpaper_spoilers ) : ?>
+					</details>
+				<?php endif; ?>
+			<?php endif; ?>
+
 		</div>
 
+		<?php if ( $endpaper_facts || $endpaper_show_rating || $endpaper_show_credit ) : ?>
+		<div class="endpaper-book__footer">
+			<?php if ( $endpaper_facts || $endpaper_show_rating ) : ?>
+				<p class="endpaper-book__meta">
+					<?php foreach ( $endpaper_facts as $endpaper_fact ) : ?>
+						<span class="endpaper-book__fact"><bdi><?php echo esc_html( $endpaper_fact ); ?></bdi></span>
+					<?php endforeach; ?>
+
+					<?php if ( $endpaper_show_rating ) : ?>
+						<span class="endpaper-book__fact endpaper-book__rating">
+							<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $endpaper_book['rating'], 1 ) ); ?><?php echo get_star_icon(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG markup. ?></span>
+							<span class="endpaper-book__rating-count" aria-hidden="true"><bdi>
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: %s: Number of ratings. */
+										_n( '(%s rating)', '(%s ratings)', $endpaper_book['ratings_count'], 'endpaper' ),
+										number_format_i18n( $endpaper_book['ratings_count'] )
+									)
+								);
+								?>
+							</bdi></span>
+							<span class="screen-reader-text">
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: 1: Average rating, 2: Number of ratings. */
+										_n( 'Rated %1$s out of 5 on Hardcover, from %2$s rating', 'Rated %1$s out of 5 on Hardcover, from %2$s ratings', $endpaper_book['ratings_count'], 'endpaper' ),
+										number_format_i18n( $endpaper_book['rating'], 1 ),
+										number_format_i18n( $endpaper_book['ratings_count'] )
+									)
+								);
+								?>
+							</span>
+						</span>
+					<?php endif; ?>
+				</p>
+			<?php endif; ?>
+
+			<?php if ( $endpaper_show_credit ) : ?>
+				<?php the_hardcover_credit( $endpaper_url, 'endpaper-book__credit' ); ?>
+			<?php endif; ?>
+		</div>
+		<?php endif; ?>
 	</div>
 
 	<?php

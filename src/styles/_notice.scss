@@ -24,7 +24,8 @@
 	@include muted-text;
 }
 
-/* Below a book, with some room between them. */
+/* In a book, on a line of its own under it. */
 .wp-block-endpaper-book > .endpaper-notice {
-	margin-top: 1em;
+	flex: none;
+	width: 100%;
 }

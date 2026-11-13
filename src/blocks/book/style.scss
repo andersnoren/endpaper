@@ -41,7 +41,7 @@
  * border, a background or a shadow gets room inside it, and rounded corners.
  * The Card style gives it a faint tint of the text color as a background.
  */
-:where(.endpaper-book__card--framed) {
+:where(.endpaper-book--framed) {
 	border-radius: 0.75em;
 	padding: 1.5em;
 }
@@ -50,14 +50,10 @@
  * The Card style is registered in endpaper.php with these same values as data,
  * for the site editor. This is for themes that do not use them.
  */
-:where(.wp-block-endpaper-book.is-style-card .endpaper-book__card) {
+:where(.wp-block-endpaper-book.is-style-card) {
 	background: $card-color;
 	border-radius: 0.75em;
 	padding: 1.5em;
-}
-
-.wp-block-endpaper-book {
-	box-sizing: border-box;
 }
 
 /*
@@ -79,8 +75,8 @@
 	margin: 0;
 }
 
-/* The card wraps when it gets narrow, which puts the text under the cover. */
-.endpaper-book__card {
+/* The block wraps when it gets narrow, which puts the text under the cover. */
+.wp-block-endpaper-book {
 	box-sizing: border-box;
 	display: flex;
 	flex-wrap: wrap;
@@ -115,7 +111,7 @@
 }
 
 /* The cover on the other side of the text. */
-.endpaper-book--cover-right .endpaper-book__card {
+.endpaper-book--cover-right {
 	flex-direction: row-reverse;
 }
 
@@ -123,7 +119,7 @@
  * The cover above the text. It keeps the width its size gives it, and is
  * never wider than the card.
  */
-.endpaper-book--cover-top .endpaper-book__card {
+.endpaper-book--cover-top {
 	flex-direction: column;
 	flex-wrap: nowrap;
 }
@@ -144,11 +140,8 @@
  */
 
 .endpaper-book--align-center {
+	justify-content: center;
 	text-align: center;
-
-	.endpaper-book__card {
-		justify-content: center;
-	}
 
 	.endpaper-book__main {
 		align-items: center;
@@ -160,17 +153,14 @@
 		justify-content: center;
 	}
 
-	&.endpaper-book--cover-top .endpaper-book__card {
+	&.endpaper-book--cover-top {
 		align-items: center;
 	}
 }
 
 .endpaper-book--align-end {
+	justify-content: end;
 	text-align: end;
-
-	.endpaper-book__card {
-		justify-content: end;
-	}
 
 	.endpaper-book__main {
 		align-items: flex-end;
@@ -182,7 +172,7 @@
 		justify-content: flex-end;
 	}
 
-	&.endpaper-book--cover-top .endpaper-book__card {
+	&.endpaper-book--cover-top {
 		align-items: flex-end;
 	}
 }

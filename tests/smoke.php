@@ -413,8 +413,8 @@ try {
 
 	echo "The Book block\n";
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showShelf":true,"showProgress":true} /-->' );
-	endpaper_check( 'it renders a card', false !== strpos( $endpaper_html, 'endpaper-book__card' ) );
-	endpaper_check( 'the book has no frame unless it is given one', false === strpos( $endpaper_html, 'endpaper-book__card--framed' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42,"style":{"border":{"width":"1px"}}} /-->' ), 'endpaper-book__card--framed' ) );
+	endpaper_check( 'it renders a card', false !== strpos( $endpaper_html, 'endpaper-book__content' ) );
+	endpaper_check( 'the book has no frame unless it is given one, and then the block itself has it', false === strpos( $endpaper_html, 'endpaper-book--framed' ) && 1 === preg_match( '/<div [^>]*border-width:1px[^>]*endpaper-book--framed/', do_blocks( '<!-- wp:endpaper/book {"bookId":42,"style":{"border":{"width":"1px"}}} /-->' ) ) );
 	endpaper_check( 'the title is escaped', false === strpos( $endpaper_html, '"Complete"' ) && false !== strpos( $endpaper_html, 'Complete' ) );
 	endpaper_check( 'it shows the reading progress', false !== strpos( $endpaper_html, '<progress' ) );
 	endpaper_check( 'it shows the owner’s rating as stars, next to the progress', false !== strpos( $endpaper_html, 'endpaper-book__my-rating' ) && false !== strpos( $endpaper_html, 'endpaper-icon--star-half' ) && false !== strpos( $endpaper_html, 'Rated 3.5 out of 5' ) );
@@ -793,7 +793,7 @@ try {
 	clear_cache();
 	endpaper_check( 'clearing it puts everything out of reach', (int) get_option( 'endpaper_cache_generation' ) === $endpaper_generation + 1 && false === get_transient( cache_key( 'endpaper_book_42' ) ) && 0 === get_book_end_time( 42 ) );
 	endpaper_check( 'the key is kept', 'smoke-test-key' === get_token() );
-	endpaper_check( 'the block fetches the book again', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), 'endpaper-book__card' ) && false !== get_transient( cache_key( 'endpaper_book_42' ) ) );
+	endpaper_check( 'the block fetches the book again', false !== strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), 'endpaper-book__content' ) && false !== get_transient( cache_key( 'endpaper_book_42' ) ) );
 
 	echo "The settings screen\n";
 	wp_set_current_user( 1 );
@@ -856,11 +856,11 @@ try {
 	delete_transient( 'endpaper_api_backoff' );
 	wp_set_current_user( 0 );
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /--><!-- wp:endpaper/reading-list {"status":3} /-->' );
-	endpaper_check( 'visitors still get the book, and no messages', false !== strpos( $endpaper_html, 'endpaper-book__card' ) && false === strpos( $endpaper_html, 'endpaper-notice' ) );
+	endpaper_check( 'visitors still get the book, and no messages', false !== strpos( $endpaper_html, 'endpaper-book__content' ) && false === strpos( $endpaper_html, 'endpaper-notice' ) );
 
 	wp_set_current_user( 1 );
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
-	endpaper_check( 'people who can edit are told the book will go', false !== strpos( $endpaper_html, 'endpaper-book__card' ) && false !== strpos( $endpaper_html, 'shown from a saved copy' ) && false !== strpos( $endpaper_html, wp_date( 'Y' ) ) );
+	endpaper_check( 'people who can edit are told the book will go', false !== strpos( $endpaper_html, 'endpaper-book__content' ) && false !== strpos( $endpaper_html, 'shown from a saved copy' ) && false !== strpos( $endpaper_html, wp_date( 'Y' ) ) );
 	endpaper_check( 'the message says it is private, and links to the settings', false !== strpos( $endpaper_html, 'Only people who can edit this site see this message.' ) && false !== strpos( $endpaper_html, 'options-general.php?page=endpaper' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"align":"wide"} /-->' );
