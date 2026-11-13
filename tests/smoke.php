@@ -579,6 +579,20 @@ try {
 
 	endpaper_check( 'the percentage is left out unless that is switched on', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' ), '__percent' ) );
 
+	echo "Authors\n";
+	$endpaper_oliver = array(
+		array(
+			'author'       => array( 'name' => 'Charles Dickens' ),
+			'contribution' => null,
+		),
+		array(
+			'author'       => array( 'name' => 'George Cruikshank' ),
+			'contribution' => 'Illustrator',
+		),
+	);
+	endpaper_check( 'only the main authors are picked from the contributors, so an illustrator is left out', array( 'Charles Dickens' ) === Endpaper\get_main_authors( $endpaper_oliver ) );
+	endpaper_check( 'when nobody is a main author, all contributors are used, and bad data gives none', array( 'George Cruikshank' ) === Endpaper\get_main_authors( array( $endpaper_oliver[1] ) ) && array() === Endpaper\get_main_authors( null ) );
+
 	echo "The shortcodes\n";
 	delete_transient( Endpaper\cache_key( 'endpaper_slug_the-stand' ) );
 	$endpaper_requests = $GLOBALS['endpaper_api_requests'];

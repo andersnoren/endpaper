@@ -20,34 +20,45 @@ define( 'ENDPAPER_BOOK_FIELDS', 'id title slug description pages release_year ra
 define( 'ENDPAPER_SEARCH_LIMIT', 20 );
 
 /**
- * Converts a raw book record from the API into the shape Endpaper uses.
+ * Picks the main authors from a book's contributors.
  *
- * @param array $raw Raw book record.
- * @return array Normalized book.
+ * Illustrators, translators and the like are left out. A contribution that is
+ * empty or says Author means the person is a main author. If nobody is, all of
+ * the contributors are returned, so a book is never shown without a name.
+ *
+ * @param mixed $contributors A list of contributions from the API, each with an author and a contribution.
+ * @return string[] The names of the authors.
  */
-function normalize_book( $raw ) {
-	$authors      = array();
-	$contributors = array();
+function get_main_authors( $contributors ) {
+	$authors = array();
+	$all     = array();
 
-	if ( isset( $raw['cached_contributors'] ) && is_array( $raw['cached_contributors'] ) ) {
-		foreach ( $raw['cached_contributors'] as $contributor ) {
-			if ( empty( $contributor['author']['name'] ) ) {
+	if ( is_array( $contributors ) ) {
+		foreach ( $contributors as $contributor ) {
+			if ( ! is_array( $contributor ) || empty( $contributor['author']['name'] ) ) {
 				continue;
 			}
 
-			$name           = sanitize_text_field( $contributor['author']['name'] );
-			$contributors[] = $name;
+			$name  = sanitize_text_field( $contributor['author']['name'] );
+			$all[] = $name;
 
-			// An empty contribution means the person is a main author.
 			if ( empty( $contributor['contribution'] ) || 'Author' === $contributor['contribution'] ) {
 				$authors[] = $name;
 			}
 		}
 	}
 
-	if ( empty( $authors ) ) {
-		$authors = $contributors;
-	}
+	return array_values( array_unique( $authors ? $authors : $all ) );
+}
+
+/**
+ * Converts a raw book record from the API into the shape Endpaper uses.
+ *
+ * @param array $raw Raw book record.
+ * @return array Normalized book.
+ */
+function normalize_book( $raw ) {
+	$authors = get_main_authors( isset( $raw['cached_contributors'] ) ? $raw['cached_contributors'] : array() );
 
 	$slug = isset( $raw['slug'] ) ? sanitize_title( $raw['slug'] ) : '';
 
@@ -62,7 +73,7 @@ function normalize_book( $raw ) {
 		'rating'        => isset( $raw['rating'] ) ? (float) $raw['rating'] : 0.0,
 		'ratings_count' => isset( $raw['ratings_count'] ) ? absint( $raw['ratings_count'] ) : 0,
 		'cover'         => isset( $raw['image']['url'] ) ? esc_url_raw( $raw['image']['url'] ) : '',
-		'authors'       => array_values( array_unique( $authors ) ),
+		'authors'       => $authors,
 	);
 }
 
@@ -526,7 +537,12 @@ function search_books( $term ) {
 			continue;
 		}
 
-		$authors = isset( $document['author_names'] ) && is_array( $document['author_names'] ) ? $document['author_names'] : array();
+		// Only the main authors, like the block shows. The list of names has everyone, such as illustrators, so it is the fallback.
+		$authors = get_main_authors( isset( $document['contributions'] ) ? $document['contributions'] : array() );
+
+		if ( ! $authors && isset( $document['author_names'] ) && is_array( $document['author_names'] ) ) {
+			$authors = $document['author_names'];
+		}
 
 		$books[] = array(
 			'id'      => $book_id,
