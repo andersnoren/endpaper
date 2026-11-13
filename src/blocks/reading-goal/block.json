@@ -67,7 +67,6 @@
 		"color": {
 			"gradients": true,
 			"link": true,
-			"heading": true,
 			"__experimentalSkipSerialization": [
 				"background",
 				"gradients"

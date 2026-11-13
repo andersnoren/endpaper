@@ -338,16 +338,11 @@
 }
 
 /*
- * The title takes the block's text color, not the theme's color for headings.
- * One class is enough to outweigh the theme's rule for h1 to h6, and still
- * lets the Heading color setting, which is more specific, change it.
+ * The size is set here. The weight and font come from the theme's headings,
+ * the color from the block, not from the theme's color for headings.
  */
-.endpaper-book__title {
-	color: inherit;
-}
-
-/* The size is set here. The weight and font come from the theme's headings. */
 .wp-block-endpaper-book .endpaper-book__title {
+	color: inherit;
 	font-size: 1.75em;
 	line-height: 1.2;
 
