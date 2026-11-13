@@ -65,9 +65,15 @@ function highlight( text, term ) {
 	}
 
 	// The whole phrase if the text has it, otherwise each word on its own.
+	// A single letter, like the J in J R R Tolkien, would mark that letter inside every other word.
+	const words = phrase.split( ' ' ).filter( ( word ) => word.length > 1 );
 	const pattern = new RegExp( escape( phrase ), 'i' ).test( text )
 		? escape( phrase )
-		: phrase.split( ' ' ).map( escape ).join( '|' );
+		: words.map( escape ).join( '|' );
+
+	if ( ! pattern ) {
+		return text;
+	}
 
 	// A capture group makes split() keep the matches, at odd indexes.
 	return text
