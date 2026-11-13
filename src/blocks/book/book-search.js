@@ -606,23 +606,22 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 			{ author && (
 				<div className="endpaper-book-search__scope">
 					<Button
-						className="endpaper-book-search__back"
-						size="compact"
-						label={ __( 'Back to results', 'endpaper' ) }
+						className="endpaper-book-search__result endpaper-book-search__back"
 						onClick={ closeAuthor }
-						icon={
-							<SVG
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								width="24"
-								height="24"
-								aria-hidden="true"
-								focusable="false"
-							>
-								<Path d="M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z" />
-							</SVG>
-						}
-					/>
+					>
+						<SVG
+							className="endpaper-book-search__chevron"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							width="24"
+							height="24"
+							aria-hidden="true"
+							focusable="false"
+						>
+							<Path d="M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z" />
+						</SVG>
+						<span>{ __( 'Back to results', 'endpaper' ) }</span>
+					</Button>
 					<h3 className="endpaper-book-search__heading">
 						{ sprintf(
 							/* translators: %s: an author's name. */

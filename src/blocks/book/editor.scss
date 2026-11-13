@@ -87,9 +87,13 @@
 	width: 100%;
 }
 
-.endpaper-book-search__result.endpaper-book-search__author {
+.endpaper-book-search__result.endpaper-book-search__author,
+.endpaper-book-search__result.endpaper-book-search__back {
 	border-bottom: 1px solid color-mix(in srgb, currentcolor 10%, transparent);
 	border-radius: 0;
+}
+
+.endpaper-book-search__result.endpaper-book-search__author {
 	justify-content: space-between;
 	margin-top: 1em;
 }
@@ -99,20 +103,16 @@
 	flex: 0 0 auto;
 }
 
-/* The back arrow and the heading share a line. */
+/* The way back, under the same search field as the author row it replaces. */
 .endpaper-book-search__scope {
-	align-items: center;
-	display: flex;
-	gap: 0.25em;
 	margin-top: 1em;
 }
 
 .endpaper-book-search .endpaper-book-search__scope .endpaper-book-search__heading {
-	margin: 0;
+	margin-top: 1em;
 }
 
 /* The arrows point the other way in right-to-left languages. */
-[dir="rtl"] .endpaper-book-search__back svg,
 [dir="rtl"] .endpaper-book-search__chevron {
 	transform: scaleX(-1);
 }
