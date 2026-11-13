@@ -35,6 +35,7 @@ import BookSearch from './book-search';
 import CardPlaceholder from './card-placeholder';
 import EditionPicker from './edition-picker';
 import AccentColorControl from '../../components/accent-color-control';
+import BlockIcon from '../../components/block-icon';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
 import RefreshButton from '../../components/refresh-button';
 import getEditorData from '../../utils/editor-data';
@@ -317,6 +318,7 @@ export default function Edit( {
 					.join( ' ' ) }
 			>
 				<Placeholder
+					icon={ <BlockIcon name="book" /> }
 					label={ __( 'Book', 'endpaper' ) }
 					instructions={
 						keyTrouble
