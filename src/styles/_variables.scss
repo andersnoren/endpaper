@@ -89,7 +89,10 @@ $text-lightness: "(0.2126 * r + 0.7152 * g + 0.0722 * b) / 255";
 /*
  * An inline icon from the WordPress icon library. The icons have empty space
  * around the shape, so the box is larger than the text and pulled in with
- * negative margins, which makes the shape itself match the text.
+ * negative margins, which makes the shape itself match the text. It is
+ * centered on the height of a capital letter, as the dot is, so it sits right
+ * in fonts with unusual proportions. Browsers that do not know the cap unit
+ * get a value that suits most fonts.
  */
 @mixin icon {
 	display: inline-block;
@@ -97,6 +100,7 @@ $text-lightness: "(0.2126 * r + 0.7152 * g + 0.0722 * b) / 255";
 	height: 1.4em;
 	margin-inline: -0.2em;
 	vertical-align: -0.38em;
+	vertical-align: calc(0.5cap - 0.7em);
 	width: 1.4em;
 }
 
