@@ -135,11 +135,9 @@
 	width: 44px;
 }
 
-/* An author's photo is at least square, and as tall as a book cover at most. */
-.endpaper-book-search__cover.endpaper-book-search__cover--author {
-	height: auto;
-	max-height: 66px;
-	min-height: 44px;
+/* An author's photo is cropped to the cover's ratio, keeping the head. */
+.endpaper-book-search__cover--author {
+	object-position: center top;
 }
 
 .endpaper-book-search__text {
