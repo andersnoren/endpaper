@@ -166,6 +166,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 	const [ loadingMore, setLoadingMore ] = useState( false );
 	const latestRequest = useRef( 0 );
 	const loadedPages = useRef( 1 );
+	const focusAfterLoad = useRef( null );
 	const wrapper = useRef( null );
 	// A full page of results means there may be more, and is also how many
 	// placeholder rows to show, so the list does not change height.
@@ -261,14 +262,18 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		}
 	}, [ status, results.length ] );
 
-	// Adds the next page of results to the list.
-	const loadMore = () => {
+	// Adds the next page of results to the list. When the button was used
+	// with the keyboard, focus moves to the first new book, so the next Tab or
+	// arrow key continues from there, not from the button that moved down.
+	const loadMore = ( event ) => {
 		if ( loadingMore ) {
 			return;
 		}
 
 		const requestId = latestRequest.current;
 		const page = loadedPages.current + 1;
+		const viaKeyboard = 0 === event?.detail;
+		const listed = results.length;
 
 		setLoadingMore( true );
 
@@ -287,6 +292,11 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 				const list = Array.isArray( books ) ? books : [];
 
 				loadedPages.current = page;
+
+				if ( viaKeyboard ) {
+					focusAfterLoad.current = listed;
+				}
+
 				setResults( ( current ) => {
 					const known = new Set( current.map( ( book ) => book.id ) );
 
@@ -314,6 +324,23 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 				setLoadingMore( false );
 			} );
 	};
+
+	// Moves focus to the first book that was just added, if the list asked for it.
+	useEffect( () => {
+		const index = focusAfterLoad.current;
+
+		if ( null === index ) {
+			return;
+		}
+
+		focusAfterLoad.current = null;
+
+		wrapper.current
+			?.querySelectorAll(
+				'.endpaper-book-search__results:not(.endpaper-book-search__results--loading) .endpaper-book-search__result'
+			)
+			?.[ index ]?.focus();
+	}, [ results ] );
 
 	// Arrow keys move between the search field and the results.
 	const moveFocus = ( event ) => {
