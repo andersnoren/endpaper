@@ -636,6 +636,28 @@ try {
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	endpaper_check( 'a theme can change the heading typography for one block, on top of the global one', false !== strpos( $endpaper_block_style, '--endpaper-heading-font-family: Georgia, serif;' ) && false !== strpos( $endpaper_block_style, '--endpaper-heading-font-weight: 800;' ) && false !== strpos( $endpaper_other_style, '--endpaper-heading-font-weight: 400;' ) );
 
+	$endpaper_heading_color = static function ( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version' => 3,
+				'styles'  => array(
+					'elements' => array( 'heading' => array( 'color' => array( 'text' => '#111111' ) ) ),
+					'blocks'   => array( 'endpaper/reading-goal' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => '#aa0000' ) ) ) ) ),
+				),
+			)
+		);
+	};
+	add_filter( 'wp_theme_json_data_user', $endpaper_heading_color );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	$endpaper_goal_color = \AndersNoren\Endpaper\get_heading_color_style( array(), 'endpaper/reading-goal' );
+	$endpaper_book_color = \AndersNoren\Endpaper\get_heading_color_style( array(), 'endpaper/book' );
+	remove_filter( 'wp_theme_json_data_user', $endpaper_heading_color );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	endpaper_check( 'a heading color set for one block in theme.json is passed to its titles, the theme\'s global one is not', '--endpaper-heading-color: #aa0000;' === $endpaper_goal_color && '' === $endpaper_book_color );
+	endpaper_check( 'a heading color set on the block is passed to its titles', '--endpaper-heading-color: #00aa00;' === \AndersNoren\Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => '#00aa00' ) ) ) ) ), 'endpaper/book' ) );
+	endpaper_check( 'a heading color preset is passed as its variable', '--endpaper-heading-color: var(--wp--preset--color--accent-1);' === \AndersNoren\Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => 'var:preset|color|accent-1' ) ) ) ) ), 'endpaper/book' ) );
+	endpaper_check( 'without a heading color on the block, nothing is set and titles inherit', '' === \AndersNoren\Endpaper\get_heading_color_style( array(), 'endpaper/book' ) );
+
 	// A heading font that is a preset is resolved to the font itself, whatever the theme in use.
 	$endpaper_preset = static function ( $theme_json ) {
 		return $theme_json->update_with(

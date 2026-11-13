@@ -75,6 +75,7 @@
 		"color": {
 			"gradients": true,
 			"link": true,
+			"heading": true,
 			"__experimentalDefaultControls": {
 				"background": true,
 				"text": true,

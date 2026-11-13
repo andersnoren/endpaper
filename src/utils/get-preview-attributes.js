@@ -23,7 +23,10 @@ export default function getPreviewAttributes( attributes, framed = true ) {
 		style = {},
 		...rest
 	} = attributes;
-	const { elements, spacing = {}, typography, ...restStyle } = style;
+	const { elements = {}, spacing = {}, typography, ...restStyle } = style;
+	const headingElement = elements.heading
+		? { elements: { heading: elements.heading } }
+		: {};
 
 	if ( ! framed ) {
 		const { border, shadow, color = {}, ...unframedStyle } = restStyle;
@@ -38,7 +41,7 @@ export default function getPreviewAttributes( attributes, framed = true ) {
 			...( getStyleClassName( className ) && {
 				className: getStyleClassName( className ),
 			} ),
-			style: { ...unframedStyle, color: textColor },
+			style: { ...unframedStyle, ...headingElement, color: textColor },
 		};
 	}
 
@@ -47,7 +50,11 @@ export default function getPreviewAttributes( attributes, framed = true ) {
 	return {
 		...rest,
 		...( styleClassName && { className: styleClassName } ),
-		style: { ...restStyle, spacing: { padding: spacing.padding } },
+		style: {
+			...restStyle,
+			...headingElement,
+			spacing: { padding: spacing.padding },
+		},
 	};
 }
 

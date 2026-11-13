@@ -230,3 +230,31 @@ function get_accent_color_style( $attributes, $block_name ) {
 
 	return '' === $value ? '' : '--endpaper-accent: ' . $value . ';';
 }
+
+/**
+ * Returns the inline style that sets the color of a block's title.
+ *
+ * Titles take the block's text color, not the theme's color for headings. A heading color set on the
+ * block, in the block settings or in theme.json under styles.blocks, is passed to the stylesheet as a
+ * custom property and wins over that. The theme's global color for headings is left alone.
+ *
+ * @param array  $attributes Block attributes.
+ * @param string $block_name Block name, such as "endpaper/book".
+ * @return string An inline style declaration, or an empty string.
+ */
+function get_heading_color_style( $attributes, $block_name ) {
+	$value = sanitize_css_color( isset( $attributes['style']['elements']['heading']['color']['text'] ) ? $attributes['style']['elements']['heading']['color']['text'] : null );
+
+	if ( '' === $value ) {
+		$for_block = wp_get_global_styles( array( 'blocks', $block_name, 'elements', 'heading', 'color', 'text' ), array( 'transforms' => array( 'resolve-variables' ) ) );
+
+		// The global styles can give a preset as a variable.
+		if ( is_string( $for_block ) && preg_match( '/^var\(--wp--preset--color--[a-z0-9-]+\)$/', trim( $for_block ) ) ) {
+			$value = trim( $for_block );
+		} else {
+			$value = sanitize_css_color( $for_block );
+		}
+	}
+
+	return '' === $value ? '' : '--endpaper-heading-color: ' . $value . ';';
+}

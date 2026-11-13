@@ -12,6 +12,7 @@
 use function AndersNoren\Endpaper\format_date;
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
+use function AndersNoren\Endpaper\get_heading_color_style;
 use function AndersNoren\Endpaper\get_block_gap_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
 use function AndersNoren\Endpaper\get_reading_list;
@@ -66,7 +67,7 @@ $endpaper_with_date     = 3 === $endpaper_status && ! empty( $attributes['showDa
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
 		'class' => 'endpaper-reading-list--' . $endpaper_layout . ( ! empty( $attributes['showCover'] ) ? ' endpaper-reading-list--has-covers' : '' ) . ( has_card_frame( $attributes ) ? ' endpaper-reading-list--framed' : '' ),
-		'style' => ( 'grid' === $endpaper_layout ? '--endpaper-columns:' . $endpaper_columns . ';' : '' ) . get_cover_radius_style( $attributes ) . get_block_gap_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/reading-list' ),
+		'style' => ( 'grid' === $endpaper_layout ? '--endpaper-columns:' . $endpaper_columns . ';' : '' ) . get_cover_radius_style( $attributes ) . get_block_gap_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/reading-list' ) . get_heading_color_style( $attributes, 'endpaper/reading-list' ),
 	)
 );
 

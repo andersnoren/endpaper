@@ -339,10 +339,11 @@
 
 /*
  * The size is set here. The weight and font come from the theme's headings,
- * the color from the block, not from the theme's color for headings.
+ * the color from the block, not from the theme's color for headings, unless
+ * a heading color is set on the block (--endpaper-heading-color).
  */
 .wp-block-endpaper-book .endpaper-book__title {
-	color: inherit;
+	color: var(--endpaper-heading-color, inherit);
 	font-size: 1.75em;
 	line-height: 1.2;
 

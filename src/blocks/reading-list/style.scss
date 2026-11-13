@@ -118,8 +118,11 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 
 .wp-block-endpaper-reading-list .endpaper-reading-list__title {
 
-	/* The color of the block, not the theme's color for headings. */
-	color: inherit;
+	/*
+	 * The color of the block, not the theme's color for headings, unless a
+	 * heading color is set on the block.
+	 */
+	color: var(--endpaper-heading-color, inherit);
 	font-size: 1.25em;
 	line-height: 1.2;
 
