@@ -87,11 +87,9 @@
 	width: 100%;
 }
 
-/* The author is tinted, to set it apart from the books under it. */
+/* The author is framed, to set it apart from the books under it. */
 .endpaper-book-search__result.endpaper-book-search__author {
-	background:
- color-mix(in srgb, var(--wp-admin-theme-color, #3858e9) 5%, transparent);
-	color: var(--wp-admin-theme-color, #3858e9);
+	border: 1px solid var(--wpds-color-stroke-surface-neutral);
 	margin-top: 1em;
 }
 
