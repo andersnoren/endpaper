@@ -46,6 +46,8 @@
  * size, which is 13px.
  */
 .endpaper-book-search {
+	--endpaper-cover-width: 44px;
+
 	width: 100%;
 }
 
@@ -107,9 +109,16 @@
 	align-items: center;
 	border-bottom: 1px solid color-mix(in srgb, currentcolor 10%, transparent);
 	display: flex;
-	gap: 0.25em;
+	gap: 1em;
 	margin-top: 1em;
-	padding: 0.25em;
+	padding: 0.25em 0.5em;
+}
+
+/* As wide as a cover, so the heading lines up with the titles below it. */
+.endpaper-book-search__back-wrap {
+	display: flex;
+	flex: 0 0 var(--endpaper-cover-width);
+	justify-content: center;
 }
 
 .endpaper-book-search .endpaper-book-search__scope .endpaper-book-search__heading {
@@ -127,12 +136,12 @@
 .endpaper-book-search__cover {
 	background: color-mix(in srgb, currentcolor 10%, transparent);
 	border-radius: 2px;
-	flex: 0 0 44px;
-	height: 66px;
+	flex: 0 0 var(--endpaper-cover-width);
+	height: calc(var(--endpaper-cover-width) * 1.5);
 	object-fit: cover;
 	outline: 1px solid color-mix(in srgb, currentcolor 12%, transparent);
 	outline-offset: -1px;
-	width: 44px;
+	width: var(--endpaper-cover-width);
 }
 
 /* An author's photo is cropped to the cover's ratio, keeping the head. */
