@@ -307,7 +307,15 @@ export default function Edit( {
 		}
 
 		return (
-			<div { ...blockProps }>
+			<div
+				{ ...blockProps }
+				className={ [
+					blockProps.className,
+					'endpaper-book--placeholder',
+				]
+					.filter( Boolean )
+					.join( ' ' ) }
+			>
 				<Placeholder
 					label={ __( 'Book', 'endpaper' ) }
 					instructions={

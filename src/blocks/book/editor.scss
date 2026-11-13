@@ -20,6 +20,17 @@
 	padding: 0;
 }
 
+/*
+ * Until a book is picked, the search is shown in the editor's own placeholder
+ * box, so the style's default background, rounded corners and padding are
+ * left off, which would put a second box around it.
+ */
+.wp-block-endpaper-book.endpaper-book--placeholder {
+	background: none;
+	border-radius: 0;
+	padding: 0;
+}
+
 /* The editor's wrapper holds the preview, so it is not laid out as the card. */
 .block-editor-block-list__block.wp-block-endpaper-book {
 	display: block;
