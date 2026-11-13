@@ -868,12 +868,50 @@ function get_icon_path( $name ) {
 }
 
 /**
+ * Returns the styles the Book block has, with their labels.
+ *
+ * That is Plain and Card, and any style a theme or another plugin has registered for the block in PHP,
+ * including the style variations in a theme's styles folder. A style that is only registered in
+ * JavaScript cannot be seen from here.
+ *
+ * @return array Labels, keyed by the name of the style. "default" is Plain.
+ */
+function get_book_styles() {
+	$styles = array();
+	$type   = \WP_Block_Type_Registry::get_instance()->get_registered( 'endpaper/book' );
+
+	if ( $type && is_array( $type->styles ) ) {
+		foreach ( $type->styles as $style ) {
+			if ( ! empty( $style['name'] ) ) {
+				$styles[ $style['name'] ] = isset( $style['label'] ) ? $style['label'] : $style['name'];
+			}
+		}
+	}
+
+	foreach ( \WP_Block_Styles_Registry::get_instance()->get_registered_styles_for_block( 'endpaper/book' ) as $name => $style ) {
+		if ( is_string( $name ) && '' !== $name ) {
+			$styles[ $name ] = isset( $style['label'] ) ? $style['label'] : $name;
+		}
+	}
+
+	if ( ! isset( $styles['default'] ) ) {
+		$styles = array( 'default' => __( 'Plain', 'endpaper' ) ) + $styles;
+	}
+
+	return $styles;
+}
+
+/**
  * Returns the style new Book blocks start with.
  *
- * @return string "card", or "default" for the Plain style.
+ * A style that is not registered any more, such as one from a theme that has been switched, counts as Plain.
+ *
+ * @return string The name of the style, or "default" for the Plain style.
  */
 function get_default_book_style() {
-	return 'card' === get_option( ENDPAPER_DEFAULT_STYLE_OPTION, 'default' ) ? 'card' : 'default';
+	$style = get_option( ENDPAPER_DEFAULT_STYLE_OPTION, 'default' );
+
+	return is_string( $style ) && isset( get_book_styles()[ $style ] ) ? $style : 'default';
 }
 
 /**

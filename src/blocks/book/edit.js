@@ -127,12 +127,13 @@ export default function Edit( {
 		const className = attributes.className || '';
 
 		if (
-			'card' === defaultBookStyle &&
+			'default' !== defaultBookStyle &&
 			! attributes.bookId &&
 			! /(^|\s)is-style-/.test( className )
 		) {
 			setAttributes( {
-				className: `${ className } is-style-card`.trim(),
+				className:
+					`${ className } is-style-${ defaultBookStyle }`.trim(),
 			} );
 		}
 	}, [

@@ -4,8 +4,8 @@
  *
  * - keyTrouble: "missing" or "rejected" when the API key cannot be used.
  * - settingsUrl: the Endpaper settings screen, only for people who can open it.
- * - defaultBookStyle: "card", or "default" for the Plain style, which new Book
- *   blocks start with.
+ * - defaultBookStyle: the name of the style new Book blocks start with, or
+ *   "default" for the Plain style.
  *
  * @return {{keyTrouble: string, settingsUrl: string, defaultBookStyle: string}} The values, empty when unknown.
  */

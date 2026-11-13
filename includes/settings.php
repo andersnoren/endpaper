@@ -95,10 +95,10 @@ add_action( 'admin_init', __NAMESPACE__ . '\register_settings' );
  * Makes sure the default style is one the Book block has.
  *
  * @param mixed $value The submitted style.
- * @return string "card", or "default" for the Plain style.
+ * @return string The name of the style, or "default" for the Plain style.
  */
 function sanitize_default_style_setting( $value ) {
-	return 'card' === $value ? 'card' : 'default';
+	return is_string( $value ) && isset( get_book_styles()[ $value ] ) ? $value : 'default';
 }
 
 /**
@@ -896,7 +896,8 @@ function render_settings_page() {
 						<?php settings_fields( 'endpaper_appearance' ); ?>
 
 						<?php
-						$endpaper_styles = array(
+						// Plain and Card have a drawing. A style from a theme or another plugin has its name only.
+						$endpaper_drawn_styles = array(
 							'default' => array(
 								'label'       => __( 'Plain', 'endpaper' ),
 								'description' => __( 'The book sits directly on the page, with no background or frame.', 'endpaper' ),
@@ -906,6 +907,17 @@ function render_settings_page() {
 								'description' => __( 'The book sits on a light background with rounded corners.', 'endpaper' ),
 							),
 						);
+						$endpaper_styles       = array();
+
+						foreach ( get_book_styles() as $endpaper_name => $endpaper_label ) {
+							$endpaper_styles[ $endpaper_name ] = isset( $endpaper_drawn_styles[ $endpaper_name ] )
+								? $endpaper_drawn_styles[ $endpaper_name ]
+								: array(
+									'label'       => $endpaper_label,
+									'description' => __( 'A style added by your theme or a plugin.', 'endpaper' ),
+									'drawn'       => false,
+								);
+						}
 						?>
 
 						<fieldset class="endpaper-style-choice">
@@ -918,12 +930,14 @@ function render_settings_page() {
 											<input type="radio" name="<?php echo esc_attr( ENDPAPER_DEFAULT_STYLE_OPTION ); ?>" value="<?php echo esc_attr( $endpaper_style ); ?>"<?php checked( get_default_book_style(), $endpaper_style ); ?> />
 											<?php echo esc_html( $endpaper_style_data['label'] ); ?>
 										</span>
-										<span class="endpaper-style-choice__preview" aria-hidden="true">
-											<span class="endpaper-style-choice__drawing endpaper-style-choice__drawing--<?php echo esc_attr( $endpaper_style ); ?>">
-												<span class="endpaper-style-choice__cover"></span>
-												<span class="endpaper-style-choice__lines"><span></span><span></span><span></span><span></span></span>
+										<?php if ( ! isset( $endpaper_style_data['drawn'] ) ) : ?>
+											<span class="endpaper-style-choice__preview" aria-hidden="true">
+												<span class="endpaper-style-choice__drawing endpaper-style-choice__drawing--<?php echo esc_attr( $endpaper_style ); ?>">
+													<span class="endpaper-style-choice__cover"></span>
+													<span class="endpaper-style-choice__lines"><span></span><span></span><span></span><span></span></span>
+												</span>
 											</span>
-										</span>
+										<?php endif; ?>
 										<span class="endpaper-style-choice__text"><?php echo esc_html( $endpaper_style_data['description'] ); ?></span>
 									</label>
 								<?php endforeach; ?>
