@@ -133,19 +133,7 @@ Covers are downloaded from Hardcover once and shown from the site itself, so vis
 
 If the site can’t save files, covers are loaded from Hardcover instead, and Site Health says so.
 
-Developers can change this with filters:
-
-| Filter | What it does |
-| --- | --- |
-| `endpaper_cover_widths` | The widths covers are saved in, in pixels. Default `[ 160, 320, 640 ]`. |
-| `endpaper_cover_quality` | The quality they are saved with, from 1 to 100. Default `80`. |
-| `endpaper_import_covers` | Return `false` to load covers from Hardcover and save nothing. |
-| `endpaper_allow_remote_covers` | Return `false` to never load a cover from Hardcover. A cover that can’t be saved is then a placeholder. |
-| `endpaper_cover_hosts` | The hosts covers may be downloaded from. Default `[ 'assets.hardcover.app' ]`. |
-
-Returning `false` from both `endpaper_import_covers` and `endpaper_allow_remote_covers` means no covers are shown at all. The edition picker in the editor always loads its thumbnails from Hardcover, in the browser of the person editing.
-
-The format follows WordPress’s own `image_editor_output_format` filter, so a site that saves its images as AVIF gets AVIF covers.
+Developers can change how covers are saved with filters, which are listed under [Hooks for developers](#hooks-for-developers).
 
 ## Hooks for developers
 
@@ -155,8 +143,15 @@ The format follows WordPress’s own `image_editor_output_format` filter, so a s
 | `endpaper_request_timeout` | How long a request to Hardcover may take before it is given up, in seconds. Default `15`, from 1 to 60. |
 | `endpaper_search_results` | How many books a search in the editor shows. Default `8`, from 1 to 20. |
 | `endpaper_backoff` | How long to wait after a failed request before asking Hardcover again, in seconds. Default `300`, at least 30. |
+| `endpaper_cover_widths` | The widths covers are saved in, in pixels. Default `[ 160, 320, 640 ]`. |
+| `endpaper_cover_quality` | The quality covers are saved with, from 1 to 100. Default `80`. |
+| `endpaper_import_covers` | Return `false` to load covers from Hardcover and save nothing. |
+| `endpaper_allow_remote_covers` | Return `false` to never load a cover from Hardcover. A cover that can’t be saved is then a placeholder. |
+| `endpaper_cover_hosts` | The hosts covers may be downloaded from. Default `[ 'assets.hardcover.app' ]`. |
 
-The filters for book covers are listed under [Book covers](#book-covers).
+Returning `false` from both `endpaper_import_covers` and `endpaper_allow_remote_covers` means no covers are shown at all. The edition picker in the editor always loads its thumbnails from Hardcover, in the browser of the person editing.
+
+The cover format follows WordPress’s own `image_editor_output_format` filter, so a site that saves its images as AVIF gets AVIF covers.
 
 ### WP-CLI
 
