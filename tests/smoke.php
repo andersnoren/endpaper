@@ -579,6 +579,37 @@ try {
 
 	endpaper_check( 'the percentage is left out unless that is switched on', false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' ), '__percent' ) );
 
+	echo "The shortcodes\n";
+	delete_transient( Endpaper\cache_key( 'endpaper_slug_the-stand' ) );
+	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
+	$endpaper_html     = do_shortcode( '[endpaper_book url="https://hardcover.app/books/the-stand" shelf="yes" review="no" class="is-style-card"]' );
+	endpaper_check( 'the book shortcode finds the book from its Hardcover URL, and shows what it is told to', false !== strpos( $endpaper_html, 'Stephen King' ) && false !== strpos( $endpaper_html, 'is-style-card' ) && false === strpos( $endpaper_html, '/reviews/@' ) );
+	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
+	do_shortcode( '[endpaper_book url="https://hardcover.app/books/the-stand"]' );
+	endpaper_check( 'the book behind a URL is looked up once, then remembered', $endpaper_requests === $GLOBALS['endpaper_api_requests'] && 42 === absint( get_transient( Endpaper\cache_key( 'endpaper_slug_the-stand' ) ) ) );
+	endpaper_check( 'a book can be given by ID, and parts can be left out', false === strpos( do_shortcode( '[endpaper_book id="42" cover="false" authors="0"]' ), 'Stephen King' ) && false === strpos( do_shortcode( '[endpaper_book id="42" cover="false"]' ), 'endpaper-book__cover' ) );
+
+	wp_set_current_user( 0 );
+	endpaper_check( 'a URL that is not a book page, and a shortcode without a book, show nothing to visitors', '' === trim( do_shortcode( '[endpaper_book url="https://example.com/"]' ) ) && '' === trim( do_shortcode( '[endpaper_book]' ) ) );
+
+	delete_transient( Endpaper\cache_key( 'endpaper_slug_other-book' ) );
+	wp_unschedule_hook( 'endpaper_refresh' );
+	set_current_screen( 'front' );
+	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
+	$endpaper_html     = do_shortcode( '[endpaper_book url="hardcover.app/books/other-book"]' );
+	endpaper_check( 'a visitor does not wait for a URL that is not known yet: nothing is shown or requested, and a lookup is queued', '' === trim( $endpaper_html ) && $endpaper_requests === $GLOBALS['endpaper_api_requests'] && false !== wp_next_scheduled( 'endpaper_refresh', array( 'slug', array( 'other-book' ) ) ) );
+	set_current_screen( 'dashboard' );
+	wp_set_current_user( 1 );
+
+	$endpaper_html = do_shortcode( '[endpaper_reading_list status="read" count="3" date="no" class="is-style-grid"]' );
+	endpaper_check( 'the reading list shortcode takes the status as a word, and the count', false !== strpos( $endpaper_html, 'endpaper-reading-list' ) && false !== strpos( do_shortcode( '[endpaper_reading_list status="want"]' ), 'endpaper-reading-list' ) );
+	endpaper_check( 'the reading goal shortcode shows the goal that is running, or the one with the ID', false !== strpos( do_shortcode( '[endpaper_reading_goal class="is-style-bar"]' ), '34 of 50 books read' ) && false !== strpos( do_shortcode( '[endpaper_reading_goal goal="2" percent="yes" class="is-style-bar"]' ), '(100%)' ) && false === strpos( do_shortcode( '[endpaper_reading_goal title="no"]' ), 'endpaper-reading-goal__title' ) );
+	endpaper_check( 'the current goal is the one that is running now', 1 === Endpaper\get_current_goal()['id'] );
+
+	$endpaper_html = do_shortcode( '[endpaper_book id="42"]' );
+	endpaper_check( 'a shortcode in a classic theme loads the styles of the block', wp_style_is( 'endpaper-book-style', 'enqueued' ) || wp_style_is( 'endpaper-book-style', 'registered' ) );
+	endpaper_check( 'a class is cleaned before it is used', false === strpos( do_shortcode( '[endpaper_book id="42" class="x&quot;onload=1"]' ), 'onload=1"' ) );
+
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
 	endpaper_check( 'a goal is a gauge unless it has the Bar style', false !== strpos( $endpaper_html, 'endpaper-reading-goal__gauge' ) && false !== strpos( $endpaper_html, 'endpaper-reading-goal--gauge' ) && false === strpos( $endpaper_html, '<progress' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), '<progress' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), 'endpaper-reading-goal--gauge' ) );
 

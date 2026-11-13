@@ -407,6 +407,45 @@ function get_book_by_slug( $slug ) {
 }
 
 /**
+ * Returns the ID of the book at a Hardcover URL, for the shortcode.
+ *
+ * The ID is saved, so a visitor never waits: the first time, Hardcover is
+ * asked in the background and the shortcode shows nothing until it has answered.
+ *
+ * @param string $slug Book slug, as used in hardcover.app/books/{slug}.
+ * @return int|WP_Error The book's ID, or an error.
+ */
+function get_book_id_by_slug( $slug ) {
+	$slug = sanitize_title( $slug );
+	$key  = cache_key( 'endpaper_slug_' . $slug );
+	$id   = absint( get_transient( $key ) );
+
+	if ( $id ) {
+		return $id;
+	}
+
+	if ( refresh_later( 'slug', array( $slug ) ) ) {
+		return get_pending_error();
+	}
+
+	$backoff = get_transient( 'endpaper_api_backoff' );
+
+	if ( $backoff ) {
+		return new WP_Error( 'endpaper_backoff', (string) $backoff, array( 'status' => 503 ) );
+	}
+
+	$book = get_book_by_slug( $slug );
+
+	if ( is_wp_error( $book ) ) {
+		return $book;
+	}
+
+	set_transient( $key, $book['id'], MONTH_IN_SECONDS );
+
+	return absint( $book['id'] );
+}
+
+/**
  * Searches Hardcover for books.
  *
  * Accepts a free-text search term or a hardcover.app book URL.

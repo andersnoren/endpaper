@@ -137,3 +137,28 @@ function get_goal( $goal_id ) {
 
 	return null;
 }
+
+/**
+ * Returns the goal that is running now, or else the latest one.
+ *
+ * Used where nobody picks a goal, such as the shortcode.
+ *
+ * @return array|null|WP_Error The goal, null if there are none, or an error.
+ */
+function get_current_goal() {
+	$goals = get_goals();
+
+	if ( is_wp_error( $goals ) || ! $goals ) {
+		return is_wp_error( $goals ) ? $goals : null;
+	}
+
+	$today = gmdate( 'Y-m-d' );
+
+	foreach ( $goals as $goal ) {
+		if ( ( '' === $goal['start'] || $goal['start'] <= $today ) && ( '' === $goal['end'] || $goal['end'] >= $today ) ) {
+			return $goal;
+		}
+	}
+
+	return $goals[0];
+}

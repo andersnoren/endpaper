@@ -77,7 +77,7 @@ function cache_key( $name ) {
  * never run there. A request already waiting for the same thing is not added a
  * second time.
  *
- * @param string $kind What to refresh: book, edition, entry, list or goals.
+ * @param string $kind What to refresh: book, edition, entry, list, goals or slug.
  * @param array  $args The arguments of the function that fetches it.
  * @return bool Whether the saved copy should be used for now.
  */
@@ -154,6 +154,8 @@ function run_refresh( $kind, $args ) {
 		get_reading_list( ...$args );
 	} elseif ( 'goals' === $kind ) {
 		get_goals( ...$args );
+	} elseif ( 'slug' === $kind ) {
+		get_book_id_by_slug( ...$args );
 	}
 }
 add_action( 'endpaper_refresh', __NAMESPACE__ . '\run_refresh', 10, 2 );
@@ -272,7 +274,7 @@ function clear_cache() {
 		return;
 	}
 
-	foreach ( array( 'book', 'edition', 'entry', 'list', 'connection' ) as $kind ) {
+	foreach ( array( 'book', 'edition', 'entry', 'list', 'slug', 'connection' ) as $kind ) {
 		foreach ( array( '_transient_', '_transient_timeout_' ) as $prefix ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients cannot be deleted by prefix any other way.
 			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( $prefix . 'endpaper_' . $kind ) . '%' ) );

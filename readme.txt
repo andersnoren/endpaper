@@ -41,6 +41,10 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 * **Only what is public.** A book you keep private on Hardcover never appears on your site.
 * **Your key stays on your server.** It is only ever sent to Hardcover, and the permissions it needs can only read.
 
+= Blocks and shortcodes =
+
+* **Not on the block editor?** Every block also has a shortcode, for classic themes, widgets and templates: `[endpaper_book url="https://hardcover.app/books/…"]`, `[endpaper_reading_list status="reading"]` and `[endpaper_reading_goal]`. They choose what to show, and your theme decides how it looks.
+
 = For developers =
 
 * **Style it in `theme.json`.** Set the accent color, the corner radius of covers and how faded secondary text is, for all blocks or for one block, along with the gap of a reading list and the typography of the reading goal number.

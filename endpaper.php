@@ -30,6 +30,7 @@ require_once ENDPAPER_DIR . 'includes/helpers.php';
 require_once ENDPAPER_DIR . 'includes/covers.php';
 require_once ENDPAPER_DIR . 'includes/colors.php';
 require_once ENDPAPER_DIR . 'includes/patterns.php';
+require_once ENDPAPER_DIR . 'includes/shortcodes.php';
 require_once ENDPAPER_DIR . 'includes/rest.php';
 require_once ENDPAPER_DIR . 'includes/theme-json.php';
 

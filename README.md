@@ -48,6 +48,18 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - The days left are worked out again in the visitor’s browser, so the number is right on pages that are served from a cache.
 - Can credit Hardcover with their logo, which is off until you switch it on. The title’s heading level and the accent color can be changed in the block settings.
 
+## Shortcodes
+
+For classic themes and places where blocks cannot go, such as a widget or a template, each block has a shortcode. They show the same thing as the blocks and only choose what to show. How it looks is up to the theme: add a block style with `class`, such as `class="is-style-card"`. Yes/no options take `yes`, `no`, `true`, `false`, `1` or `0`.
+
+| Shortcode | Options |
+| --- | --- |
+| `[endpaper_book url="https://hardcover.app/books/the-stand"]` | `url` or `id` (the book), `cover`, `authors`, `meta`, `rating`, `my_rating`, `shelf`, `progress`, `description`, `review`, `credit`, `link`, `class` |
+| `[endpaper_reading_list status="reading" count="5"]` | `status` (`reading`, `read` or `want`), `count`, `cover`, `authors`, `rating`, `date`, `progress`, `credit`, `link`, `class` |
+| `[endpaper_reading_goal]` | `goal` (an ID; without it, the goal that is running now), `title`, `days`, `percent`, `credit`, `class` |
+
+The Reading List and Reading Goal show your own Hardcover account, so they take no URL. A book at a URL is looked up in the background the first time, so it shows from the next page view.
+
 ## Patterns
 
 Two patterns are included, in the Endpaper category of the block inserter: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the books you last finished. Both are lists of three.
