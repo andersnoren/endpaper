@@ -544,10 +544,12 @@ try {
 	};
 	add_filter( 'wp_theme_json_data_user', $endpaper_gap_theme );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	$endpaper_themed  = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid"} /-->' );
 	$endpaper_own_gap = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid","style":{"spacing":{"blockGap":"10px"}}} /-->' );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_gap_theme );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	endpaper_check( 'a theme can set the gap of the list, and a gap on the block takes precedence', false !== strpos( $endpaper_themed, '--endpaper-gap: 3rem' ) && false !== strpos( $endpaper_own_gap, '--endpaper-gap: 10px' ) && false === strpos( $endpaper_own_gap, '--endpaper-gap: 3rem' ) );
 	endpaper_check( 'the Hardcover logo is left out unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'endpaper-reading-list__attribution' ) );
 
@@ -597,9 +599,11 @@ try {
 	};
 	add_filter( 'wp_theme_json_data_user', $endpaper_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	endpaper_check( 'the big number takes the font of the theme\'s headings', false !== strpos( $endpaper_html, '--endpaper-heading-font-family: &quot;Playfair Display&quot;, serif;' ) || false !== strpos( $endpaper_html, '--endpaper-heading-font-family: "Playfair Display", serif;' ) );
 	endpaper_check( 'and its weight and letter spacing', false !== strpos( $endpaper_html, '--endpaper-heading-font-weight: 400;' ) && false !== strpos( $endpaper_html, '--endpaper-heading-letter-spacing: -0.02em;' ) );
 	$endpaper_block_headings = static function ( $theme_json ) {
@@ -630,10 +634,12 @@ try {
 	};
 	add_filter( 'wp_theme_json_data_user', $endpaper_block_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	$endpaper_block_style = \Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
 	$endpaper_other_style = \Endpaper\get_heading_typography_style( 'endpaper/book' );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_block_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	endpaper_check( 'a theme can change the heading typography for one block, on top of the global one', false !== strpos( $endpaper_block_style, '--endpaper-heading-font-family: Georgia, serif;' ) && false !== strpos( $endpaper_block_style, '--endpaper-heading-font-weight: 800;' ) && false !== strpos( $endpaper_other_style, '--endpaper-heading-font-weight: 400;' ) );
 
 	$endpaper_heading_color = static function ( $theme_json ) {
@@ -649,10 +655,12 @@ try {
 	};
 	add_filter( 'wp_theme_json_data_user', $endpaper_heading_color );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	$endpaper_goal_color = \Endpaper\get_heading_color_style( array(), 'endpaper/reading-goal' );
 	$endpaper_book_color = \Endpaper\get_heading_color_style( array(), 'endpaper/book' );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_heading_color );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	$endpaper_goal_plain  = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
 	$endpaper_goal_framed = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"style":{"border":{"width":"1px"}}} /-->' );
 	endpaper_check( 'the goal has no frame unless it is given one, and then the block itself has it', false === strpos( $endpaper_goal_plain, 'endpaper-reading-goal--framed' ) && 1 === preg_match( '/<div [^>]*border-width:1px[^>]*endpaper-reading-goal--framed/', $endpaper_goal_framed ) );
@@ -696,10 +704,12 @@ try {
 	add_filter( 'wp_theme_json_data_theme', $endpaper_preset );
 	add_filter( 'wp_theme_json_data_user', $endpaper_preset_heading );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	$endpaper_theme_style = \Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
 	remove_filter( 'wp_theme_json_data_theme', $endpaper_preset );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_preset_heading );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
 	endpaper_check( 'a heading font that is a preset is resolved to the font itself, not a variable', false !== strpos( $endpaper_theme_style, 'Playfair Display' ) && false === strpos( $endpaper_theme_style, 'var(' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":2,"className":"is-style-gauge","showPercent":true} /-->' );

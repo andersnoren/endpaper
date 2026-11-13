@@ -139,7 +139,7 @@ function get_surface_color( $attributes ) {
 	}
 
 	if ( ! $surface ) {
-		$surface = resolve_color( wp_get_global_styles( array( 'color', 'background' ), array( 'transforms' => array( 'resolve-variables' ) ) ) );
+		$surface = resolve_color( get_global_style( array( 'color', 'background' ), array( 'transforms' => array( 'resolve-variables' ) ) ) );
 	}
 
 	return $surface ? $surface : array( 255, 255, 255 );
@@ -246,7 +246,7 @@ function get_heading_color_style( $attributes, $block_name ) {
 	$value = sanitize_css_color( isset( $attributes['style']['elements']['heading']['color']['text'] ) ? $attributes['style']['elements']['heading']['color']['text'] : null );
 
 	if ( '' === $value ) {
-		$for_block = wp_get_global_styles( array( 'blocks', $block_name, 'elements', 'heading', 'color', 'text' ), array( 'transforms' => array( 'resolve-variables' ) ) );
+		$for_block = get_global_style( array( 'blocks', $block_name, 'elements', 'heading', 'color', 'text' ), array( 'transforms' => array( 'resolve-variables' ) ) );
 
 		// The global styles can give a preset as a variable.
 		if ( is_string( $for_block ) && preg_match( '/^var\(--wp--preset--color--[a-z0-9-]+\)$/', trim( $for_block ) ) ) {

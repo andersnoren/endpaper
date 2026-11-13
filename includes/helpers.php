@@ -47,6 +47,48 @@ function format_text( $text ) {
 }
 
 /**
+ * Returns a value from the global styles, which are worked out once per request for each value.
+ *
+ * Reading a value with wp_get_global_styles() merges the theme's styles with the site's again each
+ * time, about a millisecond a call. A page with several blocks asks for the same few values for
+ * each of them, so the answers are kept for the rest of the request. They are dropped when the site
+ * or the theme changes within the request.
+ *
+ * @param array $path    Path to the value, such as array( 'color', 'background' ).
+ * @param array $options Options for wp_get_global_styles(), such as the transforms.
+ * @return mixed The value, or null if there is none.
+ */
+function get_global_style( $path, $options = array() ) {
+	static $values = array();
+
+	if ( null === $path ) {
+		$values = array();
+
+		return null;
+	}
+
+	$key = wp_json_encode( array( $path, $options ) );
+
+	if ( ! array_key_exists( $key, $values ) ) {
+		$values[ $key ] = wp_get_global_styles( $path, $options );
+	}
+
+	return $values[ $key ];
+}
+
+/**
+ * Drops the global styles kept by get_global_style(), so that the next read looks them up again.
+ *
+ * @return void
+ */
+function clear_global_style_cache() {
+	get_global_style( null );
+}
+
+add_action( 'switch_blog', __NAMESPACE__ . '\clear_global_style_cache' );
+add_action( 'switch_theme', __NAMESPACE__ . '\clear_global_style_cache' );
+
+/**
  * Turns a length from the block editor into a CSS value.
  *
  * Accepts a plain length such as "8px" or "50%", or a reference to one of the
@@ -125,7 +167,7 @@ function get_block_gap_style( $attributes ) {
 
 	// Without a gap on the block, the theme's gap for the block is used, from theme.json or the Styles screen.
 	if ( null === $gap || '' === $gap ) {
-		$gap = wp_get_global_styles( array( 'blocks', 'endpaper/reading-list', 'spacing', 'blockGap' ) );
+		$gap = get_global_style( array( 'blocks', 'endpaper/reading-list', 'spacing', 'blockGap' ) );
 	}
 
 	$value = sanitize_css_length( $gap, 'spacing' );
@@ -868,8 +910,8 @@ function get_default_book_style() {
  */
 function get_heading_typography_style( $block_name ) {
 	$options    = array( 'transforms' => array( 'resolve-variables' ) );
-	$typography = wp_get_global_styles( array( 'elements', 'heading', 'typography' ), $options );
-	$for_block  = wp_get_global_styles( array( 'blocks', $block_name, 'elements', 'heading', 'typography' ), $options );
+	$typography = get_global_style( array( 'elements', 'heading', 'typography' ), $options );
+	$for_block  = get_global_style( array( 'blocks', $block_name, 'elements', 'heading', 'typography' ), $options );
 
 	$typography = is_array( $typography ) ? $typography : array();
 
