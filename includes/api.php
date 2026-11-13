@@ -430,9 +430,9 @@ function get_search_results_count() {
 	/**
 	 * Filters how many books a search in the editor shows.
 	 *
-	 * @param int $count Default 8.
+	 * @param int $count Default 7.
 	 */
-	return max( 1, min( 20, absint( apply_filters( 'endpaper_search_results', 8 ) ) ) );
+	return max( 1, min( 20, absint( apply_filters( 'endpaper_search_results', 7 ) ) ) );
 }
 
 /**

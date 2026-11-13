@@ -434,7 +434,7 @@ try {
 	endpaper_check( 'an author\'s books are listed like a search', is_array( $endpaper_author_books ) && 1 === count( $endpaper_author_books ) && array( 'Stephen King' ) === $endpaper_author_books[0]['authors'] && 0 === $GLOBALS['endpaper_author_book_offset'] );
 
 	get_author_books( 7, 2 );
-	endpaper_check( 'a later page starts after the earlier ones', 8 === $GLOBALS['endpaper_author_book_offset'] );
+	endpaper_check( 'a later page starts after the earlier ones', 7 === $GLOBALS['endpaper_author_book_offset'] );
 
 	get_author_books( 7, 2 );
 	endpaper_check( 'a page of an author\'s books is answered from the cache', 2 === $GLOBALS['endpaper_author_book_requests'] );
@@ -1137,7 +1137,7 @@ endpaper_check(
 	15 === ( $endpaper_ns . 'get_request_timeout' )()
 		&& 30 === $endpaper_try( 'endpaper_request_timeout', 30, $endpaper_ns . 'get_request_timeout' )
 		&& 60 === $endpaper_try( 'endpaper_request_timeout', 600, $endpaper_ns . 'get_request_timeout' )
-		&& 8 === ( $endpaper_ns . 'get_search_results_count' )()
+		&& 7 === ( $endpaper_ns . 'get_search_results_count' )()
 		&& 12 === $endpaper_try( 'endpaper_search_results', 12, $endpaper_ns . 'get_search_results_count' )
 		&& 20 === $endpaper_try( 'endpaper_search_results', 99, $endpaper_ns . 'get_search_results_count' )
 		&& 1 === $endpaper_try( 'endpaper_search_results', 0, $endpaper_ns . 'get_search_results_count' )
