@@ -353,6 +353,15 @@
 	overflow-wrap: anywhere;
 }
 
+/*
+ * A font set on the block itself wins over the theme's heading font, so the
+ * title matches the rest of the card. Without one, the theme's font stays.
+ */
+.wp-block-endpaper-book[style*="font-family"] .endpaper-book__title,
+.wp-block-endpaper-book[class*="-font-family"] .endpaper-book__title {
+	font-family: inherit;
+}
+
 /* Beside a small cover the title is a step smaller, to keep the proportions. */
 .wp-block-endpaper-book.endpaper-book--cover-small .endpaper-book__title {
 	font-size: 1.5em;
