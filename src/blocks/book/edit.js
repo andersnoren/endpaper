@@ -39,6 +39,7 @@ import CoverRadiusPanel from '../../components/cover-radius-panel';
 import RefreshButton from '../../components/refresh-button';
 import getEditorData from '../../utils/editor-data';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
+import getGapValue from '../../utils/get-gap-value';
 import hasFrame from '../../utils/has-frame';
 import useKeepImages from '../../utils/use-keep-images';
 import metadata from './block.json';
@@ -118,6 +119,12 @@ export default function Edit( {
 				.filter( Boolean )
 				.join( ' ' ) || undefined,
 		onAnimationEnd: () => setJustPicked( false ),
+		// The preview is rendered without the Block spacing setting, so the gap is set here.
+		style: {
+			'--endpaper-gap': getGapValue(
+				attributes.style?.spacing?.blockGap
+			),
+		},
 	} );
 	useKeepImages( wrapper );
 	const { keyTrouble, settingsUrl, defaultBookStyle } = getEditorData();

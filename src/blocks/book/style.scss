@@ -80,7 +80,9 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 1.5em;
+
+	/* Between the cover and the text, also when they wrap. The Block spacing setting sets --endpaper-gap. */
+	gap: var(--endpaper-gap, 1.5em);
 
 	/*
 	 * When the card is narrow enough to wrap, the cover has a line of its own

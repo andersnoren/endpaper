@@ -590,6 +590,29 @@ try {
 	\Endpaper\clear_global_style_cache();
 	endpaper_check( 'a theme can set the gap of the list, and a gap on the block takes precedence', false !== strpos( $endpaper_themed, '--endpaper-gap: 3rem' ) && false !== strpos( $endpaper_own_gap, '--endpaper-gap: 10px' ) && false === strpos( $endpaper_own_gap, '--endpaper-gap: 3rem' ) );
 	endpaper_check( 'the Hardcover logo is left out unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'endpaper-reading-list__attribution' ) );
+	$endpaper_book_gap_theme = static function ( $theme_json ) {
+		return $theme_json->update_with(
+			array(
+				'version' => 3,
+				'styles'  => array(
+					'blocks' => array(
+						'endpaper/book' => array( 'spacing' => array( 'blockGap' => '2rem' ) ),
+					),
+				),
+			)
+		);
+	};
+	add_filter( 'wp_theme_json_data_user', $endpaper_book_gap_theme );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
+	$endpaper_book_themed  = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+	$endpaper_book_own_gap = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"style":{"spacing":{"blockGap":"0"}}} /-->' );
+	remove_filter( 'wp_theme_json_data_user', $endpaper_book_gap_theme );
+	WP_Theme_JSON_Resolver::clean_cached_data();
+	\Endpaper\clear_global_style_cache();
+	$endpaper_book_plain = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+	endpaper_check( 'the Book block takes a gap from the theme, or from its own setting, which wins', false !== strpos( $endpaper_book_themed, '--endpaper-gap: 2rem' ) && false !== strpos( $endpaper_book_own_gap, '--endpaper-gap: 0px' ) && false === strpos( $endpaper_book_own_gap, '2rem' ) && false === strpos( $endpaper_book_plain, '--endpaper-gap' ) );
+
 
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"showCredit":true} /-->' );
 	endpaper_check( 'the list credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );

@@ -17,6 +17,7 @@ use function Endpaper\format_text;
 use function Endpaper\get_accent_color_style;
 use function Endpaper\get_book;
 use function Endpaper\get_book_end_time;
+use function Endpaper\get_block_gap_style;
 use function Endpaper\get_cover_radius_style;
 use function Endpaper\get_edition;
 use function Endpaper\get_heading_color_style;
@@ -198,7 +199,7 @@ if ( 'top' === $endpaper_cover_position ) {
 $endpaper_wrapper = get_block_wrapper_attributes(
 	array(
 		'class' => 'endpaper-book--cover-' . $endpaper_cover_position . ' endpaper-book--cover-' . $endpaper_cover_size . ( $endpaper_text_align ? ' endpaper-book--align-' . $endpaper_text_align : '' ) . ( has_card_frame( $attributes ) ? ' endpaper-book--framed' : '' ),
-		'style' => get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ) . get_heading_color_style( $attributes, 'endpaper/book' ),
+		'style' => get_block_gap_style( $attributes, 'endpaper/book' ) . get_cover_radius_style( $attributes ) . get_accent_color_style( $attributes, 'endpaper/book' ) . get_heading_color_style( $attributes, 'endpaper/book' ),
 	)
 );
 
