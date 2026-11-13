@@ -127,17 +127,19 @@
 .endpaper-book-search__cover {
 	background: color-mix(in srgb, currentcolor 10%, transparent);
 	border-radius: 2px;
-	flex: 0 0 40px;
-	height: 60px;
+	flex: 0 0 44px;
+	height: 66px;
 	object-fit: cover;
 	outline: 1px solid color-mix(in srgb, currentcolor 12%, transparent);
 	outline-offset: -1px;
-	width: 40px;
+	width: 44px;
 }
 
-/* An author's photo is a square, not a book's portrait. */
+/* An author's photo is at least square, and as tall as a book cover at most. */
 .endpaper-book-search__cover.endpaper-book-search__cover--author {
-	height: 40px;
+	height: auto;
+	max-height: 66px;
+	min-height: 44px;
 }
 
 .endpaper-book-search__text {
