@@ -112,6 +112,82 @@ function Cover( { cover, className = '' } ) {
 }
 
 /**
+ * The author, as a row like a book's. In the results it opens the author's
+ * books, and in the author's books it is the way back.
+ *
+ * @param {Object}     props         Component props.
+ * @param {Object}     props.author  The author: name, books and image.
+ * @param {() => void} props.onClick Called when the row is pressed.
+ * @param {boolean}    props.back    Whether the row leads back to the results.
+ * @return {Element} The author row.
+ */
+function AuthorRow( { author, onClick, back = false } ) {
+	let details = __( 'Author', 'endpaper' );
+
+	if ( back ) {
+		details = __( 'Back to results', 'endpaper' );
+	} else if ( author.books ) {
+		details = sprintf(
+			/* translators: %s: number of books. */
+			_n(
+				'Author · %s book',
+				'Author · %s books',
+				author.books,
+				'endpaper'
+			),
+			author.books.toLocaleString(
+				document.documentElement.lang || undefined
+			)
+		);
+	}
+
+	return (
+		<Button
+			className={ `endpaper-book-search__result endpaper-book-search__author${
+				back ? ' endpaper-book-search__back' : ''
+			}` }
+			onClick={ onClick }
+		>
+			{ author.image && (
+				<Cover
+					cover={ author.image }
+					className="endpaper-book-search__cover--author"
+				/>
+			) }
+			<span className="endpaper-book-search__text">
+				<span>
+					{ sprintf(
+						/* translators: %s: an author's name. */
+						__( 'Books by %s', 'endpaper' ),
+						author.name
+					) }
+				</span>
+				<span className="endpaper-book-search__details">
+					{ details }
+				</span>
+			</span>
+			<SVG
+				className="endpaper-book-search__chevron"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				width="24"
+				height="24"
+				aria-hidden="true"
+				focusable="false"
+			>
+				<Path
+					d={
+						back
+							? 'M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z'
+							: 'M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1L16 12z'
+					}
+				/>
+			</SVG>
+		</Button>
+	);
+}
+
+/**
  * How many authors are named under a result's title, before "and 12 more".
  */
 const MAX_AUTHORS = 3;
@@ -608,86 +684,14 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 			/>
 
 			{ author && (
-				<div className="endpaper-book-search__scope">
-					<div className="endpaper-book-search__back-wrap">
-						<Button
-							className="endpaper-book-search__back"
-							label={ __( 'Back to results', 'endpaper' ) }
-							onClick={ closeAuthor }
-							icon={
-								<SVG
-									className="endpaper-book-search__chevron"
-									xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 24 24"
-									width="24"
-									height="24"
-									aria-hidden="true"
-									focusable="false"
-								>
-									<Path d="M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z" />
-								</SVG>
-							}
-						/>
-					</div>
-					<h3 className="endpaper-book-search__heading">
-						{ sprintf(
-							/* translators: %s: an author's name. */
-							__( 'Books by %s', 'endpaper' ),
-							author.name
-						) }
-					</h3>
-				</div>
+				<AuthorRow author={ author } onClick={ closeAuthor } back />
 			) }
 
 			{ ! author && 'done' === status && authorMatch && (
-				<Button
-					className="endpaper-book-search__result endpaper-book-search__author"
+				<AuthorRow
+					author={ authorMatch }
 					onClick={ () => openAuthor( authorMatch ) }
-				>
-					{ authorMatch.image && (
-						<Cover
-							cover={ authorMatch.image }
-							className="endpaper-book-search__cover--author"
-						/>
-					) }
-					<span className="endpaper-book-search__text">
-						<span>
-							{ sprintf(
-								/* translators: %s: an author's name. */
-								__( 'Books by %s', 'endpaper' ),
-								authorMatch.name
-							) }
-						</span>
-						<span className="endpaper-book-search__details">
-							{ authorMatch.books
-								? sprintf(
-										/* translators: %s: number of books. */
-										_n(
-											'Author · %s book',
-											'Author · %s books',
-											authorMatch.books,
-											'endpaper'
-										),
-										authorMatch.books.toLocaleString(
-											document.documentElement.lang ||
-												undefined
-										)
-									)
-								: __( 'Author', 'endpaper' ) }
-						</span>
-					</span>
-					<SVG
-						className="endpaper-book-search__chevron"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						width="24"
-						height="24"
-						aria-hidden="true"
-						focusable="false"
-					>
-						<Path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1L16 12z" />
-					</SVG>
-				</Button>
+				/>
 			) }
 
 			{ 'loading' === status && (

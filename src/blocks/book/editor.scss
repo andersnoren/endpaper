@@ -109,30 +109,6 @@
 	margin-inline-end: 2px;
 }
 
-/* The way back: a chevron and the heading on one line, as in the editor. */
-.endpaper-book-search__scope {
-	align-items: center;
-	border-bottom: 1px solid color-mix(in srgb, currentcolor 10%, transparent);
-	display: flex;
-	gap: 1em;
-	margin-top: 1em;
-	padding: 0.25em 0.5em;
-}
-
-/* As wide as a cover, so the heading lines up with the titles below it. */
-.endpaper-book-search__back-wrap {
-	display: flex;
-	flex: 0 0 var(--endpaper-cover-width);
-	justify-content: center;
-}
-
-.endpaper-book-search .endpaper-book-search__scope .endpaper-book-search__heading {
-	font-size: inherit;
-	font-weight: 600;
-	margin: 0;
-	text-transform: none;
-}
-
 /* The arrows point the other way in right-to-left languages. */
 [dir="rtl"] .endpaper-book-search__chevron {
 	transform: scaleX(-1);
