@@ -154,6 +154,12 @@
 		justify-content: center;
 	}
 
+	/* These stop at a width, so they are moved along with the text. */
+	.endpaper-book__description,
+	.endpaper-book__spoilers {
+		margin-inline: auto;
+	}
+
 	&.endpaper-book--cover-top {
 		align-items: center;
 	}
@@ -172,6 +178,12 @@
 	.endpaper-book__review-meta,
 	.endpaper-book__footer {
 		justify-content: flex-end;
+	}
+
+	/* These stop at a width, so they are moved along with the text. */
+	.endpaper-book__description,
+	.endpaper-book__spoilers {
+		margin-inline-start: auto;
 	}
 
 	&.endpaper-book--cover-top {
