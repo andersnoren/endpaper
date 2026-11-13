@@ -95,6 +95,13 @@
 	white-space: nowrap;
 }
 
+/* Lining numbers, as in the Book block, since these are data and not text. */
+.endpaper-reading-goal__figures,
+.endpaper-reading-goal__meta,
+.endpaper-reading-goal__count {
+	font-variant-numeric: lining-nums;
+}
+
 /* How far along the goal is, in bold, with a space before the percentage. */
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__amount {
 	display: inline;

@@ -176,6 +176,13 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 	@include muted-text;
 }
 
+/* Lining numbers, as in the Book block, since these are data and not text. */
+.endpaper-reading-list__progress span,
+.endpaper-reading-list__finished,
+.endpaper-reading-list__rating {
+	font-variant-numeric: lining-nums;
+}
+
 /* "68% read" stays on one line next to the bar, also in a narrow column. */
 .endpaper-reading-list__progress span {
 	flex: none;

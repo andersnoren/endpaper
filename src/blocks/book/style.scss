@@ -532,6 +532,17 @@
 	line-height: 1.2;
 }
 
+/*
+ * Numbers in the facts, the review's date and the progress are data, not
+ * running text, so they are lining even in a font that has old-style numerals
+ * by default. A font without lining numerals is not changed.
+ */
+.endpaper-book__meta,
+.endpaper-book__review-meta,
+.endpaper-book__progress span {
+	font-variant-numeric: lining-nums;
+}
+
 /* A dot after every fact but the last. */
 .endpaper-book__fact:not(:last-child)::after {
 

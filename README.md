@@ -125,6 +125,8 @@ The accent color and cover radius can also be changed for a single block in the 
 
 The big number in the middle of the Reading Goal gauge isn’t a heading, but it takes the font family, weight, style and letter spacing of the theme’s headings, from `styles.elements.heading.typography` in `theme.json` or the Styles screen. To give the number its own typography, set `elements.heading.typography` under `styles.blocks` for `endpaper/reading-goal`, which takes precedence.
 
+The numbers in the facts row, the progress and the Reading Goal are set with lining numerals (`font-variant-numeric: lining-nums`), also in a font that has old-style numerals by default. A theme that wants old-style numerals can set `font-variant-numeric: normal` on `.endpaper-book__meta`, `.endpaper-book__review-meta`, `.endpaper-reading-goal__figures` and the like, in its own CSS.
+
 The space between the items of a Reading List is the block’s gap. A theme sets it with `spacing.blockGap` under `styles.blocks` for `endpaper/reading-list`, and the Block spacing setting of a single block takes precedence.
 
 ## Book covers
