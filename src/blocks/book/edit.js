@@ -322,7 +322,7 @@ export default function Edit( {
 						keyTrouble
 							? undefined
 							: __(
-									'Search Hardcover for a book, or paste a link to its Hardcover page.',
+									'Search Hardcover by title or author, or paste a link to a book on Hardcover.',
 									'endpaper'
 								)
 					}
