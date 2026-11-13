@@ -280,7 +280,10 @@
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__attribution .endpaper-reading-goal__credit {
 	color: inherit;
 	display: block;
-	transition: color 0.15s ease;
+
+	@media (prefers-reduced-motion: no-preference) {
+		transition: color 0.15s ease;
+	}
 	width: fit-content;
 }
 

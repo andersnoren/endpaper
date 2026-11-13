@@ -450,7 +450,10 @@
 	color: inherit;
 	display: block;
 	flex: none;
-	transition: color 0.15s ease;
+
+	@media (prefers-reduced-motion: no-preference) {
+		transition: color 0.15s ease;
+	}
 }
 
 .endpaper-book__credit:only-child {
@@ -535,7 +538,10 @@
 	/* Keeps the placeholder gray, not the color of links. */
 	color: inherit;
 	display: block;
-	transition: opacity 0.3s ease;
+
+	@media (prefers-reduced-motion: no-preference) {
+		transition: opacity 0.3s ease;
+	}
 }
 
 .endpaper-book__cover a:hover {
