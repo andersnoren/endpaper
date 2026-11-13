@@ -26,9 +26,11 @@ define( 'ENDPAPER_COVERS_OPTION', 'endpaper_covers' );
 define( 'ENDPAPER_COVER_QUEUE_OPTION', 'endpaper_cover_queue' );
 
 /**
- * The largest cover that is downloaded, in bytes.
+ * The largest cover that is downloaded, in bytes, unless the site says otherwise.
+ *
+ * Hardcover keeps some covers as large scans of around 10 MB.
  */
-define( 'ENDPAPER_COVER_MAX_BYTES', 5 * MB_IN_BYTES );
+define( 'ENDPAPER_COVER_MAX_BYTES', 15 * MB_IN_BYTES );
 
 /**
  * Tells whether covers are saved on the site.
@@ -105,6 +107,22 @@ function get_cover_quality() {
 	$quality = absint( apply_filters( 'endpaper_cover_quality', 80 ) );
 
 	return min( 100, max( 1, $quality ) );
+}
+
+/**
+ * Gets the largest cover that is downloaded.
+ *
+ * @return int The size in bytes, at least 1 MB.
+ */
+function get_cover_max_bytes() {
+	/**
+	 * Filters the largest cover, in bytes, that is downloaded from Hardcover.
+	 *
+	 * @param int $bytes The largest size. Default 15 MB.
+	 */
+	$bytes = absint( apply_filters( 'endpaper_cover_max_bytes', ENDPAPER_COVER_MAX_BYTES ) );
+
+	return max( MB_IN_BYTES, $bytes );
 }
 
 /**
@@ -399,21 +417,22 @@ function import_cover( $url ) {
 	$dir   = get_cover_dir();
 	$files = array();
 	$temp  = wp_tempnam( 'endpaper-cover' );
+	$max   = get_cover_max_bytes();
 
 	if ( $temp ) {
 		$response = wp_safe_remote_get(
 			$url,
 			array(
-				'timeout'             => 10,
+				'timeout'             => 20,
 				'stream'              => true,
 				'filename'            => $temp,
-				'limit_response_size' => ENDPAPER_COVER_MAX_BYTES + 1,
+				'limit_response_size' => $max + 1,
 			)
 		);
 
 		$size = file_exists( $temp ) ? (int) filesize( $temp ) : 0;
 
-		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) && $size > 0 && $size <= ENDPAPER_COVER_MAX_BYTES ) {
+		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) && $size > 0 && $size <= $max ) {
 			delete_cover_files( $key );
 
 			$files = save_cover_sizes( $temp, $dir['path'] . '/' . $key );
@@ -460,6 +479,9 @@ function save_cover_sizes( $source, $target ) {
 	if ( ! in_array( $mime, array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif' ), true ) ) {
 		return array();
 	}
+
+	// Large scans need more memory than a page view is given.
+	wp_raise_memory_limit( 'image' );
 
 	$editor = wp_get_image_editor( $source, array( 'mime_type' => $mime ) );
 

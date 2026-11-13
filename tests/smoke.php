@@ -27,6 +27,7 @@ use function Endpaper\get_goal_days_text;
 use function Endpaper\get_goals;
 use function Endpaper\get_cover_dir;
 use function Endpaper\get_cover_key;
+use function Endpaper\get_cover_max_bytes;
 use function Endpaper\get_cover_stats;
 use function Endpaper\get_cover_queue_status;
 use function Endpaper\get_covers_site_health_result;
@@ -830,6 +831,13 @@ try {
 
 		endpaper_check( 'a cover that cannot be downloaded gets a placeholder, and is not tried again at once', null === get_cover( 'https://assets.hardcover.app/missing.jpg' ) && null === get_cover( 'https://assets.hardcover.app/missing.jpg' ) && ! empty( cover_records()[ get_cover_key( 'https://assets.hardcover.app/missing.jpg' ) ]['failed'] ) );
 		endpaper_check( 'only Hardcover’s image server is downloaded from', false === import_cover( 'https://example.com/cover.jpg' ) && false === import_cover( 'http://assets.hardcover.app/cover.jpg' ) );
+		$endpaper_max_filter = static function () {
+			return 10;
+		};
+		endpaper_check( 'covers up to 15 MB are downloaded', 15 * MB_IN_BYTES === get_cover_max_bytes() );
+		add_filter( 'endpaper_cover_max_bytes', $endpaper_max_filter );
+		endpaper_check( 'the cover limit can be changed, but not below 1 MB', MB_IN_BYTES === get_cover_max_bytes() );
+		remove_filter( 'endpaper_cover_max_bytes', $endpaper_max_filter );
 
 		queue_cover( 'https://assets.hardcover.app/edition-queued.jpg' );
 		queue_cover();

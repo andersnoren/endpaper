@@ -150,6 +150,7 @@ Yes, with these filters:
 
 * `endpaper_cover_widths`: the widths covers are saved in, in pixels.
 * `endpaper_cover_quality`: the quality they are saved with, from 1 to 100. It is 80 to begin with.
+* `endpaper_cover_max_bytes`: the largest cover, in bytes, that is downloaded. It is 15 MB to begin with.
 * `endpaper_import_covers`: return false to load covers from Hardcover and save nothing.
 * `endpaper_allow_remote_covers`: return false to never load a cover from Hardcover. A cover that cannot be saved is then a gray box.
 
