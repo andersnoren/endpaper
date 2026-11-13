@@ -104,6 +104,11 @@
 	flex: 0 0 auto;
 }
 
+/* Lines the chevron up with the search field's clear icon above it. */
+.endpaper-book-search__author .endpaper-book-search__chevron {
+	margin-inline-end: 2px;
+}
+
 /* The way back: a chevron and the heading on one line, as in the editor. */
 .endpaper-book-search__scope {
 	align-items: center;
