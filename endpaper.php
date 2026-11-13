@@ -35,6 +35,8 @@ require_once ENDPAPER_DIR . 'includes/theme-json.php';
 
 if ( is_admin() ) {
 	require_once ENDPAPER_DIR . 'includes/settings.php';
+	require_once ENDPAPER_DIR . 'includes/settings-page.php';
+	require_once ENDPAPER_DIR . 'includes/site-health.php';
 }
 
 /**

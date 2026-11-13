@@ -313,6 +313,8 @@ try {
 	// The settings screen's code is only loaded in the admin, along with the functions it uses.
 	require_once ABSPATH . 'wp-admin/includes/admin.php';
 	require_once WP_PLUGIN_DIR . '/endpaper/includes/settings.php';
+	require_once WP_PLUGIN_DIR . '/endpaper/includes/settings-page.php';
+	require_once WP_PLUGIN_DIR . '/endpaper/includes/site-health.php';
 
 	// Start clean: no key, and nothing cached from an earlier run.
 	delete_option( 'endpaper_hardcover_token' );
