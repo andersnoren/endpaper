@@ -1,4 +1,4 @@
-=== Endpaper – Book Blocks for Hardcover ===
+=== Endpaper: Book Blocks for Hardcover ===
 Contributors: anlino
 Tags: books, reading, hardcover, block, reading list
 Requires at least: 6.6
