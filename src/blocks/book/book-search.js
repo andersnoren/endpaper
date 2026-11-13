@@ -618,7 +618,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 								aria-hidden="true"
 								focusable="false"
 							>
-								<Path d="M20 11.2H6.8l3.7-3.7-1-1L3.9 12l5.6 5.5 1-1-3.7-3.7H20z" />
+								<Path d="M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z" />
 							</SVG>
 						}
 					/>
