@@ -151,6 +151,8 @@ $column-gap: var(--endpaper-column-gap, var(--endpaper-gap, min(1.5em, 4%)));
 	height: 0.25em;
 	min-width: 0;
 	overflow: hidden;
+
+	@include progress-forced-colors;
 }
 
 .endpaper-reading-list__progress progress::-webkit-progress-bar {

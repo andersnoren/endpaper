@@ -387,6 +387,8 @@
 	height: 0.25em;
 	min-width: 0;
 	overflow: hidden;
+
+	@include progress-forced-colors;
 }
 
 .endpaper-book__progress progress::-webkit-progress-bar {
@@ -426,6 +428,28 @@
 	font-size: 0.875em;
 	line-height: 1.2;
 	padding: 0.36em 0.86em;
+}
+
+/*
+ * The Card style is a tinted background, which forced colors modes take away.
+ * It gets an outline, so the card is still a card.
+ */
+@media (forced-colors: active) {
+
+	.wp-block-endpaper-book.is-style-card {
+		border: 1px solid CanvasText;
+	}
+}
+
+/*
+ * Without its tinted background, the shelf label gets an outline, so it
+ * stays a label.
+ */
+@media (forced-colors: active) {
+
+	.endpaper-book__shelf span {
+		border: 1px solid CanvasText;
+	}
 }
 
 /*

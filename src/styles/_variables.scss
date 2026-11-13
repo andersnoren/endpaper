@@ -114,3 +114,30 @@ $small-font-size: 0.75em;
 	display: block;
 	width: 100%;
 }
+
+/*
+ * In Windows High Contrast and other forced colors modes, the browser takes
+ * away the background colors that draw a progress bar: the track and the
+ * fill would both disappear. The fill is drawn in the text color instead,
+ * which the browser keeps readable on its own background, and the track,
+ * where it has no outline of its own, gets a thin one.
+ */
+@mixin progress-forced-colors($outline: true) {
+
+	@media (forced-colors: active) {
+
+		@if $outline {
+			outline: 1px solid CanvasText;
+		}
+
+		&::-webkit-progress-value {
+			background: CanvasText;
+			forced-color-adjust: none;
+		}
+
+		&::-moz-progress-bar {
+			background: CanvasText;
+			forced-color-adjust: none;
+		}
+	}
+}
