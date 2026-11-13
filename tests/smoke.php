@@ -14,43 +14,43 @@
  * @package Endpaper
  */
 
-use function AndersNoren\Endpaper\format_date;
-use function AndersNoren\Endpaper\api_request;
-use function AndersNoren\Endpaper\cache_key;
-use function AndersNoren\Endpaper\clear_cache;
-use function AndersNoren\Endpaper\can_store_covers;
-use function AndersNoren\Endpaper\cover_records;
-use function AndersNoren\Endpaper\delete_all_covers;
-use function AndersNoren\Endpaper\get_cover;
-use function AndersNoren\Endpaper\get_goal;
-use function AndersNoren\Endpaper\get_goal_days_text;
-use function AndersNoren\Endpaper\get_goals;
-use function AndersNoren\Endpaper\get_cover_dir;
-use function AndersNoren\Endpaper\get_cover_key;
-use function AndersNoren\Endpaper\get_cover_stats;
-use function AndersNoren\Endpaper\get_cover_queue_status;
-use function AndersNoren\Endpaper\get_covers_site_health_result;
-use function AndersNoren\Endpaper\import_cover;
-use function AndersNoren\Endpaper\prune_covers;
-use function AndersNoren\Endpaper\queue_cover;
-use function AndersNoren\Endpaper\save_queued_covers;
-use function AndersNoren\Endpaper\get_book_end_time;
-use function AndersNoren\Endpaper\get_connection_status;
-use function AndersNoren\Endpaper\get_editions;
-use function AndersNoren\Endpaper\get_key_problem_message;
-use function AndersNoren\Endpaper\get_privacy_policy_text;
-use function AndersNoren\Endpaper\get_site_health_result;
-use function AndersNoren\Endpaper\get_book_styles;
-use function AndersNoren\Endpaper\get_default_book_style;
-use function AndersNoren\Endpaper\get_reading_list;
-use function AndersNoren\Endpaper\get_token;
-use function AndersNoren\Endpaper\is_token_rejected;
-use function AndersNoren\Endpaper\render_settings_page;
-use function AndersNoren\Endpaper\sanitize_default_style_setting;
-use function AndersNoren\Endpaper\sanitize_token_setting;
-use function AndersNoren\Endpaper\search_books;
-use function AndersNoren\Endpaper\the_key_notice;
-use function AndersNoren\Endpaper\trim_to_sentence;
+use function Endpaper\format_date;
+use function Endpaper\api_request;
+use function Endpaper\cache_key;
+use function Endpaper\clear_cache;
+use function Endpaper\can_store_covers;
+use function Endpaper\cover_records;
+use function Endpaper\delete_all_covers;
+use function Endpaper\get_cover;
+use function Endpaper\get_goal;
+use function Endpaper\get_goal_days_text;
+use function Endpaper\get_goals;
+use function Endpaper\get_cover_dir;
+use function Endpaper\get_cover_key;
+use function Endpaper\get_cover_stats;
+use function Endpaper\get_cover_queue_status;
+use function Endpaper\get_covers_site_health_result;
+use function Endpaper\import_cover;
+use function Endpaper\prune_covers;
+use function Endpaper\queue_cover;
+use function Endpaper\save_queued_covers;
+use function Endpaper\get_book_end_time;
+use function Endpaper\get_connection_status;
+use function Endpaper\get_editions;
+use function Endpaper\get_key_problem_message;
+use function Endpaper\get_privacy_policy_text;
+use function Endpaper\get_site_health_result;
+use function Endpaper\get_book_styles;
+use function Endpaper\get_default_book_style;
+use function Endpaper\get_reading_list;
+use function Endpaper\get_token;
+use function Endpaper\is_token_rejected;
+use function Endpaper\render_settings_page;
+use function Endpaper\sanitize_default_style_setting;
+use function Endpaper\sanitize_token_setting;
+use function Endpaper\search_books;
+use function Endpaper\the_key_notice;
+use function Endpaper\trim_to_sentence;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -378,25 +378,25 @@ try {
 	wp_set_current_user( 0 );
 
 	echo "Refreshing in the background\n";
-	$endpaper_book_key = AndersNoren\Endpaper\cache_key( 'endpaper_book_42' );
+	$endpaper_book_key = Endpaper\cache_key( 'endpaper_book_42' );
 	delete_transient( $endpaper_book_key );
 	wp_unschedule_hook( 'endpaper_refresh' );
 	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
 
-	$endpaper_nothing_saved = AndersNoren\Endpaper\get_book( 42 );
+	$endpaper_nothing_saved = Endpaper\get_book( 42 );
 	endpaper_check( 'a visitor does not wait for a book that is not saved: nothing is requested, and a fetch is queued', is_wp_error( $endpaper_nothing_saved ) && 'endpaper_pending' === $endpaper_nothing_saved->get_error_code() && $endpaper_requests === $GLOBALS['endpaper_api_requests'] && false !== wp_next_scheduled( 'endpaper_refresh', array( 'book', array( 42 ) ) ) );
 
 	wp_unschedule_hook( 'endpaper_refresh' );
 	set_current_screen( 'dashboard' );
-	AndersNoren\Endpaper\get_book( 42 );
+	Endpaper\get_book( 42 );
 	set_current_screen( 'front' );
 	$endpaper_book_cached            = get_transient( $endpaper_book_key );
 	$endpaper_book_cached['fetched'] = time() - 2 * WEEK_IN_SECONDS;
 	set_transient( $endpaper_book_key, $endpaper_book_cached, MONTH_IN_SECONDS );
 	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
 
-	$endpaper_old_book = AndersNoren\Endpaper\get_book( 42 );
-	AndersNoren\Endpaper\get_book( 42 );
+	$endpaper_old_book = Endpaper\get_book( 42 );
+	Endpaper\get_book( 42 );
 	endpaper_check( 'a visitor gets the saved book at once, and a refresh is queued once', is_array( $endpaper_old_book ) && $endpaper_requests === $GLOBALS['endpaper_api_requests'] && false !== wp_next_scheduled( 'endpaper_refresh', array( 'book', array( 42 ) ) ) && 1 === count( array_filter( _get_cron_array(), static function ( $hooks ) { return isset( $hooks['endpaper_refresh'] ); } ) ) );
 
 	add_filter( 'wp_doing_cron', '__return_true' );
@@ -410,7 +410,7 @@ try {
 	wp_unschedule_hook( 'endpaper_refresh' );
 	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
 	set_current_screen( 'dashboard' );
-	AndersNoren\Endpaper\get_book( 42 );
+	Endpaper\get_book( 42 );
 	set_current_screen( 'front' );
 	endpaper_check( 'in the admin, the book is fetched at once and nothing is queued', $endpaper_requests + 1 === $GLOBALS['endpaper_api_requests'] && false === wp_next_scheduled( 'endpaper_refresh', array( 'book', array( 42 ) ) ) );
 
@@ -441,23 +441,23 @@ try {
 	endpaper_check( 'the review keeps its headings, bold text, quotes and lists', false !== strpos( $endpaper_html_review, '<strong>ending</strong>' ) && false !== strpos( $endpaper_html_review, '<blockquote>' ) && false !== strpos( $endpaper_html_review, '<ol><li>One</li>' ) && false !== strpos( $endpaper_html_review, '<p><strong>Heading</strong></p>' ) );
 	$endpaper_html_short = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true,"reviewLength":20} /-->' );
 	endpaper_check( 'the review is cut to its own length, on a whole block', false !== strpos( $endpaper_html_short, 'Heading' ) && false === strpos( $endpaper_html_short, 'A quiet' ) && false === strpos( $endpaper_html_short, '<blockquote>' ) );
-	endpaper_check( 'a review is cut inside a block when it is long enough, without leaving bold text open', false === strpos( AndersNoren\Endpaper\markdown_to_html( AndersNoren\Endpaper\trim_markdown( 'First **bold words here** and more words that go on and on.', 20 ) ), '**' ) );
-	endpaper_check( 'markup in a review is escaped, and links must be web addresses', false === strpos( AndersNoren\Endpaper\markdown_to_html( '<script>alert(1)</script> [x](javascript:alert(1)) <img src=x onerror=alert(1)>' ), '<script' ) && false === strpos( AndersNoren\Endpaper\markdown_to_html( '[x](javascript:alert(1))' ), 'javascript:' ) && false !== strpos( AndersNoren\Endpaper\markdown_to_html( '[Hardcover](https://hardcover.app/)' ), '<a href="https://hardcover.app/"' ) );
+	endpaper_check( 'a review is cut inside a block when it is long enough, without leaving bold text open', false === strpos( Endpaper\markdown_to_html( Endpaper\trim_markdown( 'First **bold words here** and more words that go on and on.', 20 ) ), '**' ) );
+	endpaper_check( 'markup in a review is escaped, and links must be web addresses', false === strpos( Endpaper\markdown_to_html( '<script>alert(1)</script> [x](javascript:alert(1)) <img src=x onerror=alert(1)>' ), '<script' ) && false === strpos( Endpaper\markdown_to_html( '[x](javascript:alert(1))' ), 'javascript:' ) && false !== strpos( Endpaper\markdown_to_html( '[Hardcover](https://hardcover.app/)' ), '<a href="https://hardcover.app/"' ) );
 
 	$GLOBALS['endpaper_review_plain'] = true;
-	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
+	delete_transient( Endpaper\get_entry_cache_key( 42 ) );
 	$endpaper_html_plain_review = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
 	endpaper_check( 'without Markdown, the review is shown as plain text', false !== strpos( $endpaper_html_plain_review, 'A quiet, sharp book. The ending stayed with me.' ) && false === strpos( $endpaper_html_plain_review, '<blockquote>' ) );
 	$GLOBALS['endpaper_review_plain'] = false;
-	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
+	delete_transient( Endpaper\get_entry_cache_key( 42 ) );
 
 	$GLOBALS['endpaper_review_spoilers'] = true;
-	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
+	delete_transient( Endpaper\get_entry_cache_key( 42 ) );
 	$endpaper_html_spoilers = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showReview":true} /-->' );
 	endpaper_check( 'a review with spoilers is closed behind a summary', false !== strpos( $endpaper_html_spoilers, '<details class="endpaper-book__spoilers">' ) && false !== strpos( $endpaper_html_spoilers, 'This review contains spoilers' ) );
 	endpaper_check( 'the description is not put behind a summary when the review is off', false === strpos( do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' ), '<details' ) );
 	$GLOBALS['endpaper_review_spoilers'] = false;
-	delete_transient( AndersNoren\Endpaper\get_entry_cache_key( 42 ) );
+	delete_transient( Endpaper\get_entry_cache_key( 42 ) );
 
 	$endpaper_html_credit = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showCredit":true} /-->' );
 	endpaper_check( 'it credits Hardcover when that is switched on', false !== strpos( $endpaper_html_credit, 'endpaper-logo' ) && false !== strpos( $endpaper_html_credit, 'Powered by Hardcover' ) );
@@ -630,8 +630,8 @@ try {
 	};
 	add_filter( 'wp_theme_json_data_user', $endpaper_block_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
-	$endpaper_block_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
-	$endpaper_other_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/book' );
+	$endpaper_block_style = \Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
+	$endpaper_other_style = \Endpaper\get_heading_typography_style( 'endpaper/book' );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_block_headings );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	endpaper_check( 'a theme can change the heading typography for one block, on top of the global one', false !== strpos( $endpaper_block_style, '--endpaper-heading-font-family: Georgia, serif;' ) && false !== strpos( $endpaper_block_style, '--endpaper-heading-font-weight: 800;' ) && false !== strpos( $endpaper_other_style, '--endpaper-heading-font-weight: 400;' ) );
@@ -649,8 +649,8 @@ try {
 	};
 	add_filter( 'wp_theme_json_data_user', $endpaper_heading_color );
 	WP_Theme_JSON_Resolver::clean_cached_data();
-	$endpaper_goal_color = \AndersNoren\Endpaper\get_heading_color_style( array(), 'endpaper/reading-goal' );
-	$endpaper_book_color = \AndersNoren\Endpaper\get_heading_color_style( array(), 'endpaper/book' );
+	$endpaper_goal_color = \Endpaper\get_heading_color_style( array(), 'endpaper/reading-goal' );
+	$endpaper_book_color = \Endpaper\get_heading_color_style( array(), 'endpaper/book' );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_heading_color );
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	$endpaper_goal_plain  = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
@@ -658,9 +658,9 @@ try {
 	endpaper_check( 'the goal has no frame unless it is given one, and then the block itself has it', false === strpos( $endpaper_goal_plain, 'endpaper-reading-goal--framed' ) && 1 === preg_match( '/<div [^>]*border-width:1px[^>]*endpaper-reading-goal--framed/', $endpaper_goal_framed ) );
 	endpaper_check( 'the goal has no inner card element', false === strpos( $endpaper_goal_framed, 'endpaper-reading-goal__card' ) );
 	endpaper_check( 'a heading color set for one block in theme.json is passed to its titles, the theme\'s global one is not', '--endpaper-heading-color: #aa0000;' === $endpaper_goal_color && '' === $endpaper_book_color );
-	endpaper_check( 'a heading color set on the block is passed to its titles', '--endpaper-heading-color: #00aa00;' === \AndersNoren\Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => '#00aa00' ) ) ) ) ), 'endpaper/book' ) );
-	endpaper_check( 'a heading color preset is passed as its variable', '--endpaper-heading-color: var(--wp--preset--color--accent-1);' === \AndersNoren\Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => 'var:preset|color|accent-1' ) ) ) ) ), 'endpaper/book' ) );
-	endpaper_check( 'without a heading color on the block, nothing is set and titles inherit', '' === \AndersNoren\Endpaper\get_heading_color_style( array(), 'endpaper/book' ) );
+	endpaper_check( 'a heading color set on the block is passed to its titles', '--endpaper-heading-color: #00aa00;' === \Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => '#00aa00' ) ) ) ) ), 'endpaper/book' ) );
+	endpaper_check( 'a heading color preset is passed as its variable', '--endpaper-heading-color: var(--wp--preset--color--accent-1);' === \Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => 'var:preset|color|accent-1' ) ) ) ) ), 'endpaper/book' ) );
+	endpaper_check( 'without a heading color on the block, nothing is set and titles inherit', '' === \Endpaper\get_heading_color_style( array(), 'endpaper/book' ) );
 
 	// A heading font that is a preset is resolved to the font itself, whatever the theme in use.
 	$endpaper_preset = static function ( $theme_json ) {
@@ -696,7 +696,7 @@ try {
 	add_filter( 'wp_theme_json_data_theme', $endpaper_preset );
 	add_filter( 'wp_theme_json_data_user', $endpaper_preset_heading );
 	WP_Theme_JSON_Resolver::clean_cached_data();
-	$endpaper_theme_style = \AndersNoren\Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
+	$endpaper_theme_style = \Endpaper\get_heading_typography_style( 'endpaper/reading-goal' );
 	remove_filter( 'wp_theme_json_data_theme', $endpaper_preset );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_preset_heading );
 	WP_Theme_JSON_Resolver::clean_cached_data();
@@ -921,7 +921,7 @@ $endpaper_card_dupe = array_filter(
 );
 
 endpaper_check( 'the Card style is registered with its settings as data', is_array( $endpaper_card ) && '0.75em' === $endpaper_card['style_data']['border']['radius'] && '1.5em' === $endpaper_card['style_data']['spacing']['padding'] );
-$endpaper_lifetime = static fn( $kind ) => \AndersNoren\Endpaper\get_cache_lifetime( $kind );
+$endpaper_lifetime = static fn( $kind ) => \Endpaper\get_cache_lifetime( $kind );
 $endpaper_short    = static fn() => 5;
 $endpaper_two_days = static fn() => 2 * DAY_IN_SECONDS;
 $endpaper_default  = array( $endpaper_lifetime( 'book' ), $endpaper_lifetime( 'list' ) );
@@ -940,7 +940,7 @@ $endpaper_try   = static function ( $hook, $value, $function ) use ( $endpaper_v
 	remove_filter( $hook, $callback );
 	return $result;
 };
-$endpaper_ns = '\\AndersNoren\\Endpaper\\';
+$endpaper_ns = '\\Endpaper\\';
 
 endpaper_check(
 	'the request timeout, the number of search results and the wait after a failure can be filtered, within limits',

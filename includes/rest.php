@@ -8,7 +8,7 @@
  * @package Endpaper
  */
 
-namespace AndersNoren\Endpaper;
+namespace Endpaper;
 
 use WP_Error;
 use WP_REST_Request;

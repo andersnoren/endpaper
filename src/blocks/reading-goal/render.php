@@ -9,20 +9,20 @@
  * @var WP_Block $block      Block instance.
  */
 
-use function AndersNoren\Endpaper\format_text;
-use function AndersNoren\Endpaper\get_accent_color_style;
-use function AndersNoren\Endpaper\get_goal;
-use function AndersNoren\Endpaper\get_goal_amount_parts;
-use function AndersNoren\Endpaper\get_goal_amount_text;
-use function AndersNoren\Endpaper\get_goal_days_text;
-use function AndersNoren\Endpaper\get_goal_ended_text;
-use function AndersNoren\Endpaper\get_heading_color_style;
-use function AndersNoren\Endpaper\get_heading_typography_style;
-use function AndersNoren\Endpaper\get_title_tag;
-use function AndersNoren\Endpaper\get_token_trouble;
-use function AndersNoren\Endpaper\has_card_frame;
-use function AndersNoren\Endpaper\the_editor_notice;
-use function AndersNoren\Endpaper\the_hardcover_credit;
+use function Endpaper\format_text;
+use function Endpaper\get_accent_color_style;
+use function Endpaper\get_goal;
+use function Endpaper\get_goal_amount_parts;
+use function Endpaper\get_goal_amount_text;
+use function Endpaper\get_goal_days_text;
+use function Endpaper\get_goal_ended_text;
+use function Endpaper\get_heading_color_style;
+use function Endpaper\get_heading_typography_style;
+use function Endpaper\get_title_tag;
+use function Endpaper\get_token_trouble;
+use function Endpaper\has_card_frame;
+use function Endpaper\the_editor_notice;
+use function Endpaper\the_hardcover_credit;
 
 defined( 'ABSPATH' ) || exit;
 

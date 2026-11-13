@@ -9,21 +9,21 @@
  * @var WP_Block $block      Block instance.
  */
 
-use function AndersNoren\Endpaper\format_date;
-use function AndersNoren\Endpaper\format_text;
-use function AndersNoren\Endpaper\get_accent_color_style;
-use function AndersNoren\Endpaper\get_block_gap_style;
-use function AndersNoren\Endpaper\get_cover_radius_style;
-use function AndersNoren\Endpaper\get_heading_color_style;
-use function AndersNoren\Endpaper\get_reading_list;
-use function AndersNoren\Endpaper\get_title_tag;
-use function AndersNoren\Endpaper\get_token_trouble;
-use function AndersNoren\Endpaper\has_card_frame;
-use function AndersNoren\Endpaper\the_cover_image;
-use function AndersNoren\Endpaper\the_editor_notice;
-use function AndersNoren\Endpaper\the_hardcover_credit;
-use function AndersNoren\Endpaper\the_progress_bar;
-use function AndersNoren\Endpaper\the_star_rating;
+use function Endpaper\format_date;
+use function Endpaper\format_text;
+use function Endpaper\get_accent_color_style;
+use function Endpaper\get_block_gap_style;
+use function Endpaper\get_cover_radius_style;
+use function Endpaper\get_heading_color_style;
+use function Endpaper\get_reading_list;
+use function Endpaper\get_title_tag;
+use function Endpaper\get_token_trouble;
+use function Endpaper\has_card_frame;
+use function Endpaper\the_cover_image;
+use function Endpaper\the_editor_notice;
+use function Endpaper\the_hardcover_credit;
+use function Endpaper\the_progress_bar;
+use function Endpaper\the_star_rating;
 
 defined( 'ABSPATH' ) || exit;
 

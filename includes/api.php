@@ -7,7 +7,7 @@
  * @package Endpaper
  */
 
-namespace AndersNoren\Endpaper;
+namespace Endpaper;
 
 use WP_Error;
 

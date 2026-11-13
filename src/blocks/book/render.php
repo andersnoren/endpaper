@@ -12,28 +12,28 @@
  * @var WP_Block $block      Block instance.
  */
 
-use function AndersNoren\Endpaper\format_date;
-use function AndersNoren\Endpaper\format_text;
-use function AndersNoren\Endpaper\get_accent_color_style;
-use function AndersNoren\Endpaper\get_book;
-use function AndersNoren\Endpaper\get_book_end_time;
-use function AndersNoren\Endpaper\get_cover_radius_style;
-use function AndersNoren\Endpaper\get_edition;
-use function AndersNoren\Endpaper\get_heading_color_style;
-use function AndersNoren\Endpaper\get_library_entry;
-use function AndersNoren\Endpaper\get_shelf_labels;
-use function AndersNoren\Endpaper\get_star_icon;
-use function AndersNoren\Endpaper\get_title_tag;
-use function AndersNoren\Endpaper\get_token_trouble;
-use function AndersNoren\Endpaper\has_card_frame;
-use function AndersNoren\Endpaper\markdown_to_html;
-use function AndersNoren\Endpaper\the_cover_image;
-use function AndersNoren\Endpaper\the_editor_notice;
-use function AndersNoren\Endpaper\the_hardcover_credit;
-use function AndersNoren\Endpaper\the_progress_bar;
-use function AndersNoren\Endpaper\the_star_rating;
-use function AndersNoren\Endpaper\trim_markdown;
-use function AndersNoren\Endpaper\trim_to_sentence;
+use function Endpaper\format_date;
+use function Endpaper\format_text;
+use function Endpaper\get_accent_color_style;
+use function Endpaper\get_book;
+use function Endpaper\get_book_end_time;
+use function Endpaper\get_cover_radius_style;
+use function Endpaper\get_edition;
+use function Endpaper\get_heading_color_style;
+use function Endpaper\get_library_entry;
+use function Endpaper\get_shelf_labels;
+use function Endpaper\get_star_icon;
+use function Endpaper\get_title_tag;
+use function Endpaper\get_token_trouble;
+use function Endpaper\has_card_frame;
+use function Endpaper\markdown_to_html;
+use function Endpaper\the_cover_image;
+use function Endpaper\the_editor_notice;
+use function Endpaper\the_hardcover_credit;
+use function Endpaper\the_progress_bar;
+use function Endpaper\the_star_rating;
+use function Endpaper\trim_markdown;
+use function Endpaper\trim_to_sentence;
 
 defined( 'ABSPATH' ) || exit;
 

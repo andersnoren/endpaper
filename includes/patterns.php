@@ -5,7 +5,7 @@
  * @package Endpaper
  */
 
-namespace AndersNoren\Endpaper;
+namespace Endpaper;
 
 defined( 'ABSPATH' ) || exit;
 
