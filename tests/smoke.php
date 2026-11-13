@@ -604,6 +604,7 @@ try {
 	$endpaper_html = do_shortcode( '[endpaper_reading_list status="read" count="3" date="no"]' );
 	endpaper_check( 'the reading list shortcode takes the status as a word, and the count', false !== strpos( do_shortcode( '[endpaper_reading_list status="currently-reading"]' ), 'endpaper-reading-list' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list' ) && false !== strpos( do_shortcode( '[endpaper_reading_list status="want-to-read"]' ), 'endpaper-reading-list' ) );
 	endpaper_check( 'the reading goal shortcode shows the goal that is running, or the one with the ID', false !== strpos( do_shortcode( '[endpaper_reading_goal]' ), '__number">34</span>' ) && false !== strpos( do_shortcode( '[endpaper_reading_goal goal="2"]' ), '__number">10,508</span>' ) && false === strpos( do_shortcode( '[endpaper_reading_goal title="no"]' ), 'endpaper-reading-goal__title' ) );
+	endpaper_check( 'the reading goal shortcode can be a bar, and anything but bar is the gauge', false !== strpos( do_shortcode( '[endpaper_reading_goal style="bar"]' ), '<progress' ) && false === strpos( do_shortcode( '[endpaper_reading_goal style="bogus"]' ), '<progress' ) && false !== strpos( do_shortcode( '[endpaper_reading_goal style="gauge"]' ), 'endpaper-reading-goal__gauge' ) );
 	endpaper_check( 'the current goal is the one that is running now', 1 === Endpaper\get_current_goal()['id'] );
 
 	$endpaper_html = do_shortcode( '[endpaper_book id="42"]' );

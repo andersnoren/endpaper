@@ -550,7 +550,7 @@ function render_settings_page() {
 					__( 'How do I show my reading goal?', 'endpaper' ),
 					array(
 						__( '`[endpaper_reading_goal]` shows the goal that is running now. To show another one, add its number: `[endpaper_reading_goal goal="123"]`. Only public goals can be shown.', 'endpaper' ),
-						__( 'Options: `goal`, `title`, `days`, `percent`, `credit`.', 'endpaper' ),
+						__( 'Options: `goal`, `style` (`gauge` or `bar`), `title`, `days`, `percent`, `credit`.', 'endpaper' ),
 					)
 				);
 				?>

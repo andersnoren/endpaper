@@ -48,7 +48,7 @@ For classic themes and places where blocks cannot go, such as a widget or a temp
 | --- | --- |
 | `[endpaper_book url="https://hardcover.app/books/the-stand"]` | `url` or `id` (the book), `cover`, `authors`, `meta`, `rating`, `my_rating`, `shelf`, `progress`, `description`, `review`, `credit`, `link` |
 | `[endpaper_reading_list status="currently-reading" count="5"]` | `status` (`currently-reading`, `read` or `want-to-read`), `count`, `cover`, `authors`, `rating`, `date`, `progress`, `credit`, `link` |
-| `[endpaper_reading_goal]` | `goal` (an ID; without it, the goal that is running now), `title`, `days`, `percent`, `credit` |
+| `[endpaper_reading_goal]` | `goal` (an ID; without it, the goal that is running now), `style` (`gauge` or `bar`), `title`, `days`, `percent`, `credit` |
 
 The Reading List and Reading Goal show your own Hardcover account, so they take no URL. A book at a URL is looked up in the background the first time, so it shows from the next page view.
 

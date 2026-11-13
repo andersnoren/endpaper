@@ -168,6 +168,7 @@ function shortcode_reading_list( $atts ) {
  * Renders [endpaper_reading_goal].
  *
  * Without a goal ID it shows the goal that is running now, or else the latest.
+ * The style is the gauge unless it is set to bar.
  *
  * @param array|string $atts The shortcode attributes.
  * @return string The HTML.
@@ -190,6 +191,11 @@ function shortcode_reading_goal( $atts ) {
 	}
 
 	$attributes['goalId'] = $goal_id;
+
+	// The gauge is the default. The bar is the only other style.
+	if ( isset( $atts['style'] ) && 'bar' === strtolower( trim( (string) $atts['style'] ) ) ) {
+		$attributes['className'] = 'is-style-bar';
+	}
 
 	return render_shortcode_block( 'endpaper/reading-goal', $attributes );
 }
