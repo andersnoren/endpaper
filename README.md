@@ -22,7 +22,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Shows the cover, title, authors, description, year, page count and Hardcover rating. Optionally adds your shelf, your rating and your reading progress.
 - Can show your own review in place of the description, with a link to it on Hardcover. A review marked as having spoilers stays closed until it is opened.
 - Uses the cover of your edition when the book is in your library, and you can pick another edition’s cover in the block settings.
-- Cover size and position, text alignment, title level, accent color and cover radius can all be changed. The Card style adds a light background, rounded corners and padding, and you choose the style new blocks start with under Settings, Endpaper.
+- Cover size and position, text alignment, heading level, accent color and cover radius can all be changed. The Card style adds a light background, rounded corners and padding, and you choose the style new blocks start with under Settings, Endpaper.
 - Follows the block’s font size and text color, and supports the color, typography, spacing, border and shadow settings in the editor.
 - Can credit Hardcover with their logo, which is off until you switch it on.
 
@@ -30,7 +30,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 - Shows books from your own library: the ones you are currently reading, have read or want to read. Ready-made variations for each are in the block inserter.
 - A list or a grid of covers with up to six columns, and up to 20 books. Each book shows its cover, title, authors, your rating, the date you finished it and your progress, and each part can be switched off.
-- Title level, accent color and cover radius can be changed. Can credit Hardcover with their logo, which is off until you switch it on.
+- Heading level, accent color and cover radius can be changed. Can credit Hardcover with their logo, which is off until you switch it on.
 - Only books that are public on Hardcover are shown.
 
 ## The Reading Goal block
@@ -38,7 +38,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Shows how far along you are on one of your public Hardcover reading goals, chosen in the block settings: the title, the count (books, pages or hours), the days left and, optionally, the percentage. A goal that is reached says so.
 - Two styles: **Gauge**, a half circle with the count in the middle (the default), and **Bar**.
 - The days left are worked out in the visitor’s browser, so the number is right on cached pages.
-- Title level and accent color can be changed. Can credit Hardcover with their logo, which is off until you switch it on.
+- Heading level and accent color can be changed. Can credit Hardcover with their logo, which is off until you switch it on.
 
 ## Shortcodes
 
