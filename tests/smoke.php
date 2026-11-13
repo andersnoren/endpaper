@@ -427,6 +427,9 @@ try {
 	endpaper_check( 'a name with other words in it is not an author', array() === search_author( 'stephen king novels' ) );
 	endpaper_check( 'a link is not an author search', array() === search_author( 'https://hardcover.app/books/the-stand' ) && 2 === $GLOBALS['endpaper_author_requests'] );
 
+	$endpaper_typo = search_author( 'stephen kinng' );
+	endpaper_check( 'a name with a typo in it still finds the author', is_array( $endpaper_typo ) && 7 === $endpaper_typo['id'] );
+
 	$endpaper_author_books = get_author_books( 7 );
 	endpaper_check( 'an author\'s books are listed like a search', is_array( $endpaper_author_books ) && 1 === count( $endpaper_author_books ) && array( 'Stephen King' ) === $endpaper_author_books[0]['authors'] && 0 === $GLOBALS['endpaper_author_book_offset'] );
 

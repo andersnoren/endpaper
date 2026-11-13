@@ -601,11 +601,45 @@ function get_name_words( $name ) {
 }
 
 /**
+ * Checks that every word that was typed is in a name, allowing for a typo.
+ *
+ * A word of four letters or more can be one letter off, and a word of eight or
+ * more two letters off, so "Tolken" finds Tolkien. Shorter words, and anything
+ * that is not plain letters and numbers, have to match exactly.
+ *
+ * @param string[] $words The words that were typed, from get_name_words().
+ * @param string   $name  An author's name.
+ * @return bool Whether the name has all of the words.
+ */
+function is_name_match( $words, $name ) {
+	$name_words = get_name_words( $name );
+
+	foreach ( $words as $word ) {
+		$allowed = strlen( $word ) >= 8 ? 2 : ( strlen( $word ) >= 4 ? 1 : 0 );
+		$found   = false;
+
+		foreach ( $name_words as $name_word ) {
+			if ( $word === $name_word || ( $allowed && preg_match( '/^[a-z0-9]+$/', $word . $name_word ) && levenshtein( $word, $name_word ) <= $allowed ) ) {
+				$found = true;
+				break;
+			}
+		}
+
+		if ( ! $found ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
  * Finds the author a search term is the name of.
  *
  * Only a name of two words or more counts, and every word of it has to be in
- * the author's name (or a pen name), so "Stephen King" finds the author but
- * "stephen king novels" and "king" do not. Anything else is a book search.
+ * the author's name (or a pen name), give or take a typo, so "Stephen King"
+ * finds the author but "stephen king novels" and "king" do not. Anything else
+ * is a book search.
  *
  * @param string $term What was typed in the search field.
  * @return array|WP_Error The author (id, name, books), or an empty array if the term is not an author's name, or an error.
@@ -665,7 +699,7 @@ function search_author( $term ) {
 		}
 
 		foreach ( $names as $candidate ) {
-			if ( ! array_diff( $words, get_name_words( $candidate ) ) ) {
+			if ( is_name_match( $words, $candidate ) ) {
 				$author = array(
 					'id'    => $author_id,
 					'name'  => $name,
