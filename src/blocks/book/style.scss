@@ -81,7 +81,10 @@
 	display: flex;
 	flex-wrap: wrap;
 
-	/* Between the cover and the text, also when they wrap. The Block spacing setting sets --endpaper-gap. */
+	/*
+	 * Between the cover and the text, also when they wrap. The Block spacing
+	 * setting sets --endpaper-gap.
+	 */
 	gap: var(--endpaper-gap, 1.5em);
 
 	/*
