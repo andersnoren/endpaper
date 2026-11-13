@@ -96,8 +96,17 @@ function normalize_reading_list_entry( $raw ) {
 	$entry         = normalize_library_entry( $raw );
 	$entry['book'] = normalize_book( isset( $raw['book'] ) && is_array( $raw['book'] ) ? $raw['book'] : array() );
 
-	// Show the cover of the edition that was read, if it has one.
-	if ( $entry['cover'] ) {
+	/**
+	 * Filters which cover the Reading List shows.
+	 *
+	 * Hardcover gives every library entry an edition when the book is added, and its cover is
+	 * often not the one the book page shows. The default is the book's own cover, like on Hardcover.
+	 *
+	 * @param string $source Either `book` (the default) or `edition`, the cover of the edition in your library.
+	 */
+	$source = apply_filters( 'endpaper_reading_list_cover_source', 'book' );
+
+	if ( 'edition' === $source && $entry['cover'] ) {
 		$entry['book']['cover'] = $entry['cover'];
 	}
 

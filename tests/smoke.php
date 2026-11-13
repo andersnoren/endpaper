@@ -548,8 +548,17 @@ try {
 	endpaper_check( 'the grid renders, framed', false !== strpos( $endpaper_html, 'endpaper-reading-list--grid' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list--framed' ) );
 	endpaper_check( 'a rating is shown as stars', false !== strpos( $endpaper_html, 'endpaper-icon--star-half' ) && false !== strpos( $endpaper_html, 'Rated 4.5 out of 5' ) );
 	endpaper_check( 'a book without a cover gets a placeholder', false !== strpos( $endpaper_html, 'endpaper-cover-placeholder' ) );
-	endpaper_check( 'the cover of the edition in the library is used', 1 === substr_count( $endpaper_html, 'edition-list.jpg' ) );
-	endpaper_check( 'an edition without a cover falls back to the cover of the book', 1 === substr_count( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
+	endpaper_check( 'the cover of the book is used, not the one of the edition in the library', 0 === substr_count( $endpaper_html, 'edition-list.jpg' ) && 2 === substr_count( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
+
+	$endpaper_edition_source = static function () {
+		return 'edition';
+	};
+	add_filter( 'endpaper_reading_list_cover_source', $endpaper_edition_source );
+	clear_cache();
+	$endpaper_edition_html = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid","titleLevel":3} /-->' );
+	remove_filter( 'endpaper_reading_list_cover_source', $endpaper_edition_source );
+	clear_cache();
+	endpaper_check( 'a site can ask for the cover of the edition in the library instead', 1 === substr_count( $endpaper_edition_html, 'edition-list.jpg' ) );
 	endpaper_check( 'a spacing of zero gets a unit', false !== strpos( $endpaper_html, '--endpaper-gap: 0px' ) );
 
 	$endpaper_gap_theme = static function ( $theme_json ) {
