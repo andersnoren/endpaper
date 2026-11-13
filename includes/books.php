@@ -642,7 +642,7 @@ function is_name_match( $words, $name ) {
  * is a book search.
  *
  * @param string $term What was typed in the search field.
- * @return array|WP_Error The author (id, name, books), or an empty array if the term is not an author's name, or an error.
+ * @return array|WP_Error The author (id, name, books, image), or an empty array if the term is not an author's name, or an error.
  */
 function search_author( $term ) {
 	$term  = trim( (string) $term );
@@ -708,12 +708,20 @@ function search_author( $term ) {
 			$candidate_words = get_name_words( $candidate );
 			$is_exact        = ! array_diff( $words, $candidate_words ) && ! array_diff( $candidate_words, $words );
 			$books           = isset( $document['books_count'] ) ? absint( $document['books_count'] ) : 0;
+			$image           = '';
+
+			if ( isset( $document['image']['url'] ) ) {
+				$image = esc_url_raw( $document['image']['url'] );
+			} elseif ( isset( $document['image'] ) && is_string( $document['image'] ) ) {
+				$image = esc_url_raw( $document['image'] );
+			}
 
 			if ( ! $author || ( $is_exact && ! $exact ) || ( $is_exact === $exact && $books > $author['books'] ) ) {
 				$author = array(
 					'id'    => $author_id,
 					'name'  => $name,
 					'books' => $books,
+					'image' => $image,
 				);
 				$exact  = $is_exact;
 			}

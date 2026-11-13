@@ -86,20 +86,24 @@ function highlight( text, term ) {
 /**
  * A result's cover. A missing or broken image falls back to the plain box.
  *
- * @param {Object} props       Component props.
- * @param {string} props.cover Image URL, if the book has one.
+ * @param {Object} props           Component props.
+ * @param {string} props.cover     Image URL, if the book has one.
+ * @param {string} props.className Class for a variant, such as an author's photo.
  * @return {Element} The cover element.
  */
-function Cover( { cover } ) {
+function Cover( { cover, className = '' } ) {
 	const [ failed, setFailed ] = useState( false );
+	const classes = [ 'endpaper-book-search__cover', className ]
+		.filter( Boolean )
+		.join( ' ' );
 
 	if ( ! cover || failed ) {
-		return <span className="endpaper-book-search__cover" />;
+		return <span className={ classes } />;
 	}
 
 	return (
 		<img
-			className="endpaper-book-search__cover endpaper-book-search__cover--image"
+			className={ `${ classes } endpaper-book-search__cover--image` }
 			src={ cover }
 			alt=""
 			onError={ () => setFailed( true ) }
@@ -638,6 +642,12 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 					className="endpaper-book-search__result endpaper-book-search__author"
 					onClick={ () => openAuthor( authorMatch ) }
 				>
+					{ authorMatch.image && (
+						<Cover
+							cover={ authorMatch.image }
+							className="endpaper-book-search__cover--author"
+						/>
+					) }
 					<span className="endpaper-book-search__text">
 						<span>
 							{ sprintf(

@@ -166,7 +166,7 @@ add_filter(
 			$GLOBALS['endpaper_author_requests'] = ( isset( $GLOBALS['endpaper_author_requests'] ) ? $GLOBALS['endpaper_author_requests'] : 0 ) + 1;
 
 			$hits = array(
-				array( 'document' => array( 'id' => '7', 'name' => 'Stephen King', 'books_count' => 312 ) ),
+				array( 'document' => array( 'id' => '7', 'name' => 'Stephen King', 'books_count' => 312, 'image' => array( 'url' => 'https://assets.hardcover.app/author.jpg' ) ) ),
 				array( 'document' => array( 'id' => '8', 'name' => 'Stephen Kings Jr.', 'books_count' => 2 ) ),
 			);
 
@@ -418,7 +418,7 @@ try {
 
 	echo "Author search\n";
 	$endpaper_author = search_author( 'Stephen King' );
-	endpaper_check( 'a name finds the author, not another with the same words', is_array( $endpaper_author ) && 7 === $endpaper_author['id'] && 'Stephen King' === $endpaper_author['name'] && 312 === $endpaper_author['books'] );
+	endpaper_check( 'a name finds the author, not another with the same words', is_array( $endpaper_author ) && 7 === $endpaper_author['id'] && 'Stephen King' === $endpaper_author['name'] && 312 === $endpaper_author['books'] && 'https://assets.hardcover.app/author.jpg' === $endpaper_author['image'] );
 
 	search_author( 'stephen  KING' );
 	endpaper_check( 'the same name typed differently is answered from the cache', 1 === $GLOBALS['endpaper_author_requests'] );
