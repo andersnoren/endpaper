@@ -14,6 +14,7 @@ import { speak } from '@wordpress/a11y';
  * Internal dependencies
  */
 import getBookUrl from '../../utils/book-url';
+import getEditorData from '../../utils/editor-data';
 import { addRecentBook, getRecentBooks } from '../../utils/recent-books';
 
 /**
@@ -22,10 +23,9 @@ import { addRecentBook, getRecentBooks } from '../../utils/recent-books';
 const SEARCH_DELAY = 400;
 
 /**
- * How many books a search returns at most, which is how many placeholder rows
- * to show, so the list does not change height when the results arrive.
+ * How many pages of results can be loaded, the same as the server allows.
  */
-const SEARCH_RESULTS = 8;
+const MAX_PAGES = 10;
 
 /**
  * Wraps each match of the search words in <mark>, without using HTML strings.
@@ -162,8 +162,14 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 	const [ results, setResults ] = useState( [] );
 	const [ status, setStatus ] = useState( 'idle' );
 	const [ message, setMessage ] = useState( '' );
+	const [ hasMore, setHasMore ] = useState( false );
+	const [ loadingMore, setLoadingMore ] = useState( false );
 	const latestRequest = useRef( 0 );
+	const loadedPages = useRef( 1 );
 	const wrapper = useRef( null );
+	// A full page of results means there may be more, and is also how many
+	// placeholder rows to show, so the list does not change height.
+	const { searchResults } = getEditorData();
 	const [ recent, setRecent ] = useState( getRecentBooks );
 
 	useEffect( () => {
@@ -185,6 +191,10 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		const query = term.trim();
 		const requestId = ++latestRequest.current;
 
+		loadedPages.current = 1;
+		setHasMore( false );
+		setLoadingMore( false );
+
 		if ( query.length < 3 ) {
 			setResults( [] );
 			setStatus( 'idle' );
@@ -203,7 +213,10 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 						return;
 					}
 
-					setResults( Array.isArray( books ) ? books : [] );
+					const list = Array.isArray( books ) ? books : [];
+
+					setResults( list );
+					setHasMore( list.length >= searchResults );
 					setStatus( 'done' );
 				} )
 				.catch( ( error ) => {
@@ -224,7 +237,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		}, SEARCH_DELAY );
 
 		return () => clearTimeout( timer );
-	}, [ term ] );
+	}, [ term, searchResults ] );
 
 	// Tell screen reader users what the search is doing.
 	useEffect( () => {
@@ -248,6 +261,60 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		}
 	}, [ status, results.length ] );
 
+	// Adds the next page of results to the list.
+	const loadMore = () => {
+		if ( loadingMore ) {
+			return;
+		}
+
+		const requestId = latestRequest.current;
+		const page = loadedPages.current + 1;
+
+		setLoadingMore( true );
+
+		apiFetch( {
+			path: addQueryArgs( '/endpaper/v1/search', {
+				q: term.trim(),
+				page,
+			} ),
+		} )
+			.then( ( books ) => {
+				// Ignore the response if the search has since changed.
+				if ( requestId !== latestRequest.current ) {
+					return;
+				}
+
+				const list = Array.isArray( books ) ? books : [];
+
+				loadedPages.current = page;
+				setResults( ( current ) => {
+					const known = new Set( current.map( ( book ) => book.id ) );
+
+					return [
+						...current,
+						...list.filter( ( book ) => ! known.has( book.id ) ),
+					];
+				} );
+				setHasMore( list.length >= searchResults && page < MAX_PAGES );
+				setLoadingMore( false );
+			} )
+			.catch( ( error ) => {
+				if ( requestId !== latestRequest.current ) {
+					return;
+				}
+
+				setMessage(
+					error?.message ||
+						__(
+							'Something went wrong while searching.',
+							'endpaper'
+						)
+				);
+				setStatus( 'error' );
+				setLoadingMore( false );
+			} );
+	};
+
 	// Arrow keys move between the search field and the results.
 	const moveFocus = ( event ) => {
 		if ( 'ArrowDown' !== event.key && 'ArrowUp' !== event.key ) {
@@ -256,7 +323,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 		const items = Array.from(
 			wrapper.current?.querySelectorAll(
-				'.endpaper-book-search__results:not(.endpaper-book-search__results--loading) button'
+				'.endpaper-book-search__results:not(.endpaper-book-search__results--loading) button, .endpaper-book-search__more'
 			) || []
 		);
 
@@ -359,7 +426,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 					className="endpaper-book-search__results endpaper-book-search__results--loading"
 					aria-hidden="true"
 				>
-					{ Array.from( { length: SEARCH_RESULTS }, ( _, row ) => (
+					{ Array.from( { length: searchResults }, ( _, row ) => (
 						<li
 							key={ row }
 							className="endpaper-book-search__result"
@@ -391,6 +458,20 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 			{ 'loading' !== status && results.length > 0 && (
 				<ResultList books={ results } term={ term } onPick={ pick } />
+			) }
+
+			{ 'loading' !== status && results.length > 0 && hasMore && (
+				<Button
+					variant="secondary"
+					className="endpaper-book-search__more"
+					onClick={ loadMore }
+					isBusy={ loadingMore }
+					aria-disabled={ loadingMore }
+				>
+					{ loadingMore
+						? __( 'Loading…', 'endpaper' )
+						: __( 'Load more', 'endpaper' ) }
+				</Button>
 			) }
 
 			{ showRecent && (

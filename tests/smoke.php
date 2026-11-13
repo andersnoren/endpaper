@@ -387,6 +387,16 @@ try {
 	search_books( 'The Stand' );
 	endpaper_check( 'the same search again is answered from the cache', 1 === $GLOBALS['endpaper_search_requests'] );
 
+	search_books( 'the stand', 2 );
+	endpaper_check( 'a later page of the same search is asked for on its own', 2 === $GLOBALS['endpaper_search_requests'] );
+
+	search_books( 'the stand', 2 );
+	endpaper_check( 'a later page is answered from the cache too', 2 === $GLOBALS['endpaper_search_requests'] );
+
+	endpaper_check( 'a link to a book has no second page', array() === search_books( 'https://hardcover.app/books/the-stand', 2 ) && 2 === $GLOBALS['endpaper_search_requests'] );
+
+	$endpaper_before_limit = $GLOBALS['endpaper_search_requests'];
+
 	wp_set_current_user( 1 );
 	$endpaper_limited = null;
 
@@ -394,7 +404,7 @@ try {
 		$endpaper_limited = search_books( 'limit test ' . $endpaper_i );
 	}
 
-	endpaper_check( 'a person who searches too much is asked to wait, and the request is not sent', is_wp_error( $endpaper_limited ) && 'endpaper_search_limit' === $endpaper_limited->get_error_code() && 1 + ENDPAPER_SEARCH_LIMIT === $GLOBALS['endpaper_search_requests'] );
+	endpaper_check( 'a person who searches too much is asked to wait, and the request is not sent', is_wp_error( $endpaper_limited ) && 'endpaper_search_limit' === $endpaper_limited->get_error_code() && $endpaper_before_limit + ENDPAPER_SEARCH_LIMIT === $GLOBALS['endpaper_search_requests'] );
 
 	delete_transient( 'endpaper_search_limit_1' );
 	wp_set_current_user( 0 );

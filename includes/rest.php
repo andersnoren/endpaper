@@ -31,10 +31,15 @@ function register_rest_routes() {
 			'callback'            => __NAMESPACE__ . '\rest_search',
 			'permission_callback' => __NAMESPACE__ . '\rest_permission',
 			'args'                => array(
-				'q' => array(
+				'q'    => array(
 					'type'              => 'string',
 					'required'          => true,
 					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'page' => array(
+					'type'              => 'integer',
+					'default'           => 1,
+					'sanitize_callback' => 'absint',
 				),
 			),
 		)
@@ -137,7 +142,7 @@ function rest_search( $request ) {
 		return rest_ensure_response( array() );
 	}
 
-	return rest_ensure_response( search_books( $term ) );
+	return rest_ensure_response( search_books( $term, $request->get_param( 'page' ) ) );
 }
 
 /**

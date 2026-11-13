@@ -127,6 +127,7 @@ function add_editor_data( $block_type ) {
 				'keyTrouble'       => get_token_trouble(),
 				'settingsUrl'      => current_user_can( 'manage_options' ) ? get_settings_url() : '',
 				'defaultBookStyle' => get_default_book_style(),
+				'searchResults'    => get_search_results_count(),
 			);
 
 			wp_add_inline_script( $handle, 'window.endpaperEditor = ' . wp_json_encode( $data ) . ';', 'before' );

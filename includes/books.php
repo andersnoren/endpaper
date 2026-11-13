@@ -462,12 +462,19 @@ function get_book_id_by_slug( $slug ) {
  * Accepts a free-text search term or a hardcover.app book URL.
  *
  * @param string $term Search term or book URL.
+ * @param int    $page Which page of results to return, from 1 to 10.
  * @return array|WP_Error List of book summaries (id, title, authors, year, cover), or an error.
  */
-function search_books( $term ) {
+function search_books( $term, $page = 1 ) {
 	$term = trim( (string) $term );
+	$page = max( 1, min( 10, absint( $page ) ) );
 
 	if ( preg_match( '#hardcover\.app/books/([a-z0-9_-]+)#i', $term, $matches ) ) {
+		// A link is one book, so there is nothing more to load.
+		if ( $page > 1 ) {
+			return array();
+		}
+
 		$book = get_book_by_slug( strtolower( $matches[1] ) );
 
 		if ( is_wp_error( $book ) ) {
@@ -487,7 +494,7 @@ function search_books( $term ) {
 
 	// The same search, typed again within the hour, is answered from the cache.
 	$per_page  = get_search_results_count();
-	$cache_key = cache_key( 'endpaper_search_' . $per_page . '_' . md5( strtolower( $term ) ) );
+	$cache_key = cache_key( 'endpaper_search_' . $per_page . '_' . $page . '_' . md5( strtolower( $term ) ) );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -509,10 +516,11 @@ function search_books( $term ) {
 	}
 
 	$data = api_request(
-		'query EndpaperSearch($query: String!, $per_page: Int!) { search(query: $query, query_type: "Book", per_page: $per_page, page: 1) { results } }',
+		'query EndpaperSearch($query: String!, $per_page: Int!, $page: Int!) { search(query: $query, query_type: "Book", per_page: $per_page, page: $page) { results } }',
 		array(
 			'query'    => $term,
 			'per_page' => $per_page,
+			'page'     => $page,
 		)
 	);
 
