@@ -163,20 +163,23 @@ add_filter(
 		}
 
 		if ( false !== strpos( $query, 'EndpaperEditions' ) ) {
-			$edition = static function ( $id, $cover ) {
+			$edition = static function ( $id, $cover, $look = array() ) {
 				return array(
 					'id'             => $id,
 					'book_id'        => 42,
 					'title'          => 'The Stand',
 					'edition_format' => 'Paperback',
 					'release_date'   => '1990-05-01',
-					'image'          => $cover ? array( 'url' => 'https://assets.hardcover.app/' . $cover ) : null,
+					'image'          => $cover ? array( 'url' => 'https://assets.hardcover.app/' . $cover ) + $look : null,
 					'language'       => array( 'language' => 'English' ),
 				);
 			};
 
-			// Four editions: two with covers of their own, one without a cover, and one that shares a cover.
-			return $respond( 200, array( 'data' => array( 'editions' => array( $edition( 101, 'edition-101.jpg' ), $edition( 102, null ), $edition( 103, 'edition-103.jpg' ), $edition( 104, 'edition-101.jpg' ) ) ) ) );
+			$red  = array( 'width' => 1400, 'height' => 2100, 'color' => '#aa1111', 'colors' => array( '#aa1111', '#eeeeee' ) );
+			$blue = array( 'width' => 1400, 'height' => 2100, 'color' => '#1111aa', 'colors' => array( '#1111aa', '#eeeeee' ) );
+
+			// Seven editions: two with covers of their own, one without a cover, one that shares a cover, one that is the same picture uploaded again, one that is the same size but another picture, and one with nothing known but its address.
+			return $respond( 200, array( 'data' => array( 'editions' => array( $edition( 101, 'edition-101.jpg', $red ), $edition( 102, null ), $edition( 103, 'edition-103.jpg', $blue ), $edition( 104, 'edition-101.jpg', $red ), $edition( 105, 'edition-105.jpg', $blue ), $edition( 106, 'edition-106.jpg', array( 'width' => 1400, 'height' => 2100, 'color' => '#11aa11', 'colors' => array( '#11aa11' ) ) ), $edition( 107, 'edition-107.jpg' ) ) ) ) );
 		}
 
 		if ( false !== strpos( $query, 'EndpaperEdition(' ) ) {
@@ -472,13 +475,13 @@ try {
 
 	echo "Edition covers\n";
 	$endpaper_editions = get_editions( 42 );
-	endpaper_check( 'editions without a cover, or with one already listed, are left out', is_array( $endpaper_editions ) && array( 101, 103 ) === wp_list_pluck( $endpaper_editions, 'id' ) );
+	endpaper_check( 'editions without a cover, or with one already listed, are left out, also when it was uploaded again', is_array( $endpaper_editions ) && array( 101, 103, 106, 107 ) === wp_list_pluck( $endpaper_editions, 'id' ) );
 	endpaper_check( 'an edition has a format, year and language', 'Paperback' === $endpaper_editions[0]['format'] && 1990 === $endpaper_editions[0]['year'] && 'English' === $endpaper_editions[0]['language'] );
 
 	// The route is for people who can edit, so ask as the administrator.
 	wp_set_current_user( 1 );
 	$endpaper_response = rest_do_request( new WP_REST_Request( 'GET', '/endpaper/v1/editions/42' ) )->get_data();
-	endpaper_check( 'the editor gets the editions and the languages to list first', 2 === count( $endpaper_response['editions'] ) && 'Swedish' === $endpaper_response['languages']['edition'] && get_locale() === $endpaper_response['languages']['site'] );
+	endpaper_check( 'the editor gets the editions and the languages to list first', 4 === count( $endpaper_response['editions'] ) && 'Swedish' === $endpaper_response['languages']['edition'] && get_locale() === $endpaper_response['languages']['site'] );
 
 	// Fetching again marks the saved copy as old and asks Hardcover at once. A second request in a row has to wait.
 	$endpaper_requests = $GLOBALS['endpaper_api_requests'];

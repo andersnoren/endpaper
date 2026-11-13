@@ -645,6 +645,26 @@ function normalize_edition( $raw ) {
 }
 
 /**
+ * Returns what identifies a cover, to tell when two editions have the same one.
+ *
+ * The same artwork is often uploaded again for another edition, which gives it
+ * another address. Pictures that are the same size and have the same colors
+ * are taken to be the same cover. A picture without that information is only
+ * the same as one with the same address.
+ *
+ * @param string $url   The cover's address.
+ * @param array  $image The image as Hardcover describes it: its size and colors.
+ * @return string A string that is the same for covers that are the same.
+ */
+function get_cover_fingerprint( $url, $image ) {
+	if ( empty( $image['width'] ) || empty( $image['height'] ) || empty( $image['color'] ) ) {
+		return $url;
+	}
+
+	return md5( wp_json_encode( array( absint( $image['width'] ), absint( $image['height'] ), $image['color'], isset( $image['colors'] ) ? $image['colors'] : null ) ) );
+}
+
+/**
  * Returns the editions of a book that have a cover, the most read first.
  *
  * Used by the editor, to pick a cover from. Up to 250 editions are asked
@@ -661,7 +681,7 @@ function get_editions( $book_id ) {
 		return new WP_Error( 'endpaper_invalid_book', __( 'No book selected.', 'endpaper' ), array( 'status' => 400 ) );
 	}
 
-	$cache_key = cache_key( 'endpaper_editions_v2_' . $book_id );
+	$cache_key = cache_key( 'endpaper_editions_v3_' . $book_id );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -669,7 +689,7 @@ function get_editions( $book_id ) {
 	}
 
 	$data = api_request(
-		'query EndpaperEditions($book_id: Int!) { editions(where: {book_id: {_eq: $book_id}}, order_by: {users_count: desc}, limit: 250) { id book_id title edition_format release_date image { url } language { language } } }',
+		'query EndpaperEditions($book_id: Int!) { editions(where: {book_id: {_eq: $book_id}}, order_by: {users_count: desc}, limit: 250) { id book_id title edition_format release_date image { url width height color colors } language { language } } }',
 		array( 'book_id' => $book_id )
 	);
 
@@ -684,12 +704,18 @@ function get_editions( $book_id ) {
 		$edition = normalize_edition( is_array( $raw_edition ) ? $raw_edition : array() );
 
 		// Leave out editions without a cover, and editions that share a cover with one already listed.
-		if ( ! $edition['id'] || ! $edition['cover'] || isset( $covers[ $edition['cover'] ] ) ) {
+		if ( ! $edition['id'] || ! $edition['cover'] ) {
 			continue;
 		}
 
-		$covers[ $edition['cover'] ] = true;
-		$editions[]                  = $edition;
+		$fingerprint = get_cover_fingerprint( $edition['cover'], isset( $raw_edition['image'] ) && is_array( $raw_edition['image'] ) ? $raw_edition['image'] : array() );
+
+		if ( isset( $covers[ $fingerprint ] ) ) {
+			continue;
+		}
+
+		$covers[ $fingerprint ] = true;
+		$editions[]             = $edition;
 	}
 
 	set_transient( $cache_key, $editions, DAY_IN_SECONDS );
