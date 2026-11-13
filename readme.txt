@@ -43,7 +43,7 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 
 = Blocks and shortcodes =
 
-* **Not on the block editor?** Every block also has a shortcode, for classic themes, widgets and templates: `[endpaper_book url="https://hardcover.app/books/…"]`, `[endpaper_reading_list status="reading"]` and `[endpaper_reading_goal]`. They choose what to show, and your theme decides how it looks.
+* **Not on the block editor?** Every block also has a shortcode, for classic themes, widgets and templates: `[endpaper_book url="https://hardcover.app/books/…"]`, `[endpaper_reading_list status="currently-reading"]` and `[endpaper_reading_goal]`. They choose what to show, and your theme decides how it looks.
 
 = For developers =
 

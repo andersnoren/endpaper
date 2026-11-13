@@ -602,7 +602,7 @@ try {
 	wp_set_current_user( 1 );
 
 	$endpaper_html = do_shortcode( '[endpaper_reading_list status="read" count="3" date="no" class="is-style-grid"]' );
-	endpaper_check( 'the reading list shortcode takes the status as a word, and the count', false !== strpos( $endpaper_html, 'endpaper-reading-list' ) && false !== strpos( do_shortcode( '[endpaper_reading_list status="want"]' ), 'endpaper-reading-list' ) );
+	endpaper_check( 'the reading list shortcode takes the status as a word, and the count', false !== strpos( do_shortcode( '[endpaper_reading_list status="currently-reading"]' ), 'endpaper-reading-list' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list' ) && false !== strpos( do_shortcode( '[endpaper_reading_list status="want-to-read"]' ), 'endpaper-reading-list' ) );
 	endpaper_check( 'the reading goal shortcode shows the goal that is running, or the one with the ID', false !== strpos( do_shortcode( '[endpaper_reading_goal class="is-style-bar"]' ), '34 of 50 books read' ) && false !== strpos( do_shortcode( '[endpaper_reading_goal goal="2" percent="yes" class="is-style-bar"]' ), '(100%)' ) && false === strpos( do_shortcode( '[endpaper_reading_goal title="no"]' ), 'endpaper-reading-goal__title' ) );
 	endpaper_check( 'the current goal is the one that is running now', 1 === Endpaper\get_current_goal()['id'] );
 

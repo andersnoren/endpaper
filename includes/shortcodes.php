@@ -144,9 +144,9 @@ function shortcode_book( $atts ) {
 function shortcode_reading_list( $atts ) {
 	$atts     = (array) $atts;
 	$statuses = array(
-		'reading' => 2,
-		'read'    => 3,
-		'want'    => 1,
+		'currently-reading' => 2,
+		'read'              => 3,
+		'want-to-read'      => 1,
 	);
 	$map      = array(
 		'count'    => array( 'count', 'int' ),
@@ -160,7 +160,7 @@ function shortcode_reading_list( $atts ) {
 	);
 
 	$attributes = get_shortcode_block_attributes( $atts, $map );
-	$status     = isset( $atts['status'] ) ? strtolower( trim( (string) $atts['status'] ) ) : 'reading';
+	$status     = isset( $atts['status'] ) ? strtolower( trim( (string) $atts['status'] ) ) : 'currently-reading';
 
 	if ( isset( $statuses[ $status ] ) ) {
 		$attributes['status'] = $statuses[ $status ];
