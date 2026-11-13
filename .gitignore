@@ -16,3 +16,6 @@
 .claude
 AGENTS.md
 CLAUDE.md
+
+# The zip for WordPress.org, made by bin/release.sh
+/dist/
