@@ -127,6 +127,9 @@
 	margin-top: 0;
 	min-width: 0;
 	padding-bottom: 1em;
+
+	/* The 1px the frame took, so the photo lines up with the covers. */
+	padding-inline-start: calc(0.5em + 1px);
 }
 
 .endpaper-book-search__scope .endpaper-book-search__text > :first-child {
