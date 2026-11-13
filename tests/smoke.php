@@ -582,8 +582,8 @@ try {
 	echo "The shortcodes\n";
 	delete_transient( Endpaper\cache_key( 'endpaper_slug_the-stand' ) );
 	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
-	$endpaper_html     = do_shortcode( '[endpaper_book url="https://hardcover.app/books/the-stand" shelf="yes" review="no" class="is-style-card"]' );
-	endpaper_check( 'the book shortcode finds the book from its Hardcover URL, and shows what it is told to', false !== strpos( $endpaper_html, 'Stephen King' ) && false !== strpos( $endpaper_html, 'is-style-card' ) && false === strpos( $endpaper_html, '/reviews/@' ) );
+	$endpaper_html     = do_shortcode( '[endpaper_book url="https://hardcover.app/books/the-stand" shelf="yes" review="no"]' );
+	endpaper_check( 'the book shortcode finds the book from its Hardcover URL, and shows what it is told to', false !== strpos( $endpaper_html, 'Stephen King' ) && false === strpos( $endpaper_html, '/reviews/@' ) );
 	$endpaper_requests = $GLOBALS['endpaper_api_requests'];
 	do_shortcode( '[endpaper_book url="https://hardcover.app/books/the-stand"]' );
 	endpaper_check( 'the book behind a URL is looked up once, then remembered', $endpaper_requests === $GLOBALS['endpaper_api_requests'] && 42 === absint( get_transient( Endpaper\cache_key( 'endpaper_slug_the-stand' ) ) ) );
@@ -601,14 +601,14 @@ try {
 	set_current_screen( 'dashboard' );
 	wp_set_current_user( 1 );
 
-	$endpaper_html = do_shortcode( '[endpaper_reading_list status="read" count="3" date="no" class="is-style-grid"]' );
+	$endpaper_html = do_shortcode( '[endpaper_reading_list status="read" count="3" date="no"]' );
 	endpaper_check( 'the reading list shortcode takes the status as a word, and the count', false !== strpos( do_shortcode( '[endpaper_reading_list status="currently-reading"]' ), 'endpaper-reading-list' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list' ) && false !== strpos( do_shortcode( '[endpaper_reading_list status="want-to-read"]' ), 'endpaper-reading-list' ) );
-	endpaper_check( 'the reading goal shortcode shows the goal that is running, or the one with the ID', false !== strpos( do_shortcode( '[endpaper_reading_goal class="is-style-bar"]' ), '34 of 50 books read' ) && false !== strpos( do_shortcode( '[endpaper_reading_goal goal="2" percent="yes" class="is-style-bar"]' ), '(100%)' ) && false === strpos( do_shortcode( '[endpaper_reading_goal title="no"]' ), 'endpaper-reading-goal__title' ) );
+	endpaper_check( 'the reading goal shortcode shows the goal that is running, or the one with the ID', false !== strpos( do_shortcode( '[endpaper_reading_goal]' ), '__number">34</span>' ) && false !== strpos( do_shortcode( '[endpaper_reading_goal goal="2"]' ), '__number">10,508</span>' ) && false === strpos( do_shortcode( '[endpaper_reading_goal title="no"]' ), 'endpaper-reading-goal__title' ) );
 	endpaper_check( 'the current goal is the one that is running now', 1 === Endpaper\get_current_goal()['id'] );
 
 	$endpaper_html = do_shortcode( '[endpaper_book id="42"]' );
 	endpaper_check( 'a shortcode in a classic theme loads the styles of the block', wp_style_is( 'endpaper-book-style', 'enqueued' ) || wp_style_is( 'endpaper-book-style', 'registered' ) );
-	endpaper_check( 'a class is cleaned before it is used', false === strpos( do_shortcode( '[endpaper_book id="42" class="x&quot;onload=1"]' ), 'onload=1"' ) );
+	endpaper_check( 'a shortcode takes no class, so the look is the block\'s own', 0 === preg_match( '/class="[^"]*\bmine\b/', do_shortcode( '[endpaper_book id="42" class="mine"]' ) ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
 	endpaper_check( 'a goal is a gauge unless it has the Bar style', false !== strpos( $endpaper_html, 'endpaper-reading-goal__gauge' ) && false !== strpos( $endpaper_html, 'endpaper-reading-goal--gauge' ) && false === strpos( $endpaper_html, '<progress' ) && false !== strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), '<progress' ) && false === strpos( do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"className":"is-style-bar"} /-->' ), 'endpaper-reading-goal--gauge' ) );

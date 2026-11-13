@@ -42,13 +42,13 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 ## Shortcodes
 
-For classic themes and places where blocks cannot go, such as a widget or a template, each block has a shortcode. They show the same thing as the blocks and only choose what to show. How it looks is up to the theme: add a block style with `class`, such as `class="is-style-card"`. Yes/no options take `yes`, `no`, `true`, `false`, `1` or `0`.
+For classic themes and places where blocks cannot go, such as a widget or a template, each block has a shortcode. They show the same thing as the blocks and only choose what to show. How it looks is up to the theme. Yes/no options take `yes`, `no`, `true`, `false`, `1` or `0`.
 
 | Shortcode | Options |
 | --- | --- |
-| `[endpaper_book url="https://hardcover.app/books/the-stand"]` | `url` or `id` (the book), `cover`, `authors`, `meta`, `rating`, `my_rating`, `shelf`, `progress`, `description`, `review`, `credit`, `link`, `class` |
-| `[endpaper_reading_list status="currently-reading" count="5"]` | `status` (`currently-reading`, `read` or `want-to-read`), `count`, `cover`, `authors`, `rating`, `date`, `progress`, `credit`, `link`, `class` |
-| `[endpaper_reading_goal]` | `goal` (an ID; without it, the goal that is running now), `title`, `days`, `percent`, `credit`, `class` |
+| `[endpaper_book url="https://hardcover.app/books/the-stand"]` | `url` or `id` (the book), `cover`, `authors`, `meta`, `rating`, `my_rating`, `shelf`, `progress`, `description`, `review`, `credit`, `link` |
+| `[endpaper_reading_list status="currently-reading" count="5"]` | `status` (`currently-reading`, `read` or `want-to-read`), `count`, `cover`, `authors`, `rating`, `date`, `progress`, `credit`, `link` |
+| `[endpaper_reading_goal]` | `goal` (an ID; without it, the goal that is running now), `title`, `days`, `percent`, `credit` |
 
 The Reading List and Reading Goal show your own Hardcover account, so they take no URL. A book at a URL is looked up in the background the first time, so it shows from the next page view.
 

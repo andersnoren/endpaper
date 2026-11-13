@@ -3,8 +3,7 @@
  * Shortcodes, for themes and places where blocks cannot be used.
  *
  * Each shortcode renders the block of the same kind, so they look and behave
- * the same. They only choose what to show: how it looks is the theme's job,
- * with the class attribute for the block's styles, such as is-style-card.
+ * the same. They only choose what to show: how it looks is the theme's job.
  *
  * @package Endpaper
  */
@@ -55,10 +54,6 @@ function get_shortcode_block_attributes( $atts, $map ) {
 		} else {
 			$attributes[ $attribute ] = sanitize_text_field( $atts[ $name ] );
 		}
-	}
-
-	if ( ! empty( $atts['class'] ) ) {
-		$attributes['className'] = implode( ' ', array_map( 'sanitize_html_class', preg_split( '/\s+/', trim( $atts['class'] ) ) ) );
 	}
 
 	return $attributes;
