@@ -118,10 +118,18 @@
 	margin-top: 1em;
 }
 
+/* Heading the books, the author is a label, not a button: no frame, only
+   a line under it, and a bold name like the titles below. */
 .endpaper-book-search__scope .endpaper-book-search__author {
+	border-width: 0 0 1px;
+	border-radius: 0;
 	flex: 1 1 auto;
 	margin-top: 0;
 	min-width: 0;
+}
+
+.endpaper-book-search__scope .endpaper-book-search__text > :first-child {
+	font-weight: 600;
 }
 
 .endpaper-book-search__back.components-button {
