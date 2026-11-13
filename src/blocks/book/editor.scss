@@ -245,6 +245,14 @@
 	width: 100%;
 }
 
+/*
+ * With the cover above and the text centered or at the end, the text column
+ * is only as wide as what is in it, and bars have no width of their own.
+ */
+.endpaper-book-placeholder .endpaper-book__content {
+	width: 100%;
+}
+
 .endpaper-book-placeholder__text {
 	display: flex;
 	flex-direction: column;
