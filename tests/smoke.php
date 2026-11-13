@@ -608,7 +608,8 @@ try {
 	WP_Theme_JSON_Resolver::clean_cached_data();
 	\Endpaper\clear_global_style_cache();
 	endpaper_check( 'the big number takes the font of the theme\'s headings', false !== strpos( $endpaper_html, '--endpaper-heading-font-family: &quot;Playfair Display&quot;, serif;' ) || false !== strpos( $endpaper_html, '--endpaper-heading-font-family: "Playfair Display", serif;' ) );
-	endpaper_check( 'and its weight and letter spacing', false !== strpos( $endpaper_html, '--endpaper-heading-font-weight: 400;' ) && false !== strpos( $endpaper_html, '--endpaper-heading-letter-spacing: -0.02em;' ) );
+	// WordPress 7.1 leaves the semicolon off the last value in a style attribute, so the value may end in a quote.
+	endpaper_check( 'and its weight and letter spacing', false !== strpos( $endpaper_html, '--endpaper-heading-font-weight: 400;' ) && 1 === preg_match( '/--endpaper-heading-letter-spacing: -0\.02em[;"]/', $endpaper_html ) );
 	$endpaper_block_headings = static function ( $theme_json ) {
 		return $theme_json->update_with(
 			array(
