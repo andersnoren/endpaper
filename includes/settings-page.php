@@ -85,7 +85,7 @@ function enqueue_settings_styles( $hook_suffix ) {
 add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_settings_styles' );
 
 /**
- * Outputs the notice that says whether the key works.
+ * Outputs the notice that says whether the key works, above the settings.
  *
  * @return void
  */
@@ -205,12 +205,12 @@ function render_settings_page() {
 			<div class="notice notice-warning inline is-dismissible"><p><?php esc_html_e( 'The cache was not cleared, because there is no working API key.', 'endpaper' ); ?></p></div>
 		<?php endif; ?>
 
+		<?php the_connection_notice(); ?>
+
 		<div class="endpaper-settings__column">
 
 			<section class="endpaper-card endpaper-card--connection" aria-labelledby="endpaper-connection-title">
 				<h2 id="endpaper-connection-title"><?php esc_html_e( 'Connection', 'endpaper' ); ?></h2>
-
-				<?php the_connection_notice(); ?>
 
 				<?php if ( ! $has_token ) : ?>
 					<?php the_key_steps(); ?>
