@@ -76,7 +76,7 @@ A few things `theme.json` has no setting for, such as the accent color and the o
 			"endpaper": {
 				"accent": "var(--wp--preset--color--primary)",
 				"coverRadius": "4px",
-				"mutedText": 0.75
+				"mutedText": 0.85
 			}
 		}
 	}
@@ -85,8 +85,8 @@ A few things `theme.json` has no setting for, such as the accent color and the o
 
 - `accent` is the accent color, used for the reading progress bar, the rating stars and the shelf label. Without it, the blocks pick one from the theme’s palette: the first of `accent`, `accent-1` to `accent-6` and `primary` that stands out from the background, with a contrast of at least 3:1. If none does, or the theme has no accent colors, they use the text color.
 - `coverRadius` is the corner radius of book covers. Without it, the radius is 4px.
-- `mutedText` is the opacity of secondary text, such as the date of a review. The default is 0.75.
-- `mutedElement` is the opacity of small marks, such as the dots between facts and the line beside a quote. The default is 0.33.
+- `mutedText` is the opacity of secondary text, such as the date of a review. The default is 0.85.
+- `mutedElement` is the opacity of small marks, such as the dots between facts and the line beside a quote. The default is 0.5.
 - `hover` is the opacity links and covers fade to under the pointer. The default is 0.75.
 - `logoHover` is the opacity the Hardcover logo fades to under the pointer. The default is 0.5.
 - `accentFaded` is how strong the accent color is as the background of the shelf label. The default is 0.15.

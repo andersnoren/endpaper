@@ -35,8 +35,8 @@ $track-color: color-mix(in srgb, currentcolor 20%, transparent);
  * - Accent faded is how much of the accent color the shelf label has as its
  *   background.
  */
-$muted-opacity-text: var(--endpaper-muted-text, var(--wp--custom--endpaper--muted-text, 0.75));
-$muted-opacity-element: var(--endpaper-muted-element, var(--wp--custom--endpaper--muted-element, 0.33));
+$muted-opacity-text: var(--endpaper-muted-text, var(--wp--custom--endpaper--muted-text, 0.85));
+$muted-opacity-element: var(--endpaper-muted-element, var(--wp--custom--endpaper--muted-element, 0.5));
 $hover-opacity: var(--endpaper-hover, var(--wp--custom--endpaper--hover, 0.75));
 $logo-hover-opacity: var(--endpaper-logo-hover, var(--wp--custom--endpaper--logo-hover, 0.5));
 $accent-faded-opacity: var(--endpaper-accent-faded, var(--wp--custom--endpaper--accent-faded, 0.15));
@@ -60,14 +60,14 @@ $text-lightness: "(0.2126 * r + 0.7152 * g + 0.0722 * b) / 255";
  * Secondary text, faded only as far as the text color can take.
  *
  * Text that is nearly black or nearly white stands on a background at the
- * other end, so it stays readable at 75%. The closer the text color is to a
+ * other end, so it stays readable at 85%. The closer the text color is to a
  * middle tone, the less contrast it has to spare, and the less it is faded:
  * a mid-gray is not faded at all. With black text on white, or white on
  * black, that keeps the faded text above a contrast of 4.5 to 1 for as long
  * as the text color itself is.
  *
  * Browsers that cannot work with the text color this way fade all secondary
- * text to 75%, as before.
+ * text to 85%.
  *
  * The color is set as the fill of the text, not as its color. An element
  * whose own color is worked out from the color it inherits is not updated by
