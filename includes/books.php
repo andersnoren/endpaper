@@ -666,7 +666,7 @@ function search_author( $term ) {
 	}
 
 	$data = api_request(
-		'query EndpaperAuthorSearch($query: String!) { search(query: $query, query_type: "Author", per_page: 5, page: 1) { results } }',
+		'query EndpaperAuthorSearch($query: String!) { search(query: $query, query_type: "Author", per_page: 20, page: 1) { results } }',
 		array( 'query' => $term )
 	);
 
@@ -682,7 +682,9 @@ function search_author( $term ) {
 
 	$hits   = isset( $results['hits'] ) && is_array( $results['hits'] ) ? $results['hits'] : array();
 	$author = array();
+	$exact  = false;
 
+	// A name that is exactly what was typed wins. Otherwise the match with the most books does, which is the one people mean.
 	foreach ( $hits as $hit ) {
 		$document  = isset( $hit['document'] ) && is_array( $hit['document'] ) ? $hit['document'] : $hit;
 		$author_id = isset( $document['id'] ) ? absint( $document['id'] ) : 0;
@@ -699,15 +701,24 @@ function search_author( $term ) {
 		}
 
 		foreach ( $names as $candidate ) {
-			if ( is_name_match( $words, $candidate ) ) {
+			if ( ! is_name_match( $words, $candidate ) ) {
+				continue;
+			}
+
+			$candidate_words = get_name_words( $candidate );
+			$is_exact        = ! array_diff( $words, $candidate_words ) && ! array_diff( $candidate_words, $words );
+			$books           = isset( $document['books_count'] ) ? absint( $document['books_count'] ) : 0;
+
+			if ( ! $author || ( $is_exact && ! $exact ) || ( $is_exact === $exact && $books > $author['books'] ) ) {
 				$author = array(
 					'id'    => $author_id,
 					'name'  => $name,
-					'books' => isset( $document['books_count'] ) ? absint( $document['books_count'] ) : 0,
+					'books' => $books,
 				);
-
-				break 2;
+				$exact  = $is_exact;
 			}
+
+			break;
 		}
 	}
 
