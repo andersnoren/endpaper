@@ -18,6 +18,11 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 ## The Book block
 
+<p>
+  <img src=".wordpress-org/screenshot-1.png" alt="The Book block, showing Frankenstein" width="49%">
+  <img src=".wordpress-org/screenshot-3.png" alt="Searching Hardcover for a book or an author in the editor" width="49%">
+</p>
+
 - Find a book by title, author or ISBN, or paste a link to its Hardcover page. A link on a line of its own in the editor becomes a Book block.
 - Shows the cover, title, authors, description, year, page count and Hardcover rating. Optionally adds your shelf, your rating and your reading progress.
 - Can show your own review in place of the description, with a link to it on Hardcover. A review marked as having spoilers stays closed until it is opened.
@@ -26,7 +31,14 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Follows the block’s font size and text color, and supports the color, typography, spacing, border and shadow settings in the editor.
 - Can credit Hardcover with their logo, which is off until you switch it on.
 
+![The Book block in the Card style, with different colors, fonts and covers](.wordpress-org/screenshot-2.png)
+
 ## The Reading List block
+
+<p>
+  <img src=".wordpress-org/screenshot-4.png" alt="The Reading List block, as a list" width="49%">
+  <img src=".wordpress-org/screenshot-5.png" alt="The Reading List block, as a grid" width="49%">
+</p>
 
 - Shows books from your own library: the ones you are currently reading, have read or want to read. Ready-made variations for each are in the block inserter.
 - A list or a grid of covers with up to six columns, and up to 20 books. Each book shows its cover, title, authors, your rating, the date you finished it and your progress, and each part can be switched off.
@@ -34,6 +46,10 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Only books that are public on Hardcover are shown.
 
 ## The Reading Goal block
+
+<p>
+  <img src=".wordpress-org/screenshot-6.png" alt="The Reading Goal block, as a gauge" width="49%">
+</p>
 
 - Shows how far along you are on one of your public Hardcover reading goals, chosen in the block settings: the title, the count (books, pages or hours), the days left and, optionally, the percentage. A goal that is reached says so.
 - Two styles: **Gauge**, a half circle with the count in the middle (the default), and **Bar**.
@@ -57,6 +73,8 @@ The Book shortcode needs the address of a book on Hardcover. The first time an a
 Two patterns are included, in the Endpaper category of the block inserter: **Currently reading**, a heading with the books you are reading now, and **Recently read**, a heading with the books you last finished. Both are lists of three.
 
 ## The settings screen
+
+![The Endpaper settings screen](.wordpress-org/screenshot-7.png)
 
 Under Settings, Endpaper:
 
