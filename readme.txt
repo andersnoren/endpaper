@@ -20,7 +20,7 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 
 * **Embed any book.** Search Hardcover by title, author or ISBN, or paste a link to the book’s page on a line of its own, and it becomes a Book block. You get the cover, title, authors, a description, the year, the page count and the Hardcover rating.
 * **Add your own take.** Show your rating, which of your shelves the book is on and how far you have read. Or let your own review take the place of the description, with a link to it on Hardcover. Reviews keep their headings, quotes and lists, and a review with spoilers stays closed until a visitor opens it.
-* **Choose the right cover.** A book shows the cover of your own edition when it is in your library, and you can pick the cover of any other edition.
+* **Choose the right cover.** A book shows the cover of your own edition when it is in your library, and you can pick the cover of any other edition in the block settings.
 * **Make it fit the page.** Let a book sit quietly in your text, or lift it onto a soft card with rounded corners. Put the cover where it reads best, beside the text or above it, in the size you like. Then make it yours in the editor: the colors and the typography are all yours to change.
 
 = Show what you are reading =
