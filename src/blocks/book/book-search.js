@@ -607,6 +607,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 				<div className="endpaper-book-search__scope">
 					<Button
 						className="endpaper-book-search__back"
+						size="compact"
 						label={ __( 'Back to results', 'endpaper' ) }
 						onClick={ closeAuthor }
 						icon={
