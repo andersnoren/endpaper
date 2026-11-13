@@ -50,7 +50,7 @@ For classic themes and places where blocks cannot go, such as a widget or a temp
 | `[endpaper_reading_list status="currently-reading" count="5"]` | `status` (`currently-reading`, `read` or `want-to-read`), `count`, `cover`, `authors`, `rating`, `date`, `progress`, `credit`, `link` |
 | `[endpaper_reading_goal]` | `goal` (an ID; without it, the goal that is running now), `style` (`gauge` or `bar`), `title`, `days`, `percent`, `credit` |
 
-The Reading List and Reading Goal show your own Hardcover account, so they take no URL. A book at a URL is looked up in the background the first time, so it shows from the next page view.
+The Book shortcode needs the address of a book on Hardcover. The first time an address is used, the book is looked up in the background, so it appears from the next page view. The Reading List and Reading Goal shortcodes show your own Hardcover account, so they need no address.
 
 ## Patterns
 
