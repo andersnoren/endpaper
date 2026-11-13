@@ -76,7 +76,6 @@
 			"gradients": true,
 			"link": true,
 			"heading": true,
-			"__experimentalSkipSerialization": [ "background", "gradients" ],
 			"__experimentalDefaultControls": {
 				"background": true,
 				"text": true,
@@ -87,7 +86,6 @@
 			"margin": true,
 			"padding": true,
 			"blockGap": true,
-			"__experimentalSkipSerialization": [ "padding" ],
 			"__experimentalDefaultControls": {
 				"blockGap": true
 			}
@@ -110,7 +108,6 @@
 			"color": true,
 			"width": true,
 			"style": true,
-			"__experimentalSkipSerialization": true,
 			"__experimentalDefaultControls": {
 				"radius": true,
 				"color": true,
@@ -118,20 +115,7 @@
 				"style": true
 			}
 		},
-		"shadow": {
-			"__experimentalSkipSerialization": true
-		}
-	},
-	"selectors": {
-		"root": ".wp-block-endpaper-reading-list",
-		"border": ".wp-block-endpaper-reading-list .endpaper-reading-list__card",
-		"shadow": ".wp-block-endpaper-reading-list .endpaper-reading-list__card",
-		"color": {
-			"background": ".wp-block-endpaper-reading-list .endpaper-reading-list__card"
-		},
-		"spacing": {
-			"padding": ".wp-block-endpaper-reading-list .endpaper-reading-list__card"
-		}
+		"shadow": true
 	},
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",

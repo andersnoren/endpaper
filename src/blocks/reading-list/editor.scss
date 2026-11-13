@@ -6,12 +6,23 @@
  * In the editor the block is there twice: the editor's own wrapper, with the
  * block's settings on it, and inside it the preview from the server, which
  * has a wrapper of its own. The inner one must not apply the block's default
- * text size and margin again, or it would undo the settings on the outer one.
+ * text size and margin again, or it would undo the settings on the outer one,
+ * and the frame (border, background, padding, shadow) is on the outer one only.
  */
 .wp-block-endpaper-reading-list .wp-block-endpaper-reading-list {
+	background: none;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
 	font-size: inherit;
 	line-height: inherit;
 	margin: 0;
+	padding: 0;
+}
+
+/* The editor's wrapper holds the preview, so it is not laid out as the list. */
+.block-editor-block-list__block.wp-block-endpaper-reading-list {
+	display: block;
 }
 
 /* Keep links in the preview from navigating away from the editor. */

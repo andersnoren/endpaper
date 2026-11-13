@@ -24,6 +24,7 @@ import AccentColorControl from '../../components/accent-color-control';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
 import RefreshButton from '../../components/refresh-button';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
+import hasFrame from '../../utils/has-frame';
 import metadata from './block.json';
 import './editor.scss';
 
@@ -125,6 +126,9 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 
 	// The preview is rendered without the Block spacing setting, so the gap is set here.
 	const blockProps = useBlockProps( {
+		className: hasFrame( attributes )
+			? 'endpaper-reading-list--framed'
+			: undefined,
 		style: {
 			'--endpaper-gap': getGapValue(
 				attributes.style?.spacing?.blockGap
@@ -255,7 +259,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 				<ServerSideRender
 					key={ refreshCount }
 					block={ metadata.name }
-					attributes={ getPreviewAttributes( attributes ) }
+					attributes={ getPreviewAttributes( attributes, false ) }
 				/>
 			</div>
 		</>

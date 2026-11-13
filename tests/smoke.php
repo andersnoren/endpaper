@@ -523,7 +523,7 @@ try {
 	}
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid","titleLevel":3,"style":{"border":{"width":"1px"},"spacing":{"blockGap":"0"}}} /-->' );
-	endpaper_check( 'the grid renders, framed', false !== strpos( $endpaper_html, 'endpaper-reading-list--grid' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list__card--framed' ) );
+	endpaper_check( 'the grid renders, framed', false !== strpos( $endpaper_html, 'endpaper-reading-list--grid' ) && false !== strpos( $endpaper_html, 'endpaper-reading-list--framed' ) );
 	endpaper_check( 'a rating is shown as stars', false !== strpos( $endpaper_html, 'endpaper-icon--star-half' ) && false !== strpos( $endpaper_html, 'Rated 4.5 out of 5' ) );
 	endpaper_check( 'a book without a cover gets a placeholder', false !== strpos( $endpaper_html, 'endpaper-cover-placeholder' ) );
 	endpaper_check( 'the cover of the edition in the library is used', 1 === substr_count( $endpaper_html, 'edition-list.jpg' ) );
