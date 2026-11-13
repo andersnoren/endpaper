@@ -154,6 +154,7 @@
 
 .endpaper-disclosure code {
 	font-size: 12px;
+	overflow-wrap: anywhere;
 }
 
 /* The blocks: a box for each, with its icon, what it shows and how to add it. */

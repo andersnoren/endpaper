@@ -525,32 +525,32 @@ function render_settings_page() {
 				the_faq_item(
 					__( 'Can I use Endpaper without the block editor?', 'endpaper' ),
 					array(
-						__( 'Yes. Each block has a shortcode that shows the same thing, for classic themes, widgets and templates. Put it in a Shortcode block, a classic editor or a text widget. A shortcode only chooses what to show: how it looks is up to your theme. Add a block style with class, for example class="is-style-card".', 'endpaper' ),
-						__( 'Options that show or hide a part take yes or no, for example cover="no".', 'endpaper' ),
+						__( 'Yes. Each block has a shortcode that shows the same thing, for classic themes, widgets and templates. Put it in a Shortcode block, a classic editor or a text widget. A shortcode only chooses what to show: how it looks is up to your theme. Add a block style with `class`, for example `class="is-style-card"`.', 'endpaper' ),
+						__( 'Options that show or hide a part take yes or no, for example `cover="no"`.', 'endpaper' ),
 					)
 				);
 
 				the_faq_item(
 					__( 'How do I show a book?', 'endpaper' ),
 					array(
-						__( '[endpaper_book url="https://hardcover.app/books/the-stand"] shows the book at that Hardcover address. The first time, the book is looked up in the background, so it shows from the next page view.', 'endpaper' ),
-						__( 'Options: cover, authors, meta, rating, my_rating, shelf, progress, description, review, credit, link and class.', 'endpaper' ),
+						__( '`[endpaper_book url="https://hardcover.app/books/the-stand"]` shows the book at that Hardcover address. The first time, the book is looked up in the background, so it shows from the next page view.', 'endpaper' ),
+						__( 'Options: `cover`, `authors`, `meta`, `rating`, `my_rating`, `shelf`, `progress`, `description`, `review`, `credit`, `link`, `class`.', 'endpaper' ),
 					)
 				);
 
 				the_faq_item(
 					__( 'How do I show what I am reading?', 'endpaper' ),
 					array(
-						__( '[endpaper_reading_list status="currently-reading" count="5"] shows books from your Hardcover account. The status is currently-reading, read or want-to-read.', 'endpaper' ),
-						__( 'Options: count, cover, authors, rating, date, progress, credit, link and class.', 'endpaper' ),
+						__( '`[endpaper_reading_list status="currently-reading" count="5"]` shows books from your Hardcover account. The status is `currently-reading`, `read` or `want-to-read`.', 'endpaper' ),
+						__( 'Options: `count`, `cover`, `authors`, `rating`, `date`, `progress`, `credit`, `link`, `class`.', 'endpaper' ),
 					)
 				);
 
 				the_faq_item(
 					__( 'How do I show my reading goal?', 'endpaper' ),
 					array(
-						__( '[endpaper_reading_goal] shows the goal that is running now. To show another one, add its number: [endpaper_reading_goal goal="123"]. Only public goals can be shown.', 'endpaper' ),
-						__( 'Options: goal, title, days, percent, credit and class.', 'endpaper' ),
+						__( '`[endpaper_reading_goal]` shows the goal that is running now. To show another one, add its number: `[endpaper_reading_goal goal="123"]`. Only public goals can be shown.', 'endpaper' ),
+						__( 'Options: `goal`, `title`, `days`, `percent`, `credit`, `class`.', 'endpaper' ),
 					)
 				);
 				?>
@@ -746,14 +746,15 @@ function render_settings_page() {
  * Outputs a question on the settings screen, with an answer that opens when it is clicked.
  *
  * @param string   $question   The question.
- * @param string[] $paragraphs The answer, one paragraph at a time.
+ * @param string[] $paragraphs The answer, one paragraph at a time. Text between backticks is shown as code.
  * @return void
  */
 function the_faq_item( $question, $paragraphs ) {
 	echo '<details class="endpaper-disclosure"><summary>' . esc_html( $question ) . '</summary>';
 
 	foreach ( $paragraphs as $paragraph ) {
-		echo '<p>' . esc_html( $paragraph ) . '</p>';
+		// Text between backticks is code.
+		echo '<p>' . preg_replace( '/`([^`]+)`/', '<code>$1</code>', esc_html( $paragraph ) ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above, and only code tags are added.
 	}
 
 	echo '</details>';
