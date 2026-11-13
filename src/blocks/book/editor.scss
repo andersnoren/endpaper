@@ -99,12 +99,22 @@
 	flex: 0 0 auto;
 }
 
-.endpaper-book-search__back.components-button {
-	margin-top: 0.75em;
+/* The back arrow and the heading share a line. */
+.endpaper-book-search__scope {
+	align-items: center;
+	display: flex;
+	gap: 0.25em;
+	margin-top: 1em;
 }
 
 .endpaper-book-search .endpaper-book-search__scope .endpaper-book-search__heading {
-	margin-top: 0.75em;
+	margin: 0;
+}
+
+/* The arrows point the other way in right-to-left languages. */
+[dir="rtl"] .endpaper-book-search__back svg,
+[dir="rtl"] .endpaper-book-search__chevron {
+	transform: scaleX(-1);
 }
 
 .endpaper-book-search__cover {
