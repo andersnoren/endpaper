@@ -21,13 +21,16 @@
  * By default the goal sits in the page without a frame. One that is given a
  * border, a background or a shadow gets room inside it, and rounded corners.
  */
-:where(.endpaper-reading-goal__card--framed) {
+:where(.endpaper-reading-goal--framed) {
 	border-radius: 0.75em;
 	padding: 1.5em;
 }
 
 .wp-block-endpaper-reading-goal {
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
 }
 
 /*
@@ -39,16 +42,9 @@
 }
 
 /* Spacing inside the block is set with gaps, not with the theme's margins. */
-.wp-block-endpaper-reading-goal .endpaper-reading-goal__card p,
+.wp-block-endpaper-reading-goal p,
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__title {
 	margin: 0;
-}
-
-.endpaper-reading-goal__card {
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	gap: 1em;
 }
 
 .wp-block-endpaper-reading-goal .endpaper-reading-goal__title {
@@ -159,7 +155,7 @@
  * characters, as the font is not known here, so view.js measures the real
  * width and fits it again.
  */
-.wp-block-endpaper-reading-goal.endpaper-reading-goal--gauge .endpaper-reading-goal__card {
+.wp-block-endpaper-reading-goal.endpaper-reading-goal--gauge {
 	align-items: center;
 	gap: 0;
 	text-align: center;

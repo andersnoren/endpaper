@@ -1,20 +1,19 @@
 /**
  * Returns the attributes to render a block's preview with.
  *
- * The block's wrapper in the editor already has the typography, margin and
- * extra class name applied, so those are left out to avoid applying them
- * twice. The style, such as is-style-gauge, is kept, since it decides what
- * the server renders. The settings that belong on the card, such as border and
- * padding, are kept too, unless the block's own wrapper has them (`framed`
- * is false), where leaving them in would frame the preview twice. The time of
+ * The block's wrapper in the editor already has the settings that belong on
+ * the block itself applied: typography, margin, extra class name, and the
+ * frame (border, background, padding and shadow). Those are left out of the
+ * preview, to avoid applying them twice. The style, such as is-style-gauge,
+ * is kept, since it decides what the server renders, and so are the text and
+ * heading colors, which the preview's own text and titles need. The time of
  * the last update from Hardcover is left out, since it only marks the post as
  * changed and does not change what is shown.
  *
- * @param {Object}  attributes Block attributes.
- * @param {boolean} framed     Whether the preview has the card's settings. True by default.
+ * @param {Object} attributes Block attributes.
  * @return {Object} The attributes for the preview.
  */
-export default function getPreviewAttributes( attributes, framed = true ) {
+export default function getPreviewAttributes( attributes ) {
 	const {
 		className,
 		fontFamily,
@@ -23,37 +22,31 @@ export default function getPreviewAttributes( attributes, framed = true ) {
 		style = {},
 		...rest
 	} = attributes;
-	const { elements = {}, spacing = {}, typography, ...restStyle } = style;
-	const headingElement = elements.heading
-		? { elements: { heading: elements.heading } }
-		: {};
-
-	if ( ! framed ) {
-		const { border, shadow, color = {}, ...unframedStyle } = restStyle;
-		const { background, gradient, ...textColor } = color;
-
-		for ( const name of [ 'borderColor', 'backgroundColor', 'gradient' ] ) {
-			delete rest[ name ];
-		}
-
-		return {
-			...rest,
-			...( getStyleClassName( className ) && {
-				className: getStyleClassName( className ),
-			} ),
-			style: { ...unframedStyle, ...headingElement, color: textColor },
-		};
-	}
-
+	const {
+		elements = {},
+		spacing,
+		typography,
+		border,
+		shadow,
+		color = {},
+		...restStyle
+	} = style;
+	const { background, gradient, ...textColor } = color;
 	const styleClassName = getStyleClassName( className );
+
+	for ( const name of [ 'borderColor', 'backgroundColor', 'gradient' ] ) {
+		delete rest[ name ];
+	}
 
 	return {
 		...rest,
 		...( styleClassName && { className: styleClassName } ),
 		style: {
 			...restStyle,
-			...headingElement,
-			spacing: { padding: spacing.padding },
+			...( elements.heading && {
+				elements: { heading: elements.heading },
+			} ),
+			color: textColor,
 		},
 	};
 }

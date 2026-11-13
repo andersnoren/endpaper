@@ -27,6 +27,7 @@ import AccentColorControl from '../../components/accent-color-control';
 import BlockIcon from '../../components/block-icon';
 import RefreshButton from '../../components/refresh-button';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
+import hasFrame from '../../utils/has-frame';
 import metadata from './block.json';
 import './editor.scss';
 
@@ -49,7 +50,11 @@ const TITLE_LEVELS = [ 0, 2, 3, 4, 5, 6 ];
  */
 export default function Edit( { attributes, clientId, setAttributes } ) {
 	const { goalId } = attributes;
-	const blockProps = useBlockProps();
+	const blockProps = useBlockProps( {
+		className: hasFrame( attributes )
+			? 'endpaper-reading-goal--framed'
+			: undefined,
+	} );
 	const [ goals, setGoals ] = useState( null );
 	const [ error, setError ] = useState( '' );
 

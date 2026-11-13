@@ -653,6 +653,10 @@ try {
 	$endpaper_book_color = \AndersNoren\Endpaper\get_heading_color_style( array(), 'endpaper/book' );
 	remove_filter( 'wp_theme_json_data_user', $endpaper_heading_color );
 	WP_Theme_JSON_Resolver::clean_cached_data();
+	$endpaper_goal_plain  = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1} /-->' );
+	$endpaper_goal_framed = do_blocks( '<!-- wp:endpaper/reading-goal {"goalId":1,"style":{"border":{"width":"1px"}}} /-->' );
+	endpaper_check( 'the goal has no frame unless it is given one, and then the block itself has it', false === strpos( $endpaper_goal_plain, 'endpaper-reading-goal--framed' ) && 1 === preg_match( '/<div [^>]*border-width:1px[^>]*endpaper-reading-goal--framed/', $endpaper_goal_framed ) );
+	endpaper_check( 'the goal has no inner card element', false === strpos( $endpaper_goal_framed, 'endpaper-reading-goal__card' ) );
 	endpaper_check( 'a heading color set for one block in theme.json is passed to its titles, the theme\'s global one is not', '--endpaper-heading-color: #aa0000;' === $endpaper_goal_color && '' === $endpaper_book_color );
 	endpaper_check( 'a heading color set on the block is passed to its titles', '--endpaper-heading-color: #00aa00;' === \AndersNoren\Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => '#00aa00' ) ) ) ) ), 'endpaper/book' ) );
 	endpaper_check( 'a heading color preset is passed as its variable', '--endpaper-heading-color: var(--wp--preset--color--accent-1);' === \AndersNoren\Endpaper\get_heading_color_style( array( 'style' => array( 'elements' => array( 'heading' => array( 'color' => array( 'text' => 'var:preset|color|accent-1' ) ) ) ) ), 'endpaper/book' ) );

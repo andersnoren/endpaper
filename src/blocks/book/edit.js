@@ -532,7 +532,7 @@ export default function Edit( {
 				<ServerSideRender
 					key={ refreshCount }
 					block={ metadata.name }
-					attributes={ getPreviewAttributes( attributes, false ) }
+					attributes={ getPreviewAttributes( attributes ) }
 					LoadingResponsePlaceholder={ ( { children } ) =>
 						children || (
 							<CardPlaceholder attributes={ attributes } />

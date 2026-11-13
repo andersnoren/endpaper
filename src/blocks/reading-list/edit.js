@@ -259,7 +259,7 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 				<ServerSideRender
 					key={ refreshCount }
 					block={ metadata.name }
-					attributes={ getPreviewAttributes( attributes, false ) }
+					attributes={ getPreviewAttributes( attributes ) }
 				/>
 			</div>
 		</>

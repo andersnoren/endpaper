@@ -12,9 +12,9 @@
 use function AndersNoren\Endpaper\format_date;
 use function AndersNoren\Endpaper\format_text;
 use function AndersNoren\Endpaper\get_accent_color_style;
-use function AndersNoren\Endpaper\get_heading_color_style;
 use function AndersNoren\Endpaper\get_block_gap_style;
 use function AndersNoren\Endpaper\get_cover_radius_style;
+use function AndersNoren\Endpaper\get_heading_color_style;
 use function AndersNoren\Endpaper\get_reading_list;
 use function AndersNoren\Endpaper\get_title_tag;
 use function AndersNoren\Endpaper\get_token_trouble;

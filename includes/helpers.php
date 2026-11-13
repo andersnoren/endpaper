@@ -514,71 +514,12 @@ function trim_markdown( $markdown, $length ) {
 }
 
 /**
- * Returns the inline styles for a block's card: its border, padding, background and shadow.
+ * Tells whether a block has been given a frame: a border, a background or a shadow.
  *
- * These come from the standard block settings, but they belong on the card
- * inside the block, not on the block's wrapper. WordPress is told not to
- * output them itself, and they are applied here instead.
+ * A framed block needs room between its edge and its contents.
  *
  * @param array $attributes Block attributes.
- * @return string CSS declarations, or an empty string.
- */
-function get_card_style( $attributes ) {
-	$style  = isset( $attributes['style'] ) && is_array( $attributes['style'] ) ? $attributes['style'] : array();
-	$styles = array();
-
-	$border = isset( $style['border'] ) && is_array( $style['border'] ) ? $style['border'] : array();
-
-	if ( ! empty( $attributes['borderColor'] ) ) {
-		$border['color'] = 'var:preset|color|' . $attributes['borderColor'];
-	}
-
-	if ( $border ) {
-		$styles['border'] = $border;
-	}
-
-	if ( isset( $style['spacing']['padding'] ) ) {
-		$styles['spacing'] = array( 'padding' => $style['spacing']['padding'] );
-	}
-
-	$color = array();
-
-	if ( ! empty( $attributes['backgroundColor'] ) ) {
-		$color['background'] = 'var:preset|color|' . $attributes['backgroundColor'];
-	} elseif ( isset( $style['color']['background'] ) ) {
-		$color['background'] = $style['color']['background'];
-	}
-
-	if ( ! empty( $attributes['gradient'] ) ) {
-		$color['gradient'] = 'var:preset|gradient|' . $attributes['gradient'];
-	} elseif ( isset( $style['color']['gradient'] ) ) {
-		$color['gradient'] = $style['color']['gradient'];
-	}
-
-	if ( $color ) {
-		$styles['color'] = $color;
-	}
-
-	if ( isset( $style['shadow'] ) ) {
-		$styles['shadow'] = $style['shadow'];
-	}
-
-	if ( ! $styles ) {
-		return '';
-	}
-
-	$result = wp_style_engine_get_styles( $styles );
-
-	return isset( $result['css'] ) ? $result['css'] : '';
-}
-
-/**
- * Tells whether a block's card has been given a frame: a border, a background or a shadow.
- *
- * A framed card needs room between its edge and its contents.
- *
- * @param array $attributes Block attributes.
- * @return bool Whether the card has a frame.
+ * @return bool Whether the block has a frame.
  */
 function has_card_frame( $attributes ) {
 	$style = isset( $attributes['style'] ) && is_array( $attributes['style'] ) ? $attributes['style'] : array();
