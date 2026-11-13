@@ -88,6 +88,8 @@
 }
 
 .endpaper-book-search__result.endpaper-book-search__author {
+	border-bottom: 1px solid color-mix(in srgb, currentcolor 10%, transparent);
+	border-radius: 0;
 	justify-content: space-between;
 	margin-top: 1em;
 }
