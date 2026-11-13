@@ -909,7 +909,11 @@ function render_settings_page() {
 						);
 						$endpaper_styles       = array();
 
-						foreach ( get_book_styles() as $endpaper_name => $endpaper_label ) {
+						// Our own styles come first, then the ones added by themes and plugins.
+						$endpaper_all_styles = get_book_styles();
+						$endpaper_all_styles = array_intersect_key( array_replace( array_flip( array_keys( $endpaper_drawn_styles ) ), $endpaper_all_styles ), $endpaper_all_styles );
+
+						foreach ( $endpaper_all_styles as $endpaper_name => $endpaper_label ) {
 							$endpaper_styles[ $endpaper_name ] = isset( $endpaper_drawn_styles[ $endpaper_name ] )
 								? $endpaper_drawn_styles[ $endpaper_name ]
 								: array(
