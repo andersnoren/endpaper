@@ -346,7 +346,7 @@ export default function Edit( {
 			help={ __( '0 shows everything.', 'endpaper' ) }
 			min={ 0 }
 			max={ 1000 }
-			step={ 20 }
+			step={ 10 }
 			value={ attributes[ attribute ] }
 			onChange={ ( value ) =>
 				setAttributes( { [ attribute ]: value || 0 } )
