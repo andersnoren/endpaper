@@ -27,7 +27,7 @@ Endpaper brings your reading life from [Hardcover](https://hardcover.app), the b
 
 * **Bring your Hardcover shelves along.** Your Currently Reading, Read and Want to Read shelves on Hardcover become a list or a grid of covers on your site, with up to six columns, and they stay up to date as you read. Ready-made versions are in the block inserter, and two patterns get you started.
 * **Show your progress.** Add how far you have read, your star ratings and the dates you finished. Each part is optional.
-* **Track a reading goal.** The Reading Goal block shows how far along you are on one of your Hardcover goals, counted in books, pages or hours, as a half-circle gauge or a progress bar. It shows the days left, and says so when you have reached the goal.
+* **Track a reading goal.** The Reading Goal block shows how far along you are on one of your Hardcover goals, counted in books, pages or hours, as a half-circle gauge or a progress bar. It shows the days left, and once you have reached the goal it says so instead.
 
 = Made to fit your theme =
 
