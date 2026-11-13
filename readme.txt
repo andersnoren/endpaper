@@ -22,7 +22,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 * **Embed any book.** Search Hardcover by title, author or ISBN, or paste a link to the book’s page on a line of its own, and it becomes a Book block. You get the cover, title, authors, a description, the year, the page count and the Hardcover rating.
 * **Add your own take.** Show your rating, which of your shelves the book is on and how far you have read. Or let your own review take the place of the description, with a link to it on Hardcover. Reviews keep their headings, quotes and lists, and a review with spoilers stays closed until a visitor opens it.
-* **Choose the right cover.** A book shows the cover of your own edition when it is in your library, and you can pick the cover of any other edition in the block settings.
+* **Choose the right cover.** A book shows the cover Hardcover shows for it, and you can pick the cover of any edition in the block settings.
 * **Make it fit the page.** Let a book sit quietly in your text, or lift it onto a soft card with rounded corners. Put the cover where it reads best, beside the text or above it, in the size you like. Then make it yours in the editor: the colors and the typography are all yours to change.
 
 = Show what you are reading =
@@ -128,7 +128,7 @@ Endpaper only shows goals that are public on Hardcover and not archived, and onl
 
 = Can I choose which cover a book has? =
 
-Yes. A book shows the cover of the edition in your library, if it is there, and otherwise Hardcover’s default cover for the book. To pick another edition’s cover, select the Book block and open “Cover” in the block settings.
+Yes. A book shows the same cover as its page on Hardcover. To pick the cover of another edition, select the Book block and open “Cover” in the block settings.
 
 = Where are book covers stored? =
 
@@ -150,7 +150,7 @@ Yes, with these filters:
 
 * `endpaper_cover_widths`: the widths covers are saved in, in pixels.
 * `endpaper_cover_quality`: the quality they are saved with, from 1 to 100. It is 80 to begin with.
-* `endpaper_reading_list_cover_source`: `book` (the default, the cover Hardcover shows for the book) or `edition` (the cover of the edition in your library) for the Reading List.
+* `endpaper_library_cover_source`: `book` (the default, the cover Hardcover shows for the book) or `edition` (the cover of the edition in your library) for the Book and Reading List blocks.
 * `endpaper_cover_max_bytes`: the largest cover, in bytes, that is downloaded. It is 15 MB to begin with.
 * `endpaper_import_covers`: return false to load covers from Hardcover and save nothing.
 * `endpaper_allow_remote_covers`: return false to never load a cover from Hardcover. A cover that cannot be saved is then a gray box.

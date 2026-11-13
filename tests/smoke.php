@@ -449,7 +449,14 @@ try {
 
 	$endpaper_html_plain = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"showUserRating":false} /-->' );
 	endpaper_check( 'the owner’s rating can be switched off', false === strpos( $endpaper_html_plain, 'endpaper-book__my-rating' ) );
-	endpaper_check( 'it uses the cover of the edition in the library', false !== strpos( $endpaper_html, 'edition-entry.jpg' ) && false === strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
+	endpaper_check( 'it uses the cover of the book, not the one of the edition in the library', false !== strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) && false === strpos( $endpaper_html, 'edition-entry.jpg' ) );
+	$endpaper_book_edition_source = static function () {
+		return 'edition';
+	};
+	add_filter( 'endpaper_library_cover_source', $endpaper_book_edition_source );
+	$endpaper_book_edition_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
+	remove_filter( 'endpaper_library_cover_source', $endpaper_book_edition_source );
+	endpaper_check( 'a site can ask for the cover of the edition in the library instead', false !== strpos( $endpaper_book_edition_html, 'edition-entry.jpg' ) );
 	endpaper_check( 'it leaves out the Hardcover logo unless that is switched on', false === strpos( $endpaper_html, 'endpaper-logo' ) && false === strpos( $endpaper_html, 'Powered by Hardcover' ) );
 
 	endpaper_check( 'the review is not shown unless it is switched on', false === strpos( $endpaper_html, 'A quiet, sharp book' ) );
@@ -532,10 +539,10 @@ try {
 	endpaper_check( 'a picked edition decides the cover', false !== strpos( $endpaper_html, 'edition-103.jpg' ) && false === strpos( $endpaper_html, 'edition-entry.jpg' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"editionId":900} /-->' );
-	endpaper_check( 'an edition of another book is ignored', false === strpos( $endpaper_html, 'edition-900.jpg' ) && false !== strpos( $endpaper_html, 'edition-entry.jpg' ) );
+	endpaper_check( 'an edition of another book is ignored', false === strpos( $endpaper_html, 'edition-900.jpg' ) && false !== strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42,"editionId":555} /-->' );
-	endpaper_check( 'an edition that no longer exists is ignored', false !== strpos( $endpaper_html, 'edition-entry.jpg' ) );
+	endpaper_check( 'an edition that no longer exists is ignored', false !== strpos( $endpaper_html, 'assets.hardcover.app/cover.jpg' ) );
 
 	echo "The Reading List block\n";
 
@@ -553,10 +560,10 @@ try {
 	$endpaper_edition_source = static function () {
 		return 'edition';
 	};
-	add_filter( 'endpaper_reading_list_cover_source', $endpaper_edition_source );
+	add_filter( 'endpaper_library_cover_source', $endpaper_edition_source );
 	clear_cache();
 	$endpaper_edition_html = do_blocks( '<!-- wp:endpaper/reading-list {"status":3,"layout":"grid","titleLevel":3} /-->' );
-	remove_filter( 'endpaper_reading_list_cover_source', $endpaper_edition_source );
+	remove_filter( 'endpaper_library_cover_source', $endpaper_edition_source );
 	clear_cache();
 	endpaper_check( 'a site can ask for the cover of the edition in the library instead', 1 === substr_count( $endpaper_edition_html, 'edition-list.jpg' ) );
 	endpaper_check( 'a spacing of zero gets a unit', false !== strpos( $endpaper_html, '--endpaper-gap: 0px' ) );
@@ -809,7 +816,7 @@ try {
 	echo "Saving covers\n";
 	wp_set_current_user( 0 );
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
-	endpaper_check( 'a cover that is not saved is loaded from Hardcover, without a referrer', false !== strpos( $endpaper_html, 'src="https://assets.hardcover.app/edition-entry.jpg"' ) && false !== strpos( $endpaper_html, 'referrerpolicy="no-referrer"' ) );
+	endpaper_check( 'a cover that is not saved is loaded from Hardcover, without a referrer', false !== strpos( $endpaper_html, 'src="https://assets.hardcover.app/cover.jpg"' ) && false !== strpos( $endpaper_html, 'referrerpolicy="no-referrer"' ) );
 
 	add_filter( 'endpaper_allow_remote_covers', '__return_false' );
 	$endpaper_html = do_blocks( '<!-- wp:endpaper/book {"bookId":42} /-->' );
@@ -822,7 +829,7 @@ try {
 		echo "  skip  this server cannot save images, so the rest of this part is left out\n";
 	} else {
 		$endpaper_cover_dir = get_cover_dir();
-		$endpaper_cover_url = 'https://assets.hardcover.app/edition-entry.jpg';
+		$endpaper_cover_url = 'https://assets.hardcover.app/cover.jpg';
 		$endpaper_cover_key = get_cover_key( $endpaper_cover_url );
 
 		$GLOBALS['endpaper_cover_downloads'] = 0;

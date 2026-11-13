@@ -28,6 +28,7 @@ use function Endpaper\get_token_trouble;
 use function Endpaper\has_card_frame;
 use function Endpaper\markdown_to_html;
 use function Endpaper\the_cover_image;
+use function Endpaper\use_edition_cover;
 use function Endpaper\the_editor_notice;
 use function Endpaper\the_hardcover_credit;
 use function Endpaper\the_progress_bar;
@@ -68,8 +69,8 @@ if ( is_wp_error( $endpaper_entry ) ) {
 	$endpaper_entry = array();
 }
 
-// The edition in the library can have another cover than the one Hardcover shows for the book.
-$endpaper_cover = ! empty( $endpaper_entry['cover'] ) ? $endpaper_entry['cover'] : $endpaper_book['cover'];
+// The edition in the library can have another cover than the one Hardcover shows for the book. It is only used if the site asks for it.
+$endpaper_cover = ! empty( $endpaper_entry['cover'] ) && use_edition_cover() ? $endpaper_entry['cover'] : $endpaper_book['cover'];
 
 // An edition picked in the editor comes first. It is only used if it still exists and belongs to this book.
 $endpaper_edition_id = isset( $attributes['editionId'] ) ? absint( $attributes['editionId'] ) : 0;

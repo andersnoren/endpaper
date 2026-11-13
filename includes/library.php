@@ -87,6 +87,24 @@ function normalize_library_entry( $raw ) {
 }
 
 /**
+ * Tells whether the cover of the edition in the library is shown, rather than the book's own cover.
+ *
+ * @return bool True if the library edition's cover is shown.
+ */
+function use_edition_cover() {
+	/**
+	 * Filters which cover the Book and Reading List blocks show for a book in your library.
+	 *
+	 * Hardcover gives every library entry an edition when the book is added, and its cover is
+	 * often not the one the book page shows. The default is the book's own cover, like on Hardcover.
+	 * A cover picked in the Book block's settings always wins.
+	 *
+	 * @param string $source Either `book` (the default) or `edition`, the cover of the edition in your library.
+	 */
+	return 'edition' === apply_filters( 'endpaper_library_cover_source', 'book' );
+}
+
+/**
  * Converts a raw library entry, with its book, into the shape Endpaper uses.
  *
  * @param array $raw Raw library entry.
@@ -96,17 +114,7 @@ function normalize_reading_list_entry( $raw ) {
 	$entry         = normalize_library_entry( $raw );
 	$entry['book'] = normalize_book( isset( $raw['book'] ) && is_array( $raw['book'] ) ? $raw['book'] : array() );
 
-	/**
-	 * Filters which cover the Reading List shows.
-	 *
-	 * Hardcover gives every library entry an edition when the book is added, and its cover is
-	 * often not the one the book page shows. The default is the book's own cover, like on Hardcover.
-	 *
-	 * @param string $source Either `book` (the default) or `edition`, the cover of the edition in your library.
-	 */
-	$source = apply_filters( 'endpaper_reading_list_cover_source', 'book' );
-
-	if ( 'edition' === $source && $entry['cover'] ) {
+	if ( use_edition_cover() && $entry['cover'] ) {
 		$entry['book']['cover'] = $entry['cover'];
 	}
 

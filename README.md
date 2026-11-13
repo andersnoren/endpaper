@@ -21,7 +21,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 - Find a book by title, author or ISBN, or paste a link to its Hardcover page. A link on a line of its own in the editor becomes a Book block.
 - Shows the cover, title, authors, description, year, page count and Hardcover rating. Optionally adds your shelf, your rating and your reading progress.
 - Can show your own review in place of the description, with a link to it on Hardcover. A review marked as having spoilers stays closed until it is opened.
-- Uses the cover of your edition when the book is in your library, and you can pick another edition’s cover in the block settings.
+- Uses the cover Hardcover shows for the book, and you can pick the cover of any edition in the block settings.
 - Cover size and position, text alignment, heading level, accent color and cover radius can all be changed. The Card style adds a light background, rounded corners and padding, and you choose the style new blocks start with under Settings, Endpaper.
 - Follows the block’s font size and text color, and supports the color, typography, spacing, border and shadow settings in the editor.
 - Can credit Hardcover with their logo, which is off until you switch it on.
@@ -145,7 +145,7 @@ Developers can change how covers are saved with filters, which are listed under 
 | `endpaper_backoff` | How long to wait after a failed request before asking Hardcover again, in seconds. Default `300`, at least 30. |
 | `endpaper_cover_widths` | The widths covers are saved in, in pixels. Default `[ 160, 320, 640 ]`. |
 | `endpaper_cover_quality` | The quality covers are saved with, from 1 to 100. Default `80`. |
-| `endpaper_reading_list_cover_source` | Which cover the Reading List shows: `book` (default, the cover Hardcover shows for the book) or `edition` (the cover of the edition in your library). Clear the cache under Settings, Endpaper after changing it. |
+| `endpaper_library_cover_source` | Which cover the Book and Reading List blocks show for a book in your library: `book` (default, the cover Hardcover shows for the book) or `edition` (the cover of the edition in your library). Clear the cache under Settings, Endpaper after changing it. |
 | `endpaper_cover_max_bytes` | The largest cover, in bytes, that is downloaded from Hardcover. Default 15 MB. |
 | `endpaper_import_covers` | Return `false` to load covers from Hardcover and save nothing. |
 | `endpaper_allow_remote_covers` | Return `false` to never load a cover from Hardcover. A cover that can’t be saved is then a placeholder. |
