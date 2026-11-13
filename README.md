@@ -18,35 +18,27 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 ## The Book block
 
-- Search Hardcover by title, author or ISBN, or paste a link to a book’s Hardcover page. A link pasted on a line of its own in the editor becomes a Book block. When the search is empty, it lists the last five books you picked in this browser.
-- Shows the book as a card: the cover, title, authors, a description, and a row with the publication year, page count and Hardcover rating.
-- Can also show which of your own Hardcover shelves the book is on, and your reading progress while you are reading it.
-- Can show your own review in place of the description, with its headings, bold text, quotes and lists, and a link to the review on Hardcover. A review that Hardcover marks as having spoilers is closed until it is opened. The review can be limited in length, and is cut on a whole paragraph where it can.
-- Uses the cover of the edition in your Hardcover library when the book is public there. You can pick the cover of another edition in the block’s settings.
-- Layout settings: the cover can be small, medium or large, and sit on the left, on the right or above the text. Text alignment (left, center or right) is in the block toolbar and applies to everything in the card. When a narrow card puts the cover above the text, the cover lines up with the text.
-- The Card style gives the book a light background, rounded corners and padding. Under Settings, Endpaper, you can choose which style new Book blocks start with. Blocks that already have a style keep it.
-- The heading level of the title, the accent color and the corner radius of the cover can be changed in the block settings.
-- Can credit Hardcover in the card, with their logo linked to the book there. The logo is off until you switch it on.
-- The other parts can be switched on or off. The description can be limited in length, and ends on a whole sentence where it can.
-- Sizes follow the block’s font size, and colors follow the text color, so the card fits light and dark designs alike.
-- Supports the color, typography, spacing, border and shadow settings in the block editor. The border, padding, background and shadow apply to the card.
+- Find a book by title, author or ISBN, or paste a link to its Hardcover page. A link on a line of its own in the editor becomes a Book block.
+- Shows the cover, title, authors, description, year, page count and Hardcover rating. Optionally adds your shelf, your rating and your reading progress.
+- Can show your own review in place of the description, with a link to it on Hardcover. A review marked as having spoilers stays closed until it is opened.
+- Uses the cover of your edition when the book is in your library, and you can pick another edition’s cover in the block settings.
+- Cover size and position, text alignment, title level, accent color and cover radius can all be changed. The Card style adds a light background, rounded corners and padding, and you choose the style new blocks start with under Settings, Endpaper.
+- Follows the block’s font size and text color, and supports the color, typography, spacing, border and shadow settings in the editor.
+- Can credit Hardcover with their logo, which is off until you switch it on.
 
 ## The Reading List block
 
-- Shows books from your own Hardcover library: the ones you are currently reading, have read, or want to read.
-- Comes with ready-made Currently Reading, Recently Read and Want to Read variations in the block inserter.
-- Can be shown as a list or as a grid of covers, with up to six columns. By default a column is never narrower than 10em, so a narrow space gets fewer columns, down to one.
-- Shows up to 20 books. For each book it shows the cover of your edition, the title, authors, your rating and the date you finished it, and your reading progress for books you are currently reading. Each part can be switched on or off.
-- The title’s heading level, the accent color and the corner radius of the covers can be changed in the block settings. Can credit Hardcover with their logo, which is off until you switch it on.
-- Only shows books that are public on Hardcover, so a book you keep private there never appears on your site.
+- Shows books from your own library: the ones you are currently reading, have read or want to read. Ready-made variations for each are in the block inserter.
+- A list or a grid of covers with up to six columns, and up to 20 books. Each book shows its cover, title, authors, your rating, the date you finished it and your progress, and each part can be switched off.
+- Title level, accent color and cover radius can be changed. Can credit Hardcover with their logo, which is off until you switch it on.
+- Only books that are public on Hardcover are shown.
 
 ## The Reading Goal block
 
-- Shows how far along you are on one of your reading goals on Hardcover. You choose the goal in the block settings. Only goals that are public on Hardcover can be shown, and not archived ones.
-- Shows the goal’s title, how much you have done of the target (books read, pages read or hours listened), and how many days are left. A goal that is reached says so instead. The percentage can be shown too.
-- Two styles: **Gauge**, a half circle with the count in the middle (the default), and **Bar**, a progress bar.
-- The days left are worked out again in the visitor’s browser, so the number is right on pages that are served from a cache.
-- Can credit Hardcover with their logo, which is off until you switch it on. The title’s heading level and the accent color can be changed in the block settings.
+- Shows how far along you are on one of your public Hardcover reading goals, chosen in the block settings: the title, the count (books, pages or hours), the days left and, optionally, the percentage. A goal that is reached says so.
+- Two styles: **Gauge**, a half circle with the count in the middle (the default), and **Bar**.
+- The days left are worked out in the visitor’s browser, so the number is right on cached pages.
+- Title level and accent color can be changed. Can credit Hardcover with their logo, which is off until you switch it on.
 
 ## Shortcodes
 
