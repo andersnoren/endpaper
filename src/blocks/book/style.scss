@@ -538,6 +538,14 @@
 	@include dot-after;
 }
 
+/*
+ * The rating and the number of ratings stay together. If the row is too narrow
+ * the whole rating moves down, instead of "(3,580 ratings)" breaking in two.
+ */
+.endpaper-book__rating {
+	white-space: nowrap;
+}
+
 /* The star after Hardcover's rating, with a little room before it. */
 .wp-block-endpaper-book .endpaper-book__rating .endpaper-icon {
 
