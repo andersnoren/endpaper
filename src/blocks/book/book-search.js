@@ -108,6 +108,37 @@ function Cover( { cover } ) {
 }
 
 /**
+ * How many authors are named under a result's title, before "and 12 more".
+ */
+const MAX_AUTHORS = 3;
+
+/**
+ * The authors of a result, for the line under the title.
+ *
+ * An anthology can have dozens of contributors, so only the first few are
+ * named. The rest are counted.
+ *
+ * @param {Object} book A search result.
+ * @return {{names: string, more: string}} The names to show, and the note about how many are left out, if any.
+ */
+function getAuthors( book ) {
+	const authors = book.authors || [];
+	const left = authors.length - MAX_AUTHORS;
+
+	return {
+		names: authors.slice( 0, MAX_AUTHORS ).join( ', ' ),
+		more:
+			left > 0
+				? sprintf(
+						/* translators: %d: number of authors that are not named. */
+						_n( 'and %d more', 'and %d more', left, 'endpaper' ),
+						left
+					)
+				: '',
+	};
+}
+
+/**
  * The year and the page count of a result, for the line under the title.
  *
  * @param {Object} book A search result.
@@ -147,29 +178,33 @@ function getFacts( book ) {
 function ResultList( { books, term, onPick } ) {
 	return (
 		<ul className="endpaper-book-search__results">
-			{ books.map( ( book ) => (
-				<li key={ book.id }>
-					<Button
-						className="endpaper-book-search__result"
-						onClick={ () => onPick( book ) }
-					>
-						<Cover cover={ book.cover } />
-						<span className="endpaper-book-search__text">
-							<span>{ highlight( book.title, term ) }</span>
-							<span className="endpaper-book-search__details">
-								{ highlight(
-									( book.authors || [] ).join( ', ' ),
-									term
-								) }
-								{ getFacts( book ).length > 0 &&
-									( book.authors || [] ).length > 0 &&
-									' · ' }
-								{ getFacts( book ).join( ' · ' ) }
+			{ books.map( ( book ) => {
+				const authors = getAuthors( book );
+				const facts = getFacts( book );
+
+				return (
+					<li key={ book.id }>
+						<Button
+							className="endpaper-book-search__result"
+							onClick={ () => onPick( book ) }
+						>
+							<Cover cover={ book.cover } />
+							<span className="endpaper-book-search__text">
+								<span>{ highlight( book.title, term ) }</span>
+								<span className="endpaper-book-search__details">
+									{ authors.names &&
+										highlight( authors.names, term ) }
+									{ authors.more && ` ${ authors.more }` }
+									{ authors.names &&
+										facts.length > 0 &&
+										' · ' }
+									{ facts.join( ' · ' ) }
+								</span>
 							</span>
-						</span>
-					</Button>
-				</li>
-			) ) }
+						</Button>
+					</li>
+				);
+			} ) }
 		</ul>
 	);
 }
