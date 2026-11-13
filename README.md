@@ -233,7 +233,7 @@ None of these let Endpaper change anything on Hardcover, or read anything you ha
 
 ## Development
 
-Install the tools once:
+The build and lint tools need Node 22.22 or newer (`.nvmrc` has the major version, so `nvm use` picks it). Install the tools once:
 
 ```sh
 npm install
