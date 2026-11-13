@@ -46,6 +46,7 @@
  * size, which is 13px.
  */
 .endpaper-book-search {
+	--endpaper-back-width: 44px;
 	--endpaper-cover-width: 44px;
 
 	width: 100%;
@@ -91,8 +92,13 @@
 
 /* The author is framed, to set it apart from the books under it. */
 .endpaper-book-search__result.endpaper-book-search__author {
+	align-items: center;
 	border: 1px solid var(--wpds-color-stroke-surface-neutral);
+	border-radius: 2px;
+	display: flex;
+	gap: 1em;
 	margin-top: 1em;
+	padding: 0.5em;
 }
 
 .endpaper-book-search__author .endpaper-book-search__text {
@@ -102,6 +108,33 @@
 .endpaper-book-search__chevron {
 	fill: currentcolor;
 	flex: 0 0 auto;
+}
+
+/* The way back sits to the left of the author, and the books under the
+   author are set in by the same width. */
+.endpaper-book-search__scope {
+	align-items: center;
+	display: flex;
+	margin-top: 1em;
+}
+
+.endpaper-book-search__scope .endpaper-book-search__author {
+	flex: 1 1 auto;
+	margin-top: 0;
+	min-width: 0;
+}
+
+.endpaper-book-search__back.components-button {
+	flex: 0 0 var(--endpaper-back-width);
+	justify-content: center;
+	padding: 0;
+	width: var(--endpaper-back-width);
+}
+
+.endpaper-book-search--author .endpaper-book-search__results,
+.endpaper-book-search--author .endpaper-book-search__more,
+.endpaper-book-search--author .endpaper-book-search__empty {
+	margin-inline-start: var(--endpaper-back-width);
 }
 
 /* Lines the chevron up with the search field's clear icon above it. */

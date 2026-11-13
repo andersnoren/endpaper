@@ -113,20 +113,18 @@ function Cover( { cover, className = '' } ) {
 
 /**
  * The author, as a row like a book's. In the results it opens the author's
- * books, and in the author's books it is the way back.
+ * books, and heading the author's books it is only a label.
  *
- * @param {Object}     props         Component props.
- * @param {Object}     props.author  The author: name, books and image.
- * @param {() => void} props.onClick Called when the row is pressed.
- * @param {boolean}    props.back    Whether the row leads back to the results.
+ * @param {Object}      props         Component props.
+ * @param {Object}      props.author  The author: name, books and image.
+ * @param {() => void=} props.onClick Called when the row is pressed. Without
+ *                                    it, the row is not a button.
  * @return {Element} The author row.
  */
-function AuthorRow( { author, onClick, back = false } ) {
+function AuthorRow( { author, onClick } ) {
 	let details = __( 'Author', 'endpaper' );
 
-	if ( back ) {
-		details = __( 'Back to results', 'endpaper' );
-	} else if ( author.books ) {
+	if ( author.books ) {
 		details = sprintf(
 			/* translators: %s: number of books. */
 			_n(
@@ -141,13 +139,10 @@ function AuthorRow( { author, onClick, back = false } ) {
 		);
 	}
 
-	return (
-		<Button
-			className={ `endpaper-book-search__result endpaper-book-search__author${
-				back ? ' endpaper-book-search__back' : ''
-			}` }
-			onClick={ onClick }
-		>
+	const className =
+		'endpaper-book-search__result endpaper-book-search__author';
+	const content = (
+		<>
 			{ author.image && (
 				<Cover
 					cover={ author.image }
@@ -166,6 +161,16 @@ function AuthorRow( { author, onClick, back = false } ) {
 					{ details }
 				</span>
 			</span>
+		</>
+	);
+
+	if ( ! onClick ) {
+		return <div className={ className }>{ content }</div>;
+	}
+
+	return (
+		<Button className={ className } onClick={ onClick }>
+			{ content }
 			<SVG
 				className="endpaper-book-search__chevron"
 				xmlns="http://www.w3.org/2000/svg"
@@ -175,13 +180,7 @@ function AuthorRow( { author, onClick, back = false } ) {
 				aria-hidden="true"
 				focusable="false"
 			>
-				<Path
-					d={
-						back
-							? 'M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z'
-							: 'M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1L16 12z'
-					}
-				/>
+				<Path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1L16 12z" />
 			</SVG>
 		</Button>
 	);
@@ -585,7 +584,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 		const items = Array.from(
 			wrapper.current?.querySelectorAll(
-				'.endpaper-book-search__back, .endpaper-book-search__author, .endpaper-book-search__results:not(.endpaper-book-search__results--loading) button, .endpaper-book-search__more'
+				'.endpaper-book-search__back, button.endpaper-book-search__author, .endpaper-book-search__results:not(.endpaper-book-search__results--loading) button, .endpaper-book-search__more'
 			) || []
 		);
 
@@ -668,7 +667,9 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		// The key press comes from the search field inside.
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<div
-			className="endpaper-book-search"
+			className={ `endpaper-book-search${
+				author ? ' endpaper-book-search--author' : ''
+			}` }
 			ref={ wrapper }
 			onKeyDown={ pickLink }
 		>
@@ -684,7 +685,27 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 			/>
 
 			{ author && (
-				<AuthorRow author={ author } onClick={ closeAuthor } back />
+				<div className="endpaper-book-search__scope">
+					<Button
+						className="endpaper-book-search__back"
+						label={ __( 'Back to results', 'endpaper' ) }
+						onClick={ closeAuthor }
+						icon={
+							<SVG
+								className="endpaper-book-search__chevron"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								width="24"
+								height="24"
+								aria-hidden="true"
+								focusable="false"
+							>
+								<Path d="M14.6 7l-1.2-1L8 12l5.4 6 1.2-1-4.6-5z" />
+							</SVG>
+						}
+					/>
+					<AuthorRow author={ author } />
+				</div>
 			) }
 
 			{ ! author && 'done' === status && authorMatch && (
