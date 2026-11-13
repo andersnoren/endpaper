@@ -159,7 +159,24 @@ add_filter(
 		}
 
 		if ( false !== strpos( $query, 'EndpaperSearch' ) ) {
-			return $respond( 200, array( 'data' => array( 'search' => array( 'results' => array( 'hits' => array( array( 'document' => $book ) ) ) ) ) ) );
+			// Like Hardcover's: the names list has everyone, the contributions say who did what.
+			$hit = $book + array(
+				'author_names'  => array( 'Stephen King', 'Philip Horne' ),
+				'contributions' => array(
+					array(
+						'author'       => array( 'name' => 'Stephen King' ),
+						'contribution' => 'Author',
+						'primary'      => true,
+					),
+					array(
+						'author'       => array( 'name' => 'Philip Horne' ),
+						'contribution' => 'Introduction',
+						'primary'      => false,
+					),
+				),
+			);
+
+			return $respond( 200, array( 'data' => array( 'search' => array( 'results' => array( 'hits' => array( array( 'document' => $hit ) ) ) ) ) ) );
 		}
 
 		if ( false !== strpos( $query, 'EndpaperEditions' ) ) {
@@ -364,6 +381,7 @@ try {
 
 	$endpaper_results = search_books( 'the stand' );
 	endpaper_check( 'the search returns a book', is_array( $endpaper_results ) && 1 === count( $endpaper_results ) );
+	endpaper_check( 'the search lists the main authors only, not who wrote an introduction', is_array( $endpaper_results ) && array( 'Stephen King' ) === $endpaper_results[0]['authors'] );
 
 	search_books( 'The Stand' );
 	endpaper_check( 'the same search again is answered from the cache', 1 === $GLOBALS['endpaper_search_requests'] );
