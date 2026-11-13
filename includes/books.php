@@ -652,7 +652,7 @@ function search_author( $term ) {
 		return array();
 	}
 
-	$cache_key = cache_key( 'endpaper_author_' . md5( implode( ' ', $words ) ) );
+	$cache_key = cache_key( 'endpaper_author_v2_' . md5( implode( ' ', $words ) ) );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
