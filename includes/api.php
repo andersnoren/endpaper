@@ -645,23 +645,74 @@ function normalize_edition( $raw ) {
 }
 
 /**
- * Returns what identifies a cover, to tell when two editions have the same one.
+ * Returns what a cover looks like, in numbers: its proportions and its colors.
  *
- * The same artwork is often uploaded again for another edition, which gives it
- * another address. Pictures that are the same size and have the same colors
- * are taken to be the same cover. A picture without that information is only
- * the same as one with the same address.
- *
- * @param string $url   The cover's address.
- * @param array  $image The image as Hardcover describes it: its size and colors.
- * @return string A string that is the same for covers that are the same.
+ * @param array $image The image as Hardcover describes it: its size and colors.
+ * @return array|null The proportions and the colors as red, green and blue, or null if Hardcover does not say.
  */
-function get_cover_fingerprint( $url, $image ) {
-	if ( empty( $image['width'] ) || empty( $image['height'] ) || empty( $image['color'] ) ) {
-		return $url;
+function get_cover_look( $image ) {
+	if ( empty( $image['width'] ) || empty( $image['height'] ) || empty( $image['color'] ) || empty( $image['colors'] ) || ! is_array( $image['colors'] ) ) {
+		return null;
 	}
 
-	return md5( wp_json_encode( array( absint( $image['width'] ), absint( $image['height'] ), $image['color'], isset( $image['colors'] ) ? $image['colors'] : null ) ) );
+	$colors = array();
+
+	foreach ( array_merge( array( $image['color'] ), $image['colors'] ) as $hex ) {
+		if ( is_string( $hex ) && preg_match( '/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $hex, $matches ) ) {
+			$colors[] = array( hexdec( $matches[1] ), hexdec( $matches[2] ), hexdec( $matches[3] ) );
+		}
+	}
+
+	return $colors ? array(
+		'ratio'  => absint( $image['width'] ) / max( 1, absint( $image['height'] ) ),
+		'colors' => $colors,
+	) : null;
+}
+
+/**
+ * Tells whether every color of one cover has a close match among those of another.
+ *
+ * @param array $from Colors, each as red, green and blue.
+ * @param array $to   Colors to look for a match among.
+ * @return bool Whether all of them match.
+ */
+function are_colors_matched( $from, $to ) {
+	foreach ( $from as $color ) {
+		$found = false;
+
+		foreach ( $to as $other ) {
+			if ( abs( $color[0] - $other[0] ) <= 20 && abs( $color[1] - $other[1] ) <= 20 && abs( $color[2] - $other[2] ) <= 20 ) {
+				$found = true;
+				break;
+			}
+		}
+
+		if ( ! $found ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Tells whether two covers are the same picture.
+ *
+ * The same artwork is often uploaded again for another edition, in another
+ * size or saved again, so it has another address and slightly different
+ * colors. Two covers are the same when their proportions are within two
+ * percent of each other, and every color in one has a close match in the other.
+ *
+ * @param array|null $a A cover's look, from get_cover_look().
+ * @param array|null $b Another cover's look.
+ * @return bool Whether they are the same. Always false if either is not known.
+ */
+function is_same_cover( $a, $b ) {
+	if ( ! $a || ! $b || abs( $a['ratio'] - $b['ratio'] ) / max( $a['ratio'], $b['ratio'] ) > 0.02 ) {
+		return false;
+	}
+
+	return are_colors_matched( $a['colors'], $b['colors'] ) && are_colors_matched( $b['colors'], $a['colors'] );
 }
 
 /**
@@ -699,6 +750,7 @@ function get_editions( $book_id ) {
 
 	$editions = array();
 	$covers   = array();
+	$looks    = array();
 
 	foreach ( isset( $data['editions'] ) && is_array( $data['editions'] ) ? $data['editions'] : array() as $raw_edition ) {
 		$edition = normalize_edition( is_array( $raw_edition ) ? $raw_edition : array() );
@@ -708,14 +760,26 @@ function get_editions( $book_id ) {
 			continue;
 		}
 
-		$fingerprint = get_cover_fingerprint( $edition['cover'], isset( $raw_edition['image'] ) && is_array( $raw_edition['image'] ) ? $raw_edition['image'] : array() );
+		// An address already listed is the same cover. So is a picture that looks the same as one already listed.
+		$look = get_cover_look( isset( $raw_edition['image'] ) && is_array( $raw_edition['image'] ) ? $raw_edition['image'] : array() );
 
-		if ( isset( $covers[ $fingerprint ] ) ) {
+		if ( isset( $covers[ $edition['cover'] ] ) ) {
 			continue;
 		}
 
-		$covers[ $fingerprint ] = true;
-		$editions[]             = $edition;
+		foreach ( $looks as $listed ) {
+			if ( is_same_cover( $look, $listed ) ) {
+				continue 2;
+			}
+		}
+
+		$covers[ $edition['cover'] ] = true;
+
+		if ( $look ) {
+			$looks[] = $look;
+		}
+
+		$editions[] = $edition;
 	}
 
 	set_transient( $cache_key, $editions, DAY_IN_SECONDS );

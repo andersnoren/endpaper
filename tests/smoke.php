@@ -178,8 +178,11 @@ add_filter(
 			$red  = array( 'width' => 1400, 'height' => 2100, 'color' => '#aa1111', 'colors' => array( '#aa1111', '#eeeeee' ) );
 			$blue = array( 'width' => 1400, 'height' => 2100, 'color' => '#1111aa', 'colors' => array( '#1111aa', '#eeeeee' ) );
 
+			// The same picture as $blue, uploaded again smaller and saved again, so its colors are a little off.
+			$blue_again = array( 'width' => 700, 'height' => 1050, 'color' => '#1414ad', 'colors' => array( '#1414ad', '#f1f1f1' ) );
+
 			// Seven editions: two with covers of their own, one without a cover, one that shares a cover, one that is the same picture uploaded again, one that is the same size but another picture, and one with nothing known but its address.
-			return $respond( 200, array( 'data' => array( 'editions' => array( $edition( 101, 'edition-101.jpg', $red ), $edition( 102, null ), $edition( 103, 'edition-103.jpg', $blue ), $edition( 104, 'edition-101.jpg', $red ), $edition( 105, 'edition-105.jpg', $blue ), $edition( 106, 'edition-106.jpg', array( 'width' => 1400, 'height' => 2100, 'color' => '#11aa11', 'colors' => array( '#11aa11' ) ) ), $edition( 107, 'edition-107.jpg' ) ) ) ) );
+			return $respond( 200, array( 'data' => array( 'editions' => array( $edition( 101, 'edition-101.jpg', $red ), $edition( 102, null ), $edition( 103, 'edition-103.jpg', $blue ), $edition( 104, 'edition-101.jpg', $red ), $edition( 105, 'edition-105.jpg', $blue_again ), $edition( 106, 'edition-106.jpg', array( 'width' => 1400, 'height' => 2100, 'color' => '#11aa11', 'colors' => array( '#11aa11' ) ) ), $edition( 107, 'edition-107.jpg' ) ) ) ) );
 		}
 
 		if ( false !== strpos( $query, 'EndpaperEdition(' ) ) {
