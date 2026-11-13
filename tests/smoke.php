@@ -315,6 +315,7 @@ try {
 	require_once WP_PLUGIN_DIR . '/endpaper/includes/settings.php';
 	require_once WP_PLUGIN_DIR . '/endpaper/includes/settings-page.php';
 	require_once WP_PLUGIN_DIR . '/endpaper/includes/site-health.php';
+	require_once WP_PLUGIN_DIR . '/endpaper/includes/class-cli-command.php';
 
 	// Start clean: no key, and nothing cached from an earlier run.
 	delete_option( 'endpaper_hardcover_token' );
@@ -931,6 +932,15 @@ $endpaper_card_dupe = array_filter(
 	WP_Block_Type_Registry::get_instance()->get_registered( 'endpaper/book' )->styles,
 	static fn( $style ) => 'card' === $style['name']
 );
+
+endpaper_check( 'the WP-CLI command to clear the cache exists', method_exists( '\\Endpaper\\CLI_Command', 'clear_cache' ) );
+
+// Without WP-CLI, only that the command exists is checked.
+if ( class_exists( 'WP_CLI' ) ) {
+	$endpaper_generation = (int) get_option( 'endpaper_cache_generation', 0 );
+	( new \Endpaper\CLI_Command() )->clear_cache( array(), array( 'force' => true ) );
+	endpaper_check( 'the command clears the cache', (int) get_option( 'endpaper_cache_generation', 0 ) === $endpaper_generation + 1 );
+}
 
 endpaper_check( 'the Card style is registered with its settings as data', is_array( $endpaper_card ) && '0.75em' === $endpaper_card['style_data']['border']['radius'] && '1.5em' === $endpaper_card['style_data']['spacing']['padding'] );
 $endpaper_lifetime = static fn( $kind ) => \Endpaper\get_cache_lifetime( $kind );

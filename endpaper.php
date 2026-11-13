@@ -33,6 +33,10 @@ require_once ENDPAPER_DIR . 'includes/patterns.php';
 require_once ENDPAPER_DIR . 'includes/rest.php';
 require_once ENDPAPER_DIR . 'includes/theme-json.php';
 
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once ENDPAPER_DIR . 'includes/class-cli-command.php';
+}
+
 if ( is_admin() ) {
 	require_once ENDPAPER_DIR . 'includes/settings.php';
 	require_once ENDPAPER_DIR . 'includes/settings-page.php';

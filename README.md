@@ -147,6 +147,12 @@ The format follows WordPress’s own `image_editor_output_format` filter, so a s
 
 The filters for book covers are listed under [Book covers](#book-covers).
 
+### WP-CLI
+
+| Command | What it does |
+| --- | --- |
+| `wp endpaper clear-cache` | Clears everything fetched from Hardcover, covers included, so that it is fetched again. The API key stays. It does nothing while the key is missing or turned down, as the books on the site would be gone until a key works again; `--force` clears it anyway. It is the same as the “Clear cache” button on the settings screen. |
+
 ## Performance
 
 - **Visitors don’t wait for Hardcover.** Everything fetched from Hardcover is saved on your site, and a saved copy that has gone old is shown while a new one is fetched in the background. Something that isn’t saved yet is fetched in the background too, so that one visit shows nothing in its place instead of waiting. See “How it uses the Hardcover API” below.
