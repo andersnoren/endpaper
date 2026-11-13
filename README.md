@@ -30,7 +30,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 ## The Reading List block
 
-![The Reading List block, as a grid](.wordpress-org/screenshot-5.png)
+![The Reading List block, as a list](.wordpress-org/screenshot-4.png)
 
 - Shows books from your own library: the ones you are currently reading, have read or want to read. Ready-made variations for each are in the block inserter.
 - A list or a grid of covers with up to six columns, and up to 20 books. Each book shows its cover, title, authors, your rating, the date you finished it and your progress, and each part can be switched off.
