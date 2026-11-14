@@ -267,7 +267,11 @@ export default function Edit( {
 								'endpaper'
 							) }{ ' ' }
 					{ settingsUrl ? (
-						<a href={ settingsUrl }>
+						<a
+							href={ settingsUrl }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{ __( 'Go to the Endpaper settings', 'endpaper' ) }
 						</a>
 					) : (
