@@ -337,7 +337,7 @@ $endpaper_wrapper = get_block_wrapper_attributes(
 			sprintf(
 				'%1$s %2$s',
 				'missing' === $endpaper_trouble
-					? __( 'No Hardcover API key is saved, so this book is shown from a saved copy.', 'endpaper' )
+					? __( 'No Hardcover API key is set, so this book is shown from a saved copy.', 'endpaper' )
 					: __( 'Hardcover no longer accepts the API key, so this book is shown from a saved copy.', 'endpaper' ),
 				$endpaper_end_time
 					/* translators: %s: A date. */
