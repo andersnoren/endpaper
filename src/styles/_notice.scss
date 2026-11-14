@@ -11,7 +11,7 @@ $notice-color: #161616;
 
 .endpaper-notice {
 	background-color: $notice-background;
-	border: 1px solid rgba($notice-color, 0.2);
+	border: 1px solid $notice-color;
 	border-inline-start: 4px solid $notice-color;
 	border-radius: 0.25em;
 	box-sizing: border-box;
