@@ -165,6 +165,11 @@ add_filter(
 			// Two authors with the name's words in them; only the first is the one that was typed.
 			$GLOBALS['endpaper_author_requests'] = ( isset( $GLOBALS['endpaper_author_requests'] ) ? $GLOBALS['endpaper_author_requests'] : 0 ) + 1;
 
+			// An author whose one book is left out of the lists, like a collection, which the search still counts.
+			if ( ! empty( $GLOBALS['endpaper_hollow_author'] ) ) {
+				return $respond( 200, array( 'data' => array( 'search' => array( 'results' => array( 'hits' => array( array( 'document' => array( 'id' => '9', 'name' => 'Hollow Author', 'books_count' => 1 ) ) ) ) ) ) ) );
+			}
+
 			$hits = array(
 				array( 'document' => array( 'id' => '7', 'name' => 'Stephen King', 'books_count' => 312, 'image' => array( 'url' => 'https://assets.hardcover.app/author.jpg' ) ) ),
 				array( 'document' => array( 'id' => '8', 'name' => 'Stephen Kings Jr.', 'books_count' => 2 ) ),
@@ -176,6 +181,10 @@ add_filter(
 		if ( false !== strpos( $query, 'EndpaperAuthorBooks' ) ) {
 			$GLOBALS['endpaper_author_book_requests'] = ( isset( $GLOBALS['endpaper_author_book_requests'] ) ? $GLOBALS['endpaper_author_book_requests'] : 0 ) + 1;
 			$GLOBALS['endpaper_author_book_offset']   = json_decode( $args['body'], true )['variables']['offset'];
+
+			if ( 9 === json_decode( $args['body'], true )['variables']['author'] ) {
+				return $respond( 200, array( 'data' => array( 'books' => array() ) ) );
+			}
 
 			return $respond( 200, array( 'data' => array( 'books' => array( $book ) ) ) );
 		}
@@ -439,6 +448,10 @@ try {
 	get_author_books( 7, 2 );
 	endpaper_check( 'a page of an author\'s books is answered from the cache', 2 === $GLOBALS['endpaper_author_book_requests'] );
 	endpaper_check( 'no author is an error', is_wp_error( get_author_books( 0 ) ) );
+
+	$GLOBALS['endpaper_hollow_author'] = true;
+	endpaper_check( 'an author with no books to list is not offered', array() === search_author( 'Hollow Author' ) );
+	$GLOBALS['endpaper_hollow_author'] = false;
 
 	$endpaper_before_limit = $GLOBALS['endpaper_search_requests'];
 

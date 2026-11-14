@@ -652,7 +652,7 @@ function search_author( $term ) {
 		return array();
 	}
 
-	$cache_key = cache_key( 'endpaper_author_v2_' . md5( implode( ' ', $words ) ) );
+	$cache_key = cache_key( 'endpaper_author_v3_' . md5( implode( ' ', $words ) ) );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -727,6 +727,19 @@ function search_author( $term ) {
 			}
 
 			break;
+		}
+	}
+
+	// The count Hardcover's search gives can include books that are left out of the list, such as collections. An author with nothing to show is not offered. The first page is saved, so opening the author costs nothing more.
+	if ( $author ) {
+		$author_books = get_author_books( $author['id'], 1 );
+
+		if ( is_wp_error( $author_books ) ) {
+			return $author_books;
+		}
+
+		if ( ! $author_books ) {
+			$author = array();
 		}
 	}
 
