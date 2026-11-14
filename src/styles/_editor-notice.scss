@@ -1,8 +1,9 @@
 /*
  * In the editor, the message from the server looks like the editor's own
  * warning notice, so that every message about the API key looks the same.
- * The front end keeps the dashed border. The prefix and the line about who
- * sees it are left out, as the editor's notices have neither.
+ * The front end has a cream notice of its own, with a bar on the left. The
+ * prefix and the line about who sees it are left out here, as the editor's
+ * notices have neither.
  */
 .editor-styles-wrapper .endpaper-notice {
 	background-color: var(--wpds-color-background-surface-warning-weak);

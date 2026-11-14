@@ -2,13 +2,19 @@
 
 /*
  * A message for the people who look after the site, shown in place of a
- * block or below it. Visitors never get it. The dashed border sets it apart
- * from the content around it.
+ * block or below it. Visitors never get it. It sets its own background and
+ * text color, so it stays readable on any theme, and a bar on the left sets
+ * it apart from the content around it.
  */
+$notice-background: #f3efe6;
+$notice-color: #161616;
+
 .endpaper-notice {
-	border: 1px dashed $muted-color-element;
-	border-radius: 0.75em;
+	background-color: $notice-background;
+	border-left: 4px solid $notice-color;
+	border-radius: 0.25em;
 	box-sizing: border-box;
+	color: $notice-color;
 	font-size: max(0.875rem, 14px);
 	line-height: 1.5;
 	padding: 1em 1.25em;
@@ -18,10 +24,15 @@
 	margin: 0;
 }
 
-.endpaper-notice .endpaper-notice__private {
-	margin-top: 0.25em;
+.endpaper-notice a {
+	color: inherit;
+	text-decoration: underline;
+}
 
-	@include muted-text;
+.endpaper-notice .endpaper-notice__private {
+	color: rgba($notice-color, 0.7);
+	font-size: 0.875em;
+	margin-top: 0.25em;
 }
 
 /* In a book, on a line of its own under it. */
