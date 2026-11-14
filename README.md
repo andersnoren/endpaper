@@ -13,6 +13,8 @@ Endpaper lets you show books from Hardcover in your posts and pages. Embed a sin
 
 In a hardcover book, the endpapers are what attach the book block to the cover. This plugin does the same for WordPress blocks and Hardcover.
 
+https://github.com/user-attachments/assets/46b11caa-ca5e-42b5-8c10-aeeff269a53f
+
 > [!NOTE]
 > Endpaper is an unofficial plugin. It is created independently, using Hardcover’s public API, and is not maintained or endorsed by Hardcover. Please bring questions and requests about the plugin to this repository’s issues, not to Hardcover.
 
