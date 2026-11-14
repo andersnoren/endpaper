@@ -183,10 +183,11 @@ add_filter(
 			$GLOBALS['endpaper_author_book_offset']   = json_decode( $args['body'], true )['variables']['offset'];
 
 			if ( 9 === json_decode( $args['body'], true )['variables']['author'] ) {
-				return $respond( 200, array( 'data' => array( 'books' => array() ) ) );
+				return $respond( 200, array( 'data' => array( 'books' => array(), 'books_aggregate' => array( 'aggregate' => array( 'count' => 0 ) ) ) ) );
 			}
 
-			return $respond( 200, array( 'data' => array( 'books' => array( $book ) ) ) );
+			// Fewer than the search says, since it also counts collections.
+			return $respond( 200, array( 'data' => array( 'books' => array( $book ), 'books_aggregate' => array( 'aggregate' => array( 'count' => 300 ) ) ) ) );
 		}
 
 		if ( false !== strpos( $query, 'EndpaperSearch' ) ) {
@@ -427,7 +428,7 @@ try {
 
 	echo "Author search\n";
 	$endpaper_author = search_author( 'Stephen King' );
-	endpaper_check( 'a name finds the author, not another with the same words', is_array( $endpaper_author ) && 7 === $endpaper_author['id'] && 'Stephen King' === $endpaper_author['name'] && 312 === $endpaper_author['books'] && 'https://assets.hardcover.app/author.jpg' === $endpaper_author['image'] );
+	endpaper_check( 'a name finds the author, not another with the same words, and counts the books the list holds', is_array( $endpaper_author ) && 7 === $endpaper_author['id'] && 'Stephen King' === $endpaper_author['name'] && 300 === $endpaper_author['books'] && 'https://assets.hardcover.app/author.jpg' === $endpaper_author['image'] );
 
 	search_author( 'stephen  KING' );
 	endpaper_check( 'the same name typed differently is answered from the cache', 1 === $GLOBALS['endpaper_author_requests'] );

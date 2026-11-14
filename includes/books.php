@@ -652,7 +652,7 @@ function search_author( $term ) {
 		return array();
 	}
 
-	$cache_key = cache_key( 'endpaper_author_v3_' . md5( implode( ' ', $words ) ) );
+	$cache_key = cache_key( 'endpaper_author_v4_' . md5( implode( ' ', $words ) ) );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -730,16 +730,18 @@ function search_author( $term ) {
 		}
 	}
 
-	// The count Hardcover's search gives can include books that are left out of the list, such as collections. An author with nothing to show is not offered. The first page is saved, so opening the author costs nothing more.
+	// Hardcover's search counts every book by an author, collections included, which the list leaves out. The first page of the list says how many books there are, and an author with none is not offered. The page is saved, so opening the author costs nothing more.
 	if ( $author ) {
-		$author_books = get_author_books( $author['id'], 1 );
+		$author_page = get_author_page( $author['id'], 1 );
 
-		if ( is_wp_error( $author_books ) ) {
-			return $author_books;
+		if ( is_wp_error( $author_page ) ) {
+			return $author_page;
 		}
 
-		if ( ! $author_books ) {
+		if ( ! $author_page['books'] ) {
 			$author = array();
+		} elseif ( null !== $author_page['total'] ) {
+			$author['books'] = $author_page['total'];
 		}
 	}
 
@@ -749,13 +751,16 @@ function search_author( $term ) {
 }
 
 /**
- * Lists the books by an author, the ones most readers have first.
+ * Fetches a page of the books by an author, with how many books there are in all.
+ *
+ * The count is made with the same filter as the list, so the two agree.
+ * Hardcover's search counts every book, collections included.
  *
  * @param int $author_id Hardcover author ID.
  * @param int $page      Which page of books to return, from 1 to 10.
- * @return array|WP_Error List of book summaries, in the same shape as a search, or an error.
+ * @return array|WP_Error The books ("books", in the same shape as a search) and how many there are in all ("total", or null if Hardcover did not say), or an error.
  */
-function get_author_books( $author_id, $page = 1 ) {
+function get_author_page( $author_id, $page = 1 ) {
 	$author_id = absint( $author_id );
 	$page      = max( 1, min( 10, absint( $page ) ) );
 
@@ -764,10 +769,10 @@ function get_author_books( $author_id, $page = 1 ) {
 	}
 
 	$per_page  = get_search_results_count();
-	$cache_key = cache_key( 'endpaper_author_books_' . $per_page . '_' . $page . '_' . $author_id );
+	$cache_key = cache_key( 'endpaper_author_page_' . $per_page . '_' . $page . '_' . $author_id );
 	$cached    = get_transient( $cache_key );
 
-	if ( is_array( $cached ) ) {
+	if ( is_array( $cached ) && isset( $cached['books'] ) ) {
 		return $cached;
 	}
 
@@ -778,7 +783,7 @@ function get_author_books( $author_id, $page = 1 ) {
 	}
 
 	$data = api_request(
-		'query EndpaperAuthorBooks($author: Int!, $limit: Int!, $offset: Int!) { books(where: {compilation: {_eq: false}, contributions: {author: {id: {_eq: $author}}}}, order_by: {users_count: desc}, limit: $limit, offset: $offset) { id title release_year pages image { url } cached_contributors } }',
+		'query EndpaperAuthorBooks($author: Int!, $limit: Int!, $offset: Int!) { books(where: {compilation: {_eq: false}, contributions: {author: {id: {_eq: $author}}}}, order_by: {users_count: desc}, limit: $limit, offset: $offset) { id title release_year pages image { url } cached_contributors } books_aggregate(where: {compilation: {_eq: false}, contributions: {author: {id: {_eq: $author}}}}) { aggregate { count } } }',
 		array(
 			'author' => $author_id,
 			'limit'  => $per_page,
@@ -809,7 +814,25 @@ function get_author_books( $author_id, $page = 1 ) {
 		);
 	}
 
-	set_transient( $cache_key, $books, HOUR_IN_SECONDS );
+	$result = array(
+		'books' => $books,
+		'total' => isset( $data['books_aggregate']['aggregate']['count'] ) ? absint( $data['books_aggregate']['aggregate']['count'] ) : null,
+	);
 
-	return $books;
+	set_transient( $cache_key, $result, HOUR_IN_SECONDS );
+
+	return $result;
+}
+
+/**
+ * Lists the books by an author, the ones most readers have first.
+ *
+ * @param int $author_id Hardcover author ID.
+ * @param int $page      Which page of books to return, from 1 to 10.
+ * @return array|WP_Error List of book summaries, in the same shape as a search, or an error.
+ */
+function get_author_books( $author_id, $page = 1 ) {
+	$result = get_author_page( $author_id, $page );
+
+	return is_wp_error( $result ) ? $result : $result['books'];
 }
