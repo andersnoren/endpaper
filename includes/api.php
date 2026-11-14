@@ -333,7 +333,7 @@ function api_request( $query, $variables = array(), $token = null ) {
 	if ( '' === $token ) {
 		return new WP_Error(
 			'endpaper_no_token',
-			__( 'No Hardcover API key is saved. Add one under Settings, Endpaper.', 'endpaper' ),
+			__( 'No Hardcover API key is saved. Add one under Settings → Endpaper.', 'endpaper' ),
 			array( 'status' => 400 )
 		);
 	}

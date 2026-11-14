@@ -45,7 +45,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 
 = Blocks and shortcodes =
 
-* **Not on the block editor?** Every block also has a shortcode, for classic themes, widgets and templates: `[endpaper_book url="https://hardcover.app/books/…"]`, `[endpaper_reading_list status="currently-reading"]` and `[endpaper_reading_goal]`. They choose what to show, and your theme decides how it looks. The options for each shortcode are explained under Settings, Endpaper, in the Help section.
+* **Not on the block editor?** Every block also has a shortcode, for classic themes, widgets and templates: `[endpaper_book url="https://hardcover.app/books/…"]`, `[endpaper_reading_list status="currently-reading"]` and `[endpaper_reading_goal]`. They choose what to show, and your theme decides how it looks. The options for each shortcode are explained under Settings → Endpaper, in the Help section.
 
 = For developers =
 
@@ -82,7 +82,7 @@ The API is provided by Hardcover, which is not the author of this plugin. Hardco
 == Installation ==
 
 1. Install and activate Endpaper.
-2. Go to Settings, then Endpaper.
+2. Go to Settings → Endpaper.
 3. Use the button on that screen to create an API key on Hardcover, with the right permissions already ticked, and paste it in.
 4. Add a Book, Reading List or Reading Goal block to a post or a page.
 
@@ -159,7 +159,7 @@ The format follows WordPress’s own `image_editor_output_format` filter.
 
 = Can I change how the blocks look? =
 
-Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text, and a Reading List block can be a list or a grid. The Book block comes in two styles, Plain and Card, and you choose which one new Book blocks start with under Settings, Endpaper. The Reading Goal block comes as a gauge or a bar. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
+Yes. A Book block has layout settings for the size and position of the cover and the alignment of the text, and a Reading List block can be a list or a grid. The Book block comes in two styles, Plain and Card, and you choose which one new Book blocks start with under Settings → Endpaper. The Reading Goal block comes as a gauge or a bar. The blocks take their fonts and colors from your theme, and they support the color, typography, spacing, border and shadow settings in the editor. Theme authors can set defaults in `theme.json`, including the accent color and the corner radius of covers.
 
 = What happens when I delete the plugin? =
 

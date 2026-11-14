@@ -263,10 +263,7 @@ export default function Edit( {
 								'Hardcover did not accept the API key. It may have expired or been deleted.',
 								'endpaper'
 							)
-						: __(
-								'No Hardcover API key is saved. Add one under Settings, Endpaper.',
-								'endpaper'
-							) }
+						: __( 'No Hardcover API key is saved. Add one under Settings → Endpaper.', 'endpaper' ) }
 				</SettingsNotice>
 			);
 		} else if ( attributes.bookUrl ) {

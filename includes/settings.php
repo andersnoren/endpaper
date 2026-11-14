@@ -399,7 +399,7 @@ function get_privacy_policy_text() {
 }
 
 /**
- * Offers the suggested text in the privacy policy guide, under Settings, Privacy.
+ * Offers the suggested text in the privacy policy guide, under Settings → Privacy.
  *
  * @return void
  */
