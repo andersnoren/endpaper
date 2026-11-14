@@ -818,7 +818,7 @@ function the_editor_notice( $message, $link_to_settings = false ) {
 	}
 
 	$link = $link_to_settings && current_user_can( 'manage_options' )
-		? ' <a href="' . esc_url( admin_url( 'options-general.php?page=endpaper' ) ) . '">' . esc_html__( 'Go to the Endpaper settings', 'endpaper' ) . '</a>'
+		? ' <a href="' . esc_url( admin_url( 'options-general.php?page=endpaper' ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Go to the Endpaper settings', 'endpaper' ) . '</a>'
 		: '';
 
 	printf(

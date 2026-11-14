@@ -26,6 +26,8 @@ import ServerSideRender from '@wordpress/server-side-render';
 import AccentColorControl from '../../components/accent-color-control';
 import BlockIcon from '../../components/block-icon';
 import RefreshButton from '../../components/refresh-button';
+import SettingsNotice from '../../components/settings-notice';
+import getEditorData from '../../utils/editor-data';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
 import hasFrame from '../../utils/has-frame';
 import metadata from './block.json';
@@ -101,7 +103,9 @@ export default function Edit( { attributes, clientId, setAttributes } ) {
 	let body;
 
 	if ( error ) {
-		body = (
+		body = getEditorData().keyTrouble ? (
+			<SettingsNotice>{ error }</SettingsNotice>
+		) : (
 			<Notice status="warning" isDismissible={ false }>
 				{ error }
 			</Notice>

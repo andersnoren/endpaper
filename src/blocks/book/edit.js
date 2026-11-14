@@ -38,6 +38,7 @@ import AccentColorControl from '../../components/accent-color-control';
 import BlockIcon from '../../components/block-icon';
 import CoverRadiusPanel from '../../components/cover-radius-panel';
 import RefreshButton from '../../components/refresh-button';
+import SettingsNotice from '../../components/settings-notice';
 import getEditorData from '../../utils/editor-data';
 import getPreviewAttributes from '../../utils/get-preview-attributes';
 import getGapValue from '../../utils/get-gap-value';
@@ -128,7 +129,7 @@ export default function Edit( {
 		},
 	} );
 	useKeepImages( wrapper );
-	const { keyTrouble, settingsUrl, defaultBookStyle } = getEditorData();
+	const { keyTrouble, defaultBookStyle } = getEditorData();
 
 	// A new block starts with the style chosen in the Endpaper settings, unless it has a style or a book already. This runs once, when the block is first selected, which is when it is inserted.
 	const styleChecked = useRef( false );
@@ -256,31 +257,17 @@ export default function Edit( {
 
 		if ( keyTrouble ) {
 			placeholderBody = (
-				<Notice status="warning" isDismissible={ false }>
+				<SettingsNotice>
 					{ 'rejected' === keyTrouble
 						? __(
-								'Hardcover did not accept the API key.',
+								'Hardcover did not accept the API key. It may have expired or been deleted.',
 								'endpaper'
 							)
 						: __(
-								'Add your Hardcover API key to search for books.',
+								'No Hardcover API key is saved. Add one under Settings, Endpaper.',
 								'endpaper'
-							) }{ ' ' }
-					{ settingsUrl ? (
-						<a
-							href={ settingsUrl }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{ __( 'Go to the Endpaper settings', 'endpaper' ) }
-						</a>
-					) : (
-						__(
-							'Ask a site administrator to check the Endpaper settings.',
-							'endpaper'
-						)
-					) }
-				</Notice>
+							) }
+				</SettingsNotice>
 			);
 		} else if ( attributes.bookUrl ) {
 			placeholderBody = (
