@@ -34,6 +34,12 @@ const SEARCH_DELAY = 400;
 const MAX_PAGES = 10;
 
 /**
+ * The books in the list, once it has loaded.
+ */
+const BOOKS_SELECTOR =
+	'.endpaper-book-search__results:not(.endpaper-book-search__results--loading) .endpaper-book-search__result';
+
+/**
  * The REST path for a page of results: a search, or the books of an author.
  *
  * @param {Object}      args        What to ask for.
@@ -494,7 +500,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 			pages: loadedPages.current,
 		};
 		loadedPages.current = 1;
-		focusAfterSwitch.current = '.endpaper-book-search__back';
+		focusAfterSwitch.current = BOOKS_SELECTOR;
 
 		setAuthor( match );
 		setResults( [] );
@@ -549,13 +555,20 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 		setStatus( 'done' );
 	};
 
-	// After switching between the search and an author's books, focus goes to the control for going the other way.
+	// After switching to an author's books, focus goes to the first book, or to the way back if there is none. After going back, it goes to the author.
 	useEffect( () => {
 		if ( ! focusAfterSwitch.current || 'loading' === status ) {
 			return;
 		}
 
-		wrapper.current?.querySelector( focusAfterSwitch.current )?.focus();
+		const target =
+			wrapper.current?.querySelector( focusAfterSwitch.current ) ||
+			( author &&
+				wrapper.current?.querySelector(
+					'.endpaper-book-search__back'
+				) );
+
+		target?.focus();
 		focusAfterSwitch.current = null;
 	}, [ author, status ] );
 
@@ -569,11 +582,7 @@ export default function BookSearch( { onSelect, focusOnMount = false } ) {
 
 		focusAfterLoad.current = null;
 
-		wrapper.current
-			?.querySelectorAll(
-				'.endpaper-book-search__results:not(.endpaper-book-search__results--loading) .endpaper-book-search__result'
-			)
-			?.[ index ]?.focus();
+		wrapper.current?.querySelectorAll( BOOKS_SELECTOR )?.[ index ]?.focus();
 	}, [ results ] );
 
 	// Arrow keys move between the search field and the results.
