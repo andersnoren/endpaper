@@ -75,13 +75,18 @@ function cache_key( $name ) {
  * there is none yet. The editor and WP-Cron get fresh data instead, and so
  * does a site where WP-Cron is switched off, since a background request would
  * never run there. A request already waiting for the same thing is not added a
- * second time.
+ * second time. With no key saved, nothing is queued: asking Hardcover cannot
+ * work, and the caller then reaches the "no key" error at once.
  *
  * @param string $kind What to refresh: book, edition, entry, list, goals or slug.
  * @param array  $args The arguments of the function that fetches it.
  * @return bool Whether the saved copy should be used for now.
  */
 function refresh_later( $kind, $args ) {
+	if ( '' === get_token() ) {
+		return false;
+	}
+
 	if ( is_refreshing_now() || wp_doing_cron() || wp_doing_ajax() || is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) ) {
 		return false;
 	}
