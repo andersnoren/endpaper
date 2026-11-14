@@ -652,7 +652,7 @@ function search_author( $term ) {
 		return array();
 	}
 
-	$cache_key = cache_key( 'endpaper_author_v4_' . md5( implode( ' ', $words ) ) );
+	$cache_key = cache_key( 'endpaper_author_v5_' . md5( implode( ' ', $words ) ) );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) ) {
@@ -754,7 +754,11 @@ function search_author( $term ) {
  * Fetches a page of the books by an author, with how many books there are in all.
  *
  * The count is made with the same filter as the list, so the two agree.
- * Hardcover's search counts every book, collections included.
+ * Hardcover's search counts every book, collections included. The list
+ * leaves out collections, books merged into another as duplicates (they have
+ * a canonical book), and books the person only contributed to, such as an
+ * introduction. A main author is one whose contribution is empty or Author,
+ * the same as in get_main_authors().
  *
  * @param int $author_id Hardcover author ID.
  * @param int $page      Which page of books to return, from 1 to 10.
@@ -769,7 +773,7 @@ function get_author_page( $author_id, $page = 1 ) {
 	}
 
 	$per_page  = get_search_results_count();
-	$cache_key = cache_key( 'endpaper_author_page_' . $per_page . '_' . $page . '_' . $author_id );
+	$cache_key = cache_key( 'endpaper_author_page_v2_' . $per_page . '_' . $page . '_' . $author_id );
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) && isset( $cached['books'] ) ) {
@@ -783,7 +787,7 @@ function get_author_page( $author_id, $page = 1 ) {
 	}
 
 	$data = api_request(
-		'query EndpaperAuthorBooks($author: Int!, $limit: Int!, $offset: Int!) { books(where: {compilation: {_eq: false}, contributions: {author: {id: {_eq: $author}}}}, order_by: {users_count: desc}, limit: $limit, offset: $offset) { id title release_year pages image { url } cached_contributors } books_aggregate(where: {compilation: {_eq: false}, contributions: {author: {id: {_eq: $author}}}}) { aggregate { count } } }',
+		'query EndpaperAuthorBooks($author: Int!, $limit: Int!, $offset: Int!) { books(where: {compilation: {_eq: false}, canonical_id: {_is_null: true}, contributions: {author: {id: {_eq: $author}}, _or: [{contribution: {_is_null: true}}, {contribution: {_eq: ""}}, {contribution: {_eq: "Author"}}]}}, order_by: {users_count: desc}, limit: $limit, offset: $offset) { id title release_year pages image { url } cached_contributors } books_aggregate(where: {compilation: {_eq: false}, canonical_id: {_is_null: true}, contributions: {author: {id: {_eq: $author}}, _or: [{contribution: {_is_null: true}}, {contribution: {_eq: ""}}, {contribution: {_eq: "Author"}}]}}) { aggregate { count } } }',
 		array(
 			'author' => $author_id,
 			'limit'  => $per_page,
