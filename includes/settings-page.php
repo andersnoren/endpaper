@@ -387,7 +387,7 @@ function render_settings_page() {
 				<section class="endpaper-card" aria-labelledby="endpaper-cache-title">
 					<h2 id="endpaper-cache-title"><?php esc_html_e( 'Cache', 'endpaper' ); ?></h2>
 
-					<p><?php esc_html_e( 'Endpaper saves what it fetches from Hardcover, book covers included, so your pages stay fast. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. Clear the cache to fetch everything again now, for example after changing something on Hardcover.', 'endpaper' ); ?></p>
+					<p><?php esc_html_e( 'Endpaper saves what it fetches from Hardcover, book covers included, so your pages stay fast. Reading lists, shelves and progress are fetched again every hour, and the details of a book every week. Clear the cache to fetch everything again now, for example after changing something on Hardcover. It also resets the recent books in the Book block’s search.', 'endpaper' ); ?></p>
 
 					<p class="endpaper-cache-status">
 						<?php

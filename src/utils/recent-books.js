@@ -4,7 +4,13 @@
  * They are kept in the browser's local storage, so they are per person and
  * never reach the server. Storage can be blocked or full, so every access is
  * wrapped, and a failure only means there is nothing to show.
+ *
+ * The list is saved with the cache generation it was made in. Clearing the
+ * cache on the settings screen raises that number, so the list of every
+ * browser is dropped the next time the editor loads.
  */
+
+import getEditorData from './editor-data';
 
 const STORAGE_KEY = 'endpaper-recent-books';
 const MAX_BOOKS = 5;
@@ -16,11 +22,20 @@ const MAX_BOOKS = 5;
  */
 export function getRecentBooks() {
 	try {
-		const books = JSON.parse( window.localStorage.getItem( STORAGE_KEY ) );
+		const saved = JSON.parse( window.localStorage.getItem( STORAGE_KEY ) );
 
-		return Array.isArray( books )
-			? books.filter( ( book ) => book?.id && book?.title )
-			: [];
+		// A list saved before generations were kept is just the books.
+		const generation = Array.isArray( saved ) ? 0 : saved?.generation;
+		const books = Array.isArray( saved ) ? saved : saved?.books;
+
+		if (
+			! Array.isArray( books ) ||
+			( generation || 0 ) !== getEditorData().cacheGeneration
+		) {
+			return [];
+		}
+
+		return books.filter( ( book ) => book?.id && book?.title );
 	} catch {
 		return [];
 	}
@@ -50,7 +65,13 @@ export function addRecentBook( book ) {
 	].slice( 0, MAX_BOOKS );
 
 	try {
-		window.localStorage.setItem( STORAGE_KEY, JSON.stringify( books ) );
+		window.localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify( {
+				generation: getEditorData().cacheGeneration,
+				books,
+			} )
+		);
 	} catch {
 		// Nothing to do: the list just is not kept.
 	}

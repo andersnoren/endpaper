@@ -7,8 +7,9 @@
  * - defaultBookStyle: the name of the style new Book blocks start with, or
  *   "default" for the Plain style.
  * - searchResults: how many books one page of search results holds.
+ * - cacheGeneration: a number that goes up when the cache is cleared.
  *
- * @return {{keyTrouble: string, settingsUrl: string, defaultBookStyle: string, searchResults: number}} The values, empty when unknown.
+ * @return {{keyTrouble: string, settingsUrl: string, defaultBookStyle: string, searchResults: number, cacheGeneration: number}} The values, empty when unknown.
  */
 export default function getEditorData() {
 	const data = window.endpaperEditor || {};
@@ -18,5 +19,6 @@ export default function getEditorData() {
 		settingsUrl: data.settingsUrl || '',
 		defaultBookStyle: data.defaultBookStyle || 'default',
 		searchResults: Number( data.searchResults ) || 8,
+		cacheGeneration: Number( data.cacheGeneration ) || 0,
 	};
 }
