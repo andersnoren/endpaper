@@ -41,6 +41,11 @@
 	pointer-events: none;
 }
 
+/* The settings link in the notice is meant to be clicked. */
+.wp-block-endpaper-book .components-notice a {
+	pointer-events: auto;
+}
+
 /*
  * The search results. Sizes are in em, relative to the editor's own text
  * size, which is 13px.
