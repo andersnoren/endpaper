@@ -341,8 +341,8 @@ $endpaper_wrapper = get_block_wrapper_attributes(
 					: __( 'Hardcover no longer accepts the API key, so this book is shown from a saved copy.', 'endpaper' ),
 				$endpaper_end_time
 					/* translators: %s: A date. */
-					? sprintf( __( 'It will disappear from your site on %s unless a working key is saved.', 'endpaper' ), wp_date( get_option( 'date_format' ), $endpaper_end_time ) )
-					: __( 'It will soon disappear from your site unless a working key is saved.', 'endpaper' )
+					? sprintf( __( 'It will disappear from your site on %s unless a working key is set.', 'endpaper' ), wp_date( get_option( 'date_format' ), $endpaper_end_time ) )
+					: __( 'It will soon disappear from your site unless a working key is set.', 'endpaper' )
 			),
 			true
 		);
