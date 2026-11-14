@@ -32,7 +32,7 @@ export default function SettingsNotice( { children } ) {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ __( 'Go to the Endpaper settings', 'endpaper' ) }
+					{ __( 'Go to the Endpaper settings.', 'endpaper' ) }
 				</a>
 			) : (
 				__(

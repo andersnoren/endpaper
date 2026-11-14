@@ -290,7 +290,7 @@ function the_key_notice() {
 		esc_html( $message ),
 		is_token_in_config()
 			? esc_html__( 'The key is set in wp-config.php.', 'endpaper' )
-			: '<a href="' . esc_url( get_settings_url() ) . '">' . esc_html__( 'Go to the Endpaper settings', 'endpaper' ) . '</a>'
+			: '<a href="' . esc_url( get_settings_url() ) . '">' . esc_html__( 'Go to the Endpaper settings.', 'endpaper' ) . '</a>'
 	);
 }
 add_action( 'admin_notices', __NAMESPACE__ . '\the_key_notice' );

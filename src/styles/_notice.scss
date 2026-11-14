@@ -3,25 +3,32 @@
 /*
  * A message for the people who look after the site, shown in place of a
  * block or below it. Visitors never get it. It sets its own background and
- * text color, so it stays readable on any theme, and a bar on the left sets
- * it apart from the content around it.
+ * text color, so it stays readable on any theme. A border, with a bar at the
+ * start, sets it apart from the content around it.
  */
 $notice-background: #f3efe6;
 $notice-color: #161616;
 
 .endpaper-notice {
 	background-color: $notice-background;
-	border-left: 4px solid $notice-color;
+	border: 1px solid rgba($notice-color, 0.2);
+	border-inline-start: 4px solid $notice-color;
 	border-radius: 0.25em;
 	box-sizing: border-box;
 	color: $notice-color;
 	font-size: max(0.875rem, 14px);
 	line-height: 1.5;
 	padding: 1em 1.25em;
+	text-align: start;
 }
 
 .endpaper-notice p {
 	margin: 0;
+}
+
+.endpaper-notice .endpaper-notice__title {
+	font-weight: 600;
+	margin-bottom: 0.25em;
 }
 
 .endpaper-notice a {
@@ -32,7 +39,7 @@ $notice-color: #161616;
 .endpaper-notice .endpaper-notice__private {
 	color: rgba($notice-color, 0.7);
 	font-size: 0.875em;
-	margin-top: 0.25em;
+	margin-top: 0.75em;
 }
 
 /* In a book, on a line of its own under it. */

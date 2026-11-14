@@ -60,7 +60,7 @@ function get_site_health_result() {
 	}
 
 	if ( 'good' !== $result['status'] && ! is_token_in_config() ) {
-		$result['actions'] = '<p><a href="' . esc_url( get_settings_url() ) . '">' . esc_html__( 'Go to the Endpaper settings', 'endpaper' ) . '</a></p>';
+		$result['actions'] = '<p><a href="' . esc_url( get_settings_url() ) . '">' . esc_html__( 'Go to the Endpaper settings.', 'endpaper' ) . '</a></p>';
 	}
 
 	return $result;

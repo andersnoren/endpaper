@@ -818,12 +818,12 @@ function the_editor_notice( $message, $link_to_settings = false ) {
 	}
 
 	$link = $link_to_settings && current_user_can( 'manage_options' )
-		? ' <a href="' . esc_url( admin_url( 'options-general.php?page=endpaper' ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Go to the Endpaper settings', 'endpaper' ) . '</a>'
+		? ' <a href="' . esc_url( admin_url( 'options-general.php?page=endpaper' ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Go to the Endpaper settings.', 'endpaper' ) . '</a>'
 		: '';
 
 	printf(
-		'<div class="endpaper-notice"><p><strong>%1$s</strong> %2$s%3$s</p><p class="endpaper-notice__private">%4$s</p></div>',
-		esc_html__( 'Endpaper:', 'endpaper' ),
+		'<div class="endpaper-notice"><p class="endpaper-notice__title"><strong>%1$s</strong></p><p>%2$s%3$s</p><p class="endpaper-notice__private">%4$s</p></div>',
+		esc_html__( 'Endpaper', 'endpaper' ),
 		esc_html( $message ),
 		$link, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 		esc_html__( 'Only people who can edit this site see this message.', 'endpaper' )
