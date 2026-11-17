@@ -939,6 +939,7 @@ try {
 
 		endpaper_check( 'a cover that cannot be downloaded gets a placeholder, and is not tried again at once', null === get_cover( 'https://assets.hardcover.app/missing.jpg' ) && null === get_cover( 'https://assets.hardcover.app/missing.jpg' ) && ! empty( cover_records()[ get_cover_key( 'https://assets.hardcover.app/missing.jpg' ) ]['failed'] ) );
 		endpaper_check( 'only Hardcover’s image server is downloaded from', false === import_cover( 'https://example.com/cover.jpg' ) && false === import_cover( 'http://assets.hardcover.app/cover.jpg' ) );
+		endpaper_check( 'a cover from any other address is never sent to a visitor’s browser', null === get_cover( 'https://example.com/cover.jpg' ) && null === get_cover( 'http://assets.hardcover.app/cover.jpg' ) );
 		$endpaper_max_filter = static function () {
 			return 10;
 		};

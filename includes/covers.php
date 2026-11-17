@@ -313,8 +313,13 @@ function get_cover( $url ) {
 		return null;
 	}
 
-	// Covers that cannot be saved are loaded from Hardcover, as are those from an address that is not known. Unless the site does not allow that: then there is nothing to show.
-	if ( ! is_cover_import_enabled() || ! is_allowed_cover_url( $url ) || ! can_store_covers() ) {
+	// An address that is not Hardcover's own image server is never used, saved or not: it would send a visitor's browser to somewhere nobody has vetted.
+	if ( ! is_allowed_cover_url( $url ) ) {
+		return null;
+	}
+
+	// Covers that cannot be saved are loaded from Hardcover. Unless the site does not allow that: then there is nothing to show.
+	if ( ! is_cover_import_enabled() || ! can_store_covers() ) {
 		if ( ! are_remote_covers_allowed() ) {
 			return null;
 		}

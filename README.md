@@ -143,7 +143,7 @@ The space between the items of a Reading List is the block’s gap. A theme sets
 
 ## Book covers
 
-Covers are downloaded from Hardcover once and shown from the site itself, so visitors’ browsers don’t contact Hardcover. They are saved in `wp-content/uploads/endpaper/covers`, not in the media library, in three widths (160, 320 and 640px, never larger than the original), as WebP where the server can write it and JPEG where it can’t. A cover that isn’t saved yet shows as a placeholder: it is saved in the background, usually within a minute. Covers no block has shown for a month are removed, and all of them when the cache is cleared or the plugin is deleted.
+Covers are downloaded from Hardcover once and shown from the site itself, so visitors’ browsers don’t contact Hardcover (unless the site can’t save files, see below). They are saved in `wp-content/uploads/endpaper/covers`, not in the media library, in three widths (160, 320 and 640px, never larger than the original), as WebP where the server can write it and JPEG where it can’t. A cover that isn’t saved yet shows as a placeholder: it is saved in the background, usually within a minute. Covers no block has shown for a month are removed, and all of them when the cache is cleared or the plugin is deleted.
 
 If the site can’t save files, covers are loaded from Hardcover instead, and Site Health says so.
 
@@ -178,7 +178,7 @@ The cover format follows WordPress’s own `image_editor_output_format` filter, 
 ## Performance
 
 - **Visitors don’t wait for Hardcover.** Everything fetched from Hardcover is saved on your site, and a saved copy that has gone old is shown while a new one is fetched in the background. Something that isn’t saved yet is fetched in the background too, so that one visit shows nothing in its place instead of waiting. See “How it uses the Hardcover API” below.
-- **Covers come from your own site.** They are saved in several sizes, the browser gets the one that fits, they load lazily, and they have a fixed size, so the page doesn’t jump when they arrive. Visitors’ browsers never contact Hardcover. See “Book covers” above.
+- **Covers come from your own site.** They are saved in several sizes, the browser gets the one that fits, they load lazily, and they have a fixed size, so the page doesn’t jump when they arrive. Visitors’ browsers don’t contact Hardcover, unless the site can’t save files. See “Book covers” above.
 - **Little code on the front end.** Each block’s styles are small and are only added to pages that use the block. The Book and Reading List blocks add no JavaScript for visitors. The Reading Goal block adds one small script, which keeps “days left” correct on pages that are served from a page cache. The editor code is only loaded in the editor.
 - **Plays well with page caching.** The blocks are rendered on the server like any other block, so full-page caches work as usual. After the cache is cleared, a page may be cached once without a book that wasn’t saved yet, which saving the book in the editor normally prevents.
 

@@ -39,7 +39,7 @@ In a hardcover book, the endpapers are what attach the book block to the cover. 
 = Fast, and respectful of your visitors =
 
 * **Nobody waits for Hardcover.** What the plugin fetches is saved on your site and refreshed in the background, so pages with Endpaper blocks load as fast as any other page.
-* **Covers from your own site.** They are saved in the right sizes and loaded lazily, and your visitors’ browsers never contact Hardcover. The plugin sets no cookies.
+* **Covers from your own site.** They are saved in the right sizes and loaded lazily, and your visitors’ browsers do not contact Hardcover, unless the site cannot save files (see “External services”). The plugin sets no cookies.
 * **Only what is public.** A book you keep private on Hardcover never appears on your site.
 * **Your key stays on your server.** It is only ever sent to Hardcover, and the permissions it needs can only read.
 
@@ -142,7 +142,7 @@ The cover is being saved. That happens in the background, usually within a minut
 
 = Do my visitors’ browsers contact Hardcover? =
 
-No. Covers are shown from your own site, and nothing else is loaded from Hardcover. The plugin sets no cookies and stores nothing about your visitors. The one exception is a site that cannot save covers: see “External services” above. A developer can rule that out with the `endpaper_allow_remote_covers` filter.
+Normally not. Covers are shown from your own site, and nothing else is loaded from Hardcover. The plugin sets no cookies and stores nothing about your visitors. The one exception is a site that cannot save covers: see “External services” above. A developer can rule that out with the `endpaper_allow_remote_covers` filter.
 
 = Can developers change how covers are saved? =
 
