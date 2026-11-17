@@ -622,7 +622,7 @@ function render_settings_page() {
 				?>
 				<details class="endpaper-disclosure">
 					<summary><?php esc_html_e( 'Do my visitors’ browsers contact Hardcover?', 'endpaper' ); ?></summary>
-					<p><?php esc_html_e( 'No. Covers are shown from your own site, and nothing else is loaded from Hardcover. A visitor only reaches Hardcover by following a link to it.', 'endpaper' ); ?></p>
+					<p><?php esc_html_e( 'Normally not. Covers are shown from your own site, and nothing else is loaded from Hardcover. A visitor only reaches Hardcover by following a link to it.', 'endpaper' ); ?></p>
 					<p><?php esc_html_e( 'There is one exception. If your site cannot save covers, they are loaded from Hardcover instead, and Hardcover then sees each visitor’s IP address and browser details, though not which page they are reading. Site Health tells you if that is the case.', 'endpaper' ); ?></p>
 					<p>
 						<?php
