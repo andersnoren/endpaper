@@ -201,29 +201,25 @@ See [Hooks for developers](#hooks-for-developers) for the filters.
 
 ## Installation
 
-Endpaper isn’t in the WordPress.org plugin directory yet, so for now it has to be installed from source.
+Install Endpaper from the [WordPress.org plugin directory](https://wordpress.org/plugins/endpaper/), or from your own site: go to Plugins → Add New Plugin, search for “Endpaper”, then install and activate it.
 
-1. Clone this repository into `wp-content/plugins/`:
-
-	```sh
-	git clone https://github.com/andersnoren/endpaper.git
-	```
-
-2. Build the block assets from the plugin folder:
-
-	```sh
-	npm install
-	npm run build
-	```
-
-3. Activate Endpaper on the Plugins screen in WordPress.
-
-4. Go to Settings → Endpaper, and add your Hardcover API key. A button there opens Hardcover’s form for a new key with the right permissions already ticked.
+Then go to Settings → Endpaper, and add your Hardcover API key. A button there opens Hardcover’s form for a new key with the right permissions already ticked.
 
 To keep the key out of the database, define it in `wp-config.php` instead, above the line that says to stop editing. It then takes precedence over the settings screen:
 
 ```php
 define( 'ENDPAPER_HARDCOVER_TOKEN', 'your-api-key' );
+```
+
+### From source
+
+To run the development version, clone this repository into `wp-content/plugins/` and build the block assets from the plugin folder:
+
+```sh
+git clone https://github.com/andersnoren/endpaper.git
+cd endpaper
+npm install
+npm run build
 ```
 
 ### Permissions for the API key
